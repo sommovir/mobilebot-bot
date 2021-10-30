@@ -18,6 +18,12 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <meta-data
+                android:name="RECOGNIZE_MODE"
+                android:value="1" />
+            <meta-data
+                android:name="forbid_request_semantics"
+                android:value="1" />
         </activity>
     </application>
 
