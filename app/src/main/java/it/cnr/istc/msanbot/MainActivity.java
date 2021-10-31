@@ -38,7 +38,7 @@ import com.sanbot.opensdk.function.unit.interfaces.speech.SpeakListener;
 import java.util.Date;
 
 public class MainActivity extends TopBaseActivity implements MediaListener{
-
+    //pecilli zan
     SpeechManager speechManager = (SpeechManager)getUnitManager(FuncConstant. SPEECH_MANAGER);
     HardWareManager hardWareManager = (HardWareManager) getUnitManager(FuncConstant.HARDWARE_MANAGER);
     TextView textView;
