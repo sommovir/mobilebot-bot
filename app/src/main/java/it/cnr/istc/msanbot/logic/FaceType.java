@@ -1,4 +1,4 @@
-package it.cnr.istc.msanbot;
+package it.cnr.istc.msanbot.logic;
 
 public enum FaceType {
 

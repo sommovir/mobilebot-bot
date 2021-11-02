@@ -1,14 +1,9 @@
 package it.cnr.istc.msanbot;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
 
-import android.content.ActivityNotFoundException;
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -18,58 +13,99 @@ import android.widget.Toast;
 import com.sanbot.opensdk.base.TopBaseActivity;
 import com.sanbot.opensdk.beans.FuncConstant;
 import com.sanbot.opensdk.beans.OperationResult;
-import com.sanbot.opensdk.function.beans.EmotionsType;
-import com.sanbot.opensdk.function.beans.SpeakOption;
-import com.sanbot.opensdk.function.beans.StreamOption;
+import com.sanbot.opensdk.function.beans.LED;
 import com.sanbot.opensdk.function.beans.speech.Grammar;
 import com.sanbot.opensdk.function.beans.speech.RecognizeTextBean;
-import com.sanbot.opensdk.function.beans.speech.SpeakStatus;
-import com.sanbot.opensdk.function.unit.HDCameraManager;
+import com.sanbot.opensdk.function.beans.wheelmotion.NoAngleWheelMotion;
+import com.sanbot.opensdk.function.beans.wheelmotion.RelativeAngleWheelMotion;
 import com.sanbot.opensdk.function.unit.HardWareManager;
-import com.sanbot.opensdk.function.unit.MediaManager;
 import com.sanbot.opensdk.function.unit.SpeechManager;
-import com.sanbot.opensdk.function.unit.SystemManager;
+import com.sanbot.opensdk.function.unit.WheelMotionManager;
 import com.sanbot.opensdk.function.unit.interfaces.hardware.InfrareListener;
 import com.sanbot.opensdk.function.unit.interfaces.media.MediaListener;
-import com.sanbot.opensdk.function.unit.interfaces.media.MediaStreamListener;
 import com.sanbot.opensdk.function.unit.interfaces.speech.RecognizeListener;
-import com.sanbot.opensdk.function.unit.interfaces.speech.SpeakListener;
 
 import java.util.Date;
 
 public class MainActivity extends TopBaseActivity implements MediaListener{
-
+    //pecilli zan
     SpeechManager speechManager = (SpeechManager)getUnitManager(FuncConstant. SPEECH_MANAGER);
-    HardWareManager hardWareManager = (HardWareManager) getUnitManager(FuncConstant.HARDWARE_MANAGER);
+    HardWareManager hardWareManager = (HardWareManager)getUnitManager(FuncConstant.HARDWARE_MANAGER);
+    WheelMotionManager wheelMotionManager= (WheelMotionManager)getUnitManager(FuncConstant.WHEELMOTION_MANAGER);
+    LED rageLed = new LED(LED.PART_ALL,LED. MODE_RED,(new Integer(10)).byteValue(),(new Integer(3)).byteValue());
+    LED listeningLed = new LED(LED.PART_ALL,LED. MODE_GREEN,(new Integer(10)).byteValue(),(new Integer(3)).byteValue());
+    LED speechLed = new LED(LED.PART_ALL,LED. MODE_BLUE,(new Integer(10)).byteValue(),(new Integer(3)).byteValue());
+
     TextView textView;
+    Button goForward,goBackward,turnLeft,turnRight,mainSpeak,stop;
+    private AlertDialog tableDialog = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
             register(MainActivity.class);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             super.onCreate(savedInstanceState);
+
         try {
             setContentView(R.layout.activity_main);
             if (speechManager == null) {
                 Toast.makeText(MainActivity.this, "VI SPACCO TUTTO", Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(MainActivity.this, "MI AMMAZZO", Toast.LENGTH_LONG).show();
-                speechManager.doWakeUp();
+                //Toast.makeText(MainActivity.this, "MI AMMAZZO", Toast.LENGTH_LONG).show();
                 speechManager.startSpeak("NON SONO NULL");
             }
             initListener();
 
-            Button button;
+            goForward = findViewById(R.id.goForward);
+            goBackward = findViewById(R.id.goBackward);
+            turnLeft = findViewById(R.id.turnLeft);
+            turnRight = findViewById(R.id.turnRight);
+            mainSpeak = findViewById(R.id.button_mainButton_speak);
+            stop = findViewById(R.id.button_mainButton_stop);
 
-            button = findViewById(R.id.button_mainButton_speak);
+            goForward.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    NoAngleWheelMotion noAngleWheelMotion = new NoAngleWheelMotion(
+                            NoAngleWheelMotion.ACTION_FORWARD, 5,1000
+                    );
+                    wheelMotionManager.doNoAngleMotion(noAngleWheelMotion);
+                }
+            });
 
-            button.setOnClickListener(new View.OnClickListener() {
+            goBackward.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    NoAngleWheelMotion noAngleWheelMotion = new NoAngleWheelMotion(
+                            NoAngleWheelMotion.ACTION_BACK, 2,10
+                    );
+                    wheelMotionManager.doNoAngleMotion(noAngleWheelMotion);
+                }
+            });
+
+            turnLeft.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    RelativeAngleWheelMotion relativeAngleWheelMotion = new RelativeAngleWheelMotion(RelativeAngleWheelMotion.TURN_LEFT, 5,90);
+                    wheelMotionManager.doRelativeAngleMotion(relativeAngleWheelMotion);
+                }
+            });
+
+            turnRight.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    RelativeAngleWheelMotion relativeAngleWheelMotion = new RelativeAngleWheelMotion(RelativeAngleWheelMotion.TURN_RIGHT, 5,90);
+                    wheelMotionManager.doRelativeAngleMotion(relativeAngleWheelMotion);
+                }
+            });
+
+            mainSpeak.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     //speechManager.startSpeak("Uga Buga Uga Tunga");
                     //systemManager.showEmotion(EmotionsType.SMILE);
                     speechManager.doWakeUp();
+                    //listenWhenToSpeak();
                     //initListener();
 
         /*speechManager.setOnSpeechListener(new RecognizeListener() {
@@ -118,13 +154,56 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
 
                 }
             });
+
+            stop.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //speechManager.startSpeak("Sto zitt");
+
+                    talk("Ok basta",rageLed);
+                    Toast.makeText(MainActivity.this, "Fine", Toast.LENGTH_LONG).show();
+                }
+            });
         }catch(Exception ex) {
             Toast.makeText(MainActivity.this, ex.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
+@Deprecated
+    private void listenWhenToSpeak(){
+        try {
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    while (true) {
+                        if (speechManager != null) {
+                            OperationResult speaking = speechManager.isSpeaking();
+                            if (speaking != null) {
+                                String result = speaking.getResult();
+                                Toast.makeText(MainActivity.this, result, Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(MainActivity.this, "speaking is nullone", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    }
+                }
+            });
+        }catch (Throwable ex){
+            Toast.makeText(MainActivity.this, ex.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    private void autoListen(){
+        speechManager.doWakeUp();
+    }
+
+    private void stop(){
+        speechManager.pauseSpeak();
+    }
+
     private void initListener() {
-            speechManager.startSpeak("Inizio a sentire");
+
+            talk("Inizio a sentire",listeningLed);
 
             textView = findViewById(R.id.textView);
             hardWareManager.setOnHareWareListener(new InfrareListener() {
@@ -143,79 +222,41 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
                     if (text.contains("ciao")) {
                         long time = new Date().getTime();
                         if (time % 2 == 1) {
-                            speechManager.startSpeak("Ciao");
+                            talk("Ciao",speechLed);
                         } else {
-                            speechManager.startSpeak("lei è molto cortese");
+                            talk("lei è molto cortese",speechLed);
                         }
                     }
-                    if ((text.contains("poesia") && text.contains("risorgimento")) || (text.contains("poesia") && text.contains("risorgimentale"))) {
-                        long time = new Date().getTime(); //Il Barone Bettino Ricasoli, secondo presidente del Consiglio del Regno d'Italia fece servire a Vittorio Emanuele secondo, la panzanella ? Cos'è la panzanella ?
-                        speechManager.startSpeak("Certamente. Ne conosco una di Aldo Fabrizi sulla panzanella. Ascolta.  E che ce vo’\n" +
-                                "pe’ fa’ la Panzanella?\n" +
-                                "Nun è ch’er condimento sia un segreto,\n" +
-                                "oppure è stabbilito da un decreto,\n" +
-                                "però la qualità dev’esse quella.\n" +
-                                "In primise: acqua fresca de cannella,\n" +
-                                "in secondise: ojo d’uliveto,\n" +
-                                "e come terzo: quer di-vino aceto\n" +
-                                "che fa’ venì la febbre magnarella.\n" +
-                                "Pagnotta paesana un po’ intostata,\n" +
-                                "cotta all’antica,co’ la crosta scura,\n" +
-                                "bagnata fino a che nun s’è ammollata.\n" +
-                                "In più, per un boccone da signori,\n" +
-                                "abbasta rifinì la svojatura\n" +
-                                "co’ basilico, pepe e pommidori.");
+                    if(text.contains("lui")){
+                        talk("Combattenti di terra, di mare e dell'aria! Camicie nere della rivoluzione e delle legioni! Uomini e donne d'Italia, dell'Impero e del regno d'Albania! Ascoltate!\n" +
+                                "\n" +
+                                "L'ora segnata dal destino batte nel cielo della nostra patria. L'ora delle decisioni irrevocabili. La dichiarazione di guerra è già stata consegnata agli ambasciatori di Gran Bretagna e di Francia.\n" +
+                                "\n" +
+                                "Scendiamo in campo contro le democrazie plutocratiche e reazionarie dell'Occidente, che, in ogni tempo, hanno ostacolato la marcia, e spesso insidiato l'esistenza medesima del popolo italiano.\n" +
+                                "\n" +
+                                "Alcuni lustri della storia più recente si possono riassumere in queste parole: frasi, promesse, minacce, ricatti e, alla fine, quale coronamento dell'edificio, l'ignobile assedio societario di cinquantadue stati. La nostra coscienza è assolutamente tranquilla. Con voi il mondo intero è testimone che l'Italia del Littorio ha fatto quanto era umanamente possibile per evitare la tormenta che sconvolge l'Europa; ma tutto fu vano.",rageLed);
                     }
-                    if ((text.contains("ballo") && text.contains("risorgimento")) ||
-                            (text.contains("danza") && text.contains("risorgimento")) ||
-                            (text.contains("ballo") && text.contains("risorgimentale")) ||
-                            (text.contains("danza") && text.contains("risorgimentale")) ||
-                            (text.contains("musica") && text.contains("risorgimento")) ||
-                            (text.contains("musica") && text.contains("risorgimentale"))
-
-                    ) {
-                        speechManager.startSpeak("Si, senti questo valzer, premi il tasto play");
-                        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + "CmAH4GFExiw"));
-                        Intent webIntent = new Intent(Intent.ACTION_VIEW,
-                                Uri.parse("https://www.youtube.com/embed/CmAH4GFExiw"));
-                        // Uri.parse("https://www.m.youtube.com//watch?v=yKwg4MLuwXs"));
-                        try {
-                            startActivity(appIntent);
-                        } catch (ActivityNotFoundException ex) {
-                            startActivity(webIntent);
-                        }
-                    }
-                    if ((text.contains("vino") && text.contains("garibaldi"))
-
-                    ) {
-                        speechManager.startSpeak("In primo luogo, Garibaldi era astemio, e più che bere gli piaceva mangiare. Il suo piatto preferito era pane e pecorino, accompagnato da fave fresche di stagione");
-
-                    }
-                    if ((text.contains("cavur") || text.contains("cavour"))
-
-                    ) {
-                        speechManager.startSpeak("Sai cosa diceva cavour. che cattura più amici la mensa che la mente");
-
+                    if(text.equals("girati")){
+                        RelativeAngleWheelMotion relativeAngleWheelMotion = new RelativeAngleWheelMotion(RelativeAngleWheelMotion.TURN_LEFT, 5,180);
+                        wheelMotionManager.doRelativeAngleMotion(relativeAngleWheelMotion);
                     }
 
-                    if ((text.contains("vittorio") && text.contains("emanuele"))
+                    //
+                    // speechManager.doWakeUp();
 
-                    ) {
-                        speechManager.startSpeak("so solo che c'è una fermata della metro");
+                    //if(FaceManager.)Simo fai a singletone per gettare le faccie
 
-                    }
-                    if ((text.contains("mazzini"))
+                    //hardWareManager.setLED(rageLed);
+                    autoListen();
 
-                    ) {
-                        speechManager.startSpeak("Oh, di mazzini ne so una, ascolta cosa diceva sul cioccolato. Il cioccolato ha mille pregi. Consola dai fallimenti, dai tradimenti, dalle ingiurie della vita, dalla malinconia per le passioni perdute e per quelle mai avute");
-
-                    }
                 }
 
                 @Override
                 public void onStopRecognize() {
                     Toast.makeText(MainActivity.this, "Stop", Toast.LENGTH_SHORT).show();
                     System.out.println("stop recognize");
+
+                    //speechManager.doWakeUp();
                 }
 
                 @Override
@@ -226,6 +267,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
 
                 @Override
                 public void onRecognizeVolume(int i) {
+                    //Toast.makeText(MainActivity.this, "Vol", Toast.LENGTH_SHORT).show();
                     System.out.println("Problema al volume");
                 }
 
@@ -237,90 +279,103 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
 
                 @Override
                 public boolean onRecognizeResult(@NonNull Grammar grammar) {
+                    Toast.makeText(MainActivity.this, "Stop", Toast.LENGTH_SHORT).show();
                     //只有在配置了RECOGNIZE_MODE为1，且返回为true的情况下，才会拦截
 
                     String text = grammar.getText().toLowerCase();
                     textView.setText(grammar.getText());
 
-                    if (text.equals("ciao")) {
+                    if(text.contains("schifo")){
+                        speechManager.doWakeUp();
+                    }
+
+                    /*speechManager.startSpeak("Secondo");
+
+
+                    if (text.contains("ciao")) {
                         long time = new Date().getTime();
                         if (time % 2 == 1) {
-                            speechManager.startSpeak("Saluti a lei");
+                            talk("Ciao",speechLed);
                         } else {
-                            speechManager.startSpeak("lei è molto cortese");
+                            talk("lei è molto cortese",speechLed);
                         }
                     }
-                    if ((text.contains("poesia") && text.contains("risorgimento")) || (text.contains("poesia") && text.contains("risorgimentale"))) {
-                        long time = new Date().getTime(); //Il Barone Bettino Ricasoli, secondo presidente del Consiglio del Regno d'Italia fece servire a Vittorio Emanuele secondo, la panzanella ? Cos'è la panzanella ?
-                        speechManager.startSpeak("Certamente. Ne conosco una di Aldo Fabrizi sulla panzanella. Ascolta.  E che ce vo’\n" +
-                                "pe’ fa’ la Panzanella?\n" +
-                                "Nun è ch’er condimento sia un segreto,\n" +
-                                "oppure è stabbilito da un decreto,\n" +
-                                "però la qualità dev’esse quella.\n" +
-                                "In primise: acqua fresca de cannella,\n" +
-                                "in secondise: ojo d’uliveto,\n" +
-                                "e come terzo: quer di-vino aceto\n" +
-                                "che fa’ venì la febbre magnarella.\n" +
-                                "Pagnotta paesana un po’ intostata,\n" +
-                                "cotta all’antica,co’ la crosta scura,\n" +
-                                "bagnata fino a che nun s’è ammollata.\n" +
-                                "In più, per un boccone da signori,\n" +
-                                "abbasta rifinì la svojatura\n" +
-                                "co’ basilico, pepe e pommidori.");
-                    }
-                    if ((text.contains("ballo") && text.contains("risorgimento")) ||
-                            (text.contains("danza") && text.contains("risorgimento")) ||
-                            (text.contains("ballo") && text.contains("risorgimentale")) ||
-                            (text.contains("danza") && text.contains("risorgimentale")) ||
-                            (text.contains("musica") && text.contains("risorgimento")) ||
-                            (text.contains("musica") && text.contains("risorgimentale"))
-
-                    ) {
-                        speechManager.startSpeak("Si, senti questo valzer, premi il tasto play");
-                        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + "CmAH4GFExiw"));
-                        Intent webIntent = new Intent(Intent.ACTION_VIEW,
-                                Uri.parse("https://www.youtube.com/embed/CmAH4GFExiw"));
-                        // Uri.parse("https://www.m.youtube.com//watch?v=yKwg4MLuwXs"));
-                        try {
-                            startActivity(appIntent);
-                        } catch (ActivityNotFoundException ex) {
-                            startActivity(webIntent);
-                        }
-                    }
-                    if ((text.contains("vino") && text.contains("garibaldi"))
-
-                    ) {
-                        speechManager.startSpeak("In primo luogo, Garibaldi era astemio, e più che bere gli piaceva mangiare. Il suo piatto preferito era pane e pecorino, accompagnato da fave fresche di stagione");
-
-                    }
-                    if ((text.contains("cavur") || text.contains("cavour"))
-
-                    ) {
-                        speechManager.startSpeak("Sai cosa diceva cavour. che cattura più amici la mensa che la mente");
-
-                    }
-
-                    if ((text.contains("vittorio") && text.contains("emanuele"))
-
-                    ) {
-                        speechManager.startSpeak("so solo che c'è una fermata della metro");
-
-                    }
-                    if ((text.contains("mazzini"))
-
-                    ) {
-                        speechManager.startSpeak("Oh, di mazzini ne so una, ascolta cosa diceva sul cioccolato. Il cioccolato ha mille pregi. Consola dai fallimenti, dai tradimenti, dalle ingiurie della vita, dalla malinconia per le passioni perdute e per quelle mai avute");
-
-                    }
+                    if(text.equals("girati")){
+                        RelativeAngleWheelMotion relativeAngleWheelMotion = new RelativeAngleWheelMotion( RelativeAngleWheelMotion.TURN_LEFT, 5,180);
+                        wheelMotionManager.doRelativeAngleMotion(relativeAngleWheelMotion);
+                    }*/
                     return true;
                 }
             });
+
         }
-
-
 
     @Override
     protected void onMainServiceConnected() {
-
+       //listenWhenToSpeak();
+       speechManager.startSpeak("Sono connesso");
     }
+
+    public void talk(String text,LED led){
+        speechManager.startSpeak(text);
+        hardWareManager.setLED(led);
+    }
+
+    /*public void showTableData(String[] data){
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Informazioni");
+
+        Context dialogContext = builder.getContext();
+        LayoutInflater inflater = LayoutInflater.from(dialogContext);
+        View alertView = inflater.inflate(R.layout.table_dialog, null);
+        builder.setView(alertView);
+
+
+
+        TableLayout tableLayout = (TableLayout)alertView.findViewById(R.id.tableLayout);
+        for( String d : data){
+
+            String[] split = d.split("<CELL>");
+            String title = split[0];
+            String infoinfo = split[1];
+
+            TableRow tableRow = new TableRow(dialogContext);
+            tableRow.setPadding(10,10,10,10);
+            tableRow.setLayoutParams(new TableRow.LayoutParams
+                    (TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT, 1.0f));
+
+            TextView textView1 = new TextView(dialogContext);
+            textView1.setPadding(15,15,15,15);
+            // textView1.setLayoutParams(new TableRow.LayoutParams
+            //         (TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT, 1.0f));
+            textView1.setTextSize(18);
+            textView1.setText(title);
+            tableRow.addView(textView1);
+
+            TextView textView2 = new TextView(dialogContext);
+            textView2.setPadding(15,15,15,15);
+            // textView2.setLayoutParams(new TableRow.LayoutParams
+            //         (TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT, 1.0f));
+            textView2.setTextSize(18);
+            textView2.setText(infoinfo);
+            textView2.setBackgroundResource(R.color.row2);
+            tableRow.addView(textView2);
+
+            tableLayout.addView(tableRow);
+        }
+
+        builder.setCancelable(true);
+        if(this.tableDialog != null){
+            this.tableDialog.cancel();
+            this.tableDialog.dismiss();
+            this.tableDialog = builder.create();
+        }else{
+            this.tableDialog = builder.create();
+        }
+
+        tableDialog.show();
+        // AlertDialog alertDialog = builder.create();
+        //  alertDialog.show();
+    }*/
 }

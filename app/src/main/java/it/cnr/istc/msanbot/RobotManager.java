@@ -1,19 +1,22 @@
 package it.cnr.istc.msanbot;
 
-import android.media.FaceDetector;
-
-import com.sanbot.opensdk.beans.FuncConstant;
-import com.sanbot.opensdk.beans.OperationResult;
 import com.sanbot.opensdk.function.beans.EmotionsType;
-import com.sanbot.opensdk.function.unit.SystemManager;
 
-public class RobotMangaer {
-    private static RobotMangaer instance = null;
+import it.cnr.istc.msanbot.logic.FaceType;
 
+public class RobotManager {
 
-    private RobotMangaer(){
+    private static RobotManager _instance = null;
+
+    public static RobotManager getInstance() {
+        if(_instance == null){
+            _instance = new RobotManager();
+        }
+        return _instance;
     }
 
+    private RobotManager(){
+    }
 
     public EmotionsType changeFace(FaceType face){
         switch (face){
