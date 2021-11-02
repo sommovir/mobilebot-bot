@@ -164,8 +164,12 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
                 while(true){
                     if(speechManager!=null) {
                         OperationResult speaking = speechManager.isSpeaking();
-                        String result = speaking.getResult();
-                        Toast.makeText(MainActivity.this, "Stop", Toast.LENGTH_LONG).show();
+                        if(speaking != null) {
+                            String result = speaking.getResult();
+                            Toast.makeText(MainActivity.this, result, Toast.LENGTH_LONG).show();
+                        }else{
+                            Toast.makeText(MainActivity.this, "speaking is nullone", Toast.LENGTH_LONG).show();
+                        }
                     }
                     try {
                         Thread.sleep(3000);
