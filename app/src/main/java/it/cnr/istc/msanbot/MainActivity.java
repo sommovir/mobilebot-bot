@@ -41,6 +41,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
 
     SpeechManager speechManager = (SpeechManager)getUnitManager(FuncConstant. SPEECH_MANAGER);
     HardWareManager hardWareManager = (HardWareManager) getUnitManager(FuncConstant.HARDWARE_MANAGER);
+    SystemManager systemManager= (SystemManager) getUnitManager(FuncConstant.SYSTEM_MANAGER);
     TextView textView;
 
     @Override
