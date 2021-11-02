@@ -3,6 +3,7 @@ package it.cnr.istc.msanbot;
 import androidx.annotation.NonNull;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 
 import com.sanbot.opensdk.base.TopBaseActivity;
 import com.sanbot.opensdk.beans.FuncConstant;
+import com.sanbot.opensdk.beans.OperationResult;
 import com.sanbot.opensdk.function.beans.LED;
 import com.sanbot.opensdk.function.beans.speech.Grammar;
 import com.sanbot.opensdk.function.beans.speech.RecognizeTextBean;
@@ -155,7 +157,27 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
         }
     }
 
+
+    private void listenWhenToSpeak(){
+        runOnUiThread(new Runnable() {
+            public void run() {
+                while(true){
+                    OperationResult speaking = speechManager.isSpeaking();
+                    String result = speaking.getResult();
+                    Toast.makeText(MainActivity.this, "Stop", Toast.LENGTH_LONG).show();
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+    }
+
     private void initListener() {
+            listenWhenToSpeak();
 
             talk("Inizio a sentire",listeningLed);
 
