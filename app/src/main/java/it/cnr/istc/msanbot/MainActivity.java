@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,16 +20,19 @@ import com.sanbot.opensdk.base.TopBaseActivity;
 import com.sanbot.opensdk.beans.FuncConstant;
 import com.sanbot.opensdk.beans.OperationResult;
 import com.sanbot.opensdk.function.beans.EmotionsType;
+import com.sanbot.opensdk.function.beans.LED;
 import com.sanbot.opensdk.function.beans.SpeakOption;
 import com.sanbot.opensdk.function.beans.StreamOption;
 import com.sanbot.opensdk.function.beans.speech.Grammar;
 import com.sanbot.opensdk.function.beans.speech.RecognizeTextBean;
 import com.sanbot.opensdk.function.beans.speech.SpeakStatus;
+import com.sanbot.opensdk.function.beans.wheelmotion.RelativeAngleWheelMotion;
 import com.sanbot.opensdk.function.unit.HDCameraManager;
 import com.sanbot.opensdk.function.unit.HardWareManager;
 import com.sanbot.opensdk.function.unit.MediaManager;
 import com.sanbot.opensdk.function.unit.SpeechManager;
 import com.sanbot.opensdk.function.unit.SystemManager;
+import com.sanbot.opensdk.function.unit.WheelMotionManager;
 import com.sanbot.opensdk.function.unit.interfaces.hardware.InfrareListener;
 import com.sanbot.opensdk.function.unit.interfaces.media.MediaListener;
 import com.sanbot.opensdk.function.unit.interfaces.media.MediaStreamListener;
@@ -40,7 +44,12 @@ import java.util.Date;
 public class MainActivity extends TopBaseActivity implements MediaListener{
     //pecilli zan
     SpeechManager speechManager = (SpeechManager)getUnitManager(FuncConstant. SPEECH_MANAGER);
-    HardWareManager hardWareManager = (HardWareManager) getUnitManager(FuncConstant.HARDWARE_MANAGER);
+    HardWareManager hardWareManager = (HardWareManager)getUnitManager(FuncConstant.HARDWARE_MANAGER);
+    WheelMotionManager wheelMotionManager= (WheelMotionManager)getUnitManager(FuncConstant.WHEELMOTION_MANAGER);
+    LED rageLed = new LED(LED.PART_ALL,LED. MODE_RED,(new Integer(10)).byteValue(),(new Integer(3)).byteValue());
+    LED listeningLed = new LED(LED.PART_ALL,LED. MODE_GREEN,(new Integer(25)).byteValue(),(new Integer(3)).byteValue());
+    LED speechLed = new LED(LED.PART_ALL,LED. MODE_BLUE,(new Integer(25)).byteValue(),(new Integer(3)).byteValue());
+
     TextView textView;
 
     @Override
@@ -124,7 +133,8 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
     }
 
     private void initListener() {
-            speechManager.startSpeak("Inizio a sentire");
+
+            talk("Inizio a sentire",listeningLed);
 
             textView = findViewById(R.id.textView);
             hardWareManager.setOnHareWareListener(new InfrareListener() {
@@ -140,76 +150,25 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
                     String text = recognizeTextBean.getText().toLowerCase();
                     textView.setText(recognizeTextBean.getText());
 
+                    speechManager.startSpeak("Primo");
+
                     if (text.contains("ciao")) {
                         long time = new Date().getTime();
                         if (time % 2 == 1) {
-                            speechManager.startSpeak("Ciao");
+                            talk("Ciao",speechLed);
                         } else {
-                            speechManager.startSpeak("lei è molto cortese");
+                            talk("lei è molto cortese",speechLed);
                         }
                     }
-                    if ((text.contains("poesia") && text.contains("risorgimento")) || (text.contains("poesia") && text.contains("risorgimentale"))) {
-                        long time = new Date().getTime(); //Il Barone Bettino Ricasoli, secondo presidente del Consiglio del Regno d'Italia fece servire a Vittorio Emanuele secondo, la panzanella ? Cos'è la panzanella ?
-                        speechManager.startSpeak("Certamente. Ne conosco una di Aldo Fabrizi sulla panzanella. Ascolta.  E che ce vo’\n" +
-                                "pe’ fa’ la Panzanella?\n" +
-                                "Nun è ch’er condimento sia un segreto,\n" +
-                                "oppure è stabbilito da un decreto,\n" +
-                                "però la qualità dev’esse quella.\n" +
-                                "In primise: acqua fresca de cannella,\n" +
-                                "in secondise: ojo d’uliveto,\n" +
-                                "e come terzo: quer di-vino aceto\n" +
-                                "che fa’ venì la febbre magnarella.\n" +
-                                "Pagnotta paesana un po’ intostata,\n" +
-                                "cotta all’antica,co’ la crosta scura,\n" +
-                                "bagnata fino a che nun s’è ammollata.\n" +
-                                "In più, per un boccone da signori,\n" +
-                                "abbasta rifinì la svojatura\n" +
-                                "co’ basilico, pepe e pommidori.");
-                    }
-                    if ((text.contains("ballo") && text.contains("risorgimento")) ||
-                            (text.contains("danza") && text.contains("risorgimento")) ||
-                            (text.contains("ballo") && text.contains("risorgimentale")) ||
-                            (text.contains("danza") && text.contains("risorgimentale")) ||
-                            (text.contains("musica") && text.contains("risorgimento")) ||
-                            (text.contains("musica") && text.contains("risorgimentale"))
-
-                    ) {
-                        speechManager.startSpeak("Si, senti questo valzer, premi il tasto play");
-                        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + "CmAH4GFExiw"));
-                        Intent webIntent = new Intent(Intent.ACTION_VIEW,
-                                Uri.parse("https://www.youtube.com/embed/CmAH4GFExiw"));
-                        // Uri.parse("https://www.m.youtube.com//watch?v=yKwg4MLuwXs"));
-                        try {
-                            startActivity(appIntent);
-                        } catch (ActivityNotFoundException ex) {
-                            startActivity(webIntent);
-                        }
-                    }
-                    if ((text.contains("vino") && text.contains("garibaldi"))
-
-                    ) {
-                        speechManager.startSpeak("In primo luogo, Garibaldi era astemio, e più che bere gli piaceva mangiare. Il suo piatto preferito era pane e pecorino, accompagnato da fave fresche di stagione");
-
-                    }
-                    if ((text.contains("cavur") || text.contains("cavour"))
-
-                    ) {
-                        speechManager.startSpeak("Sai cosa diceva cavour. che cattura più amici la mensa che la mente");
-
+                    if(text.equals("girati")){
+                        RelativeAngleWheelMotion relativeAngleWheelMotion = new RelativeAngleWheelMotion(RelativeAngleWheelMotion.TURN_LEFT, 5,180);
+                        wheelMotionManager.doRelativeAngleMotion(relativeAngleWheelMotion);
                     }
 
-                    if ((text.contains("vittorio") && text.contains("emanuele"))
+                    //if(FaceManager.)Simo fai a singletone per gettare le faccie
 
-                    ) {
-                        speechManager.startSpeak("so solo che c'è una fermata della metro");
+                    hardWareManager.setLED(rageLed);
 
-                    }
-                    if ((text.contains("mazzini"))
-
-                    ) {
-                        speechManager.startSpeak("Oh, di mazzini ne so una, ascolta cosa diceva sul cioccolato. Il cioccolato ha mille pregi. Consola dai fallimenti, dai tradimenti, dalle ingiurie della vita, dalla malinconia per le passioni perdute e per quelle mai avute");
-
-                    }
                 }
 
                 @Override
@@ -242,75 +201,19 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
                     String text = grammar.getText().toLowerCase();
                     textView.setText(grammar.getText());
 
-                    if (text.equals("ciao")) {
+                    speechManager.startSpeak("Secondo");
+
+                    if (text.contains("ciao")) {
                         long time = new Date().getTime();
                         if (time % 2 == 1) {
-                            speechManager.startSpeak("Saluti a lei");
+                            talk("Ciao",speechLed);
                         } else {
-                            speechManager.startSpeak("lei è molto cortese");
+                            talk("lei è molto cortese",speechLed);
                         }
                     }
-                    if ((text.contains("poesia") && text.contains("risorgimento")) || (text.contains("poesia") && text.contains("risorgimentale"))) {
-                        long time = new Date().getTime(); //Il Barone Bettino Ricasoli, secondo presidente del Consiglio del Regno d'Italia fece servire a Vittorio Emanuele secondo, la panzanella ? Cos'è la panzanella ?
-                        speechManager.startSpeak("Certamente. Ne conosco una di Aldo Fabrizi sulla panzanella. Ascolta.  E che ce vo’\n" +
-                                "pe’ fa’ la Panzanella?\n" +
-                                "Nun è ch’er condimento sia un segreto,\n" +
-                                "oppure è stabbilito da un decreto,\n" +
-                                "però la qualità dev’esse quella.\n" +
-                                "In primise: acqua fresca de cannella,\n" +
-                                "in secondise: ojo d’uliveto,\n" +
-                                "e come terzo: quer di-vino aceto\n" +
-                                "che fa’ venì la febbre magnarella.\n" +
-                                "Pagnotta paesana un po’ intostata,\n" +
-                                "cotta all’antica,co’ la crosta scura,\n" +
-                                "bagnata fino a che nun s’è ammollata.\n" +
-                                "In più, per un boccone da signori,\n" +
-                                "abbasta rifinì la svojatura\n" +
-                                "co’ basilico, pepe e pommidori.");
-                    }
-                    if ((text.contains("ballo") && text.contains("risorgimento")) ||
-                            (text.contains("danza") && text.contains("risorgimento")) ||
-                            (text.contains("ballo") && text.contains("risorgimentale")) ||
-                            (text.contains("danza") && text.contains("risorgimentale")) ||
-                            (text.contains("musica") && text.contains("risorgimento")) ||
-                            (text.contains("musica") && text.contains("risorgimentale"))
-
-                    ) {
-                        speechManager.startSpeak("Si, senti questo valzer, premi il tasto play");
-                        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + "CmAH4GFExiw"));
-                        Intent webIntent = new Intent(Intent.ACTION_VIEW,
-                                Uri.parse("https://www.youtube.com/embed/CmAH4GFExiw"));
-                        // Uri.parse("https://www.m.youtube.com//watch?v=yKwg4MLuwXs"));
-                        try {
-                            startActivity(appIntent);
-                        } catch (ActivityNotFoundException ex) {
-                            startActivity(webIntent);
-                        }
-                    }
-                    if ((text.contains("vino") && text.contains("garibaldi"))
-
-                    ) {
-                        speechManager.startSpeak("In primo luogo, Garibaldi era astemio, e più che bere gli piaceva mangiare. Il suo piatto preferito era pane e pecorino, accompagnato da fave fresche di stagione");
-
-                    }
-                    if ((text.contains("cavur") || text.contains("cavour"))
-
-                    ) {
-                        speechManager.startSpeak("Sai cosa diceva cavour. che cattura più amici la mensa che la mente");
-
-                    }
-
-                    if ((text.contains("vittorio") && text.contains("emanuele"))
-
-                    ) {
-                        speechManager.startSpeak("so solo che c'è una fermata della metro");
-
-                    }
-                    if ((text.contains("mazzini"))
-
-                    ) {
-                        speechManager.startSpeak("Oh, di mazzini ne so una, ascolta cosa diceva sul cioccolato. Il cioccolato ha mille pregi. Consola dai fallimenti, dai tradimenti, dalle ingiurie della vita, dalla malinconia per le passioni perdute e per quelle mai avute");
-
+                    if(text.equals("girati")){
+                        RelativeAngleWheelMotion relativeAngleWheelMotion = new RelativeAngleWheelMotion( RelativeAngleWheelMotion.TURN_LEFT, 5,180);
+                        wheelMotionManager.doRelativeAngleMotion(relativeAngleWheelMotion);
                     }
                     return true;
                 }
@@ -321,6 +224,11 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
 
     @Override
     protected void onMainServiceConnected() {
+        speechManager.startSpeak("Sono connesso");
+    }
 
+    public void talk(String text,LED led){
+        speechManager.startSpeak(text);
+        hardWareManager.setLED(led);
     }
 }
