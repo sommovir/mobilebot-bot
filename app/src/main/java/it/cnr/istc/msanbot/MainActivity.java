@@ -47,8 +47,8 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
     HardWareManager hardWareManager = (HardWareManager)getUnitManager(FuncConstant.HARDWARE_MANAGER);
     WheelMotionManager wheelMotionManager= (WheelMotionManager)getUnitManager(FuncConstant.WHEELMOTION_MANAGER);
     LED rageLed = new LED(LED.PART_ALL,LED. MODE_RED,(new Integer(10)).byteValue(),(new Integer(3)).byteValue());
-    LED listeningLed = new LED(LED.PART_ALL,LED. MODE_GREEN,(new Integer(25)).byteValue(),(new Integer(3)).byteValue());
-    LED speechLed = new LED(LED.PART_ALL,LED. MODE_BLUE,(new Integer(25)).byteValue(),(new Integer(3)).byteValue());
+    LED listeningLed = new LED(LED.PART_ALL,LED. MODE_GREEN,(new Integer(10)).byteValue(),(new Integer(3)).byteValue());
+    LED speechLed = new LED(LED.PART_ALL,LED. MODE_BLUE,(new Integer(10)).byteValue(),(new Integer(3)).byteValue());
 
     TextView textView;
 
@@ -150,8 +150,6 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
                     String text = recognizeTextBean.getText().toLowerCase();
                     textView.setText(recognizeTextBean.getText());
 
-                    speechManager.startSpeak("Primo");
-
                     if (text.contains("ciao")) {
                         long time = new Date().getTime();
                         if (time % 2 == 1) {
@@ -167,7 +165,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
 
                     //if(FaceManager.)Simo fai a singletone per gettare le faccie
 
-                    hardWareManager.setLED(rageLed);
+                    //hardWareManager.setLED(rageLed);
 
                 }
 
@@ -201,7 +199,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
                     String text = grammar.getText().toLowerCase();
                     textView.setText(grammar.getText());
 
-                    speechManager.startSpeak("Secondo");
+                    /*speechManager.startSpeak("Secondo");
 
                     if (text.contains("ciao")) {
                         long time = new Date().getTime();
@@ -214,7 +212,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
                     if(text.equals("girati")){
                         RelativeAngleWheelMotion relativeAngleWheelMotion = new RelativeAngleWheelMotion( RelativeAngleWheelMotion.TURN_LEFT, 5,180);
                         wheelMotionManager.doRelativeAngleMotion(relativeAngleWheelMotion);
-                    }
+                    }*/
                     return true;
                 }
             });
