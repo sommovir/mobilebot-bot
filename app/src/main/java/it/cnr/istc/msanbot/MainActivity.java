@@ -1,15 +1,8 @@
 package it.cnr.istc.msanbot;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.ActivityNotFoundException;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -18,26 +11,17 @@ import android.widget.Toast;
 
 import com.sanbot.opensdk.base.TopBaseActivity;
 import com.sanbot.opensdk.beans.FuncConstant;
-import com.sanbot.opensdk.beans.OperationResult;
-import com.sanbot.opensdk.function.beans.EmotionsType;
 import com.sanbot.opensdk.function.beans.LED;
-import com.sanbot.opensdk.function.beans.SpeakOption;
-import com.sanbot.opensdk.function.beans.StreamOption;
 import com.sanbot.opensdk.function.beans.speech.Grammar;
 import com.sanbot.opensdk.function.beans.speech.RecognizeTextBean;
-import com.sanbot.opensdk.function.beans.speech.SpeakStatus;
+import com.sanbot.opensdk.function.beans.wheelmotion.NoAngleWheelMotion;
 import com.sanbot.opensdk.function.beans.wheelmotion.RelativeAngleWheelMotion;
-import com.sanbot.opensdk.function.unit.HDCameraManager;
 import com.sanbot.opensdk.function.unit.HardWareManager;
-import com.sanbot.opensdk.function.unit.MediaManager;
 import com.sanbot.opensdk.function.unit.SpeechManager;
-import com.sanbot.opensdk.function.unit.SystemManager;
 import com.sanbot.opensdk.function.unit.WheelMotionManager;
 import com.sanbot.opensdk.function.unit.interfaces.hardware.InfrareListener;
 import com.sanbot.opensdk.function.unit.interfaces.media.MediaListener;
-import com.sanbot.opensdk.function.unit.interfaces.media.MediaStreamListener;
 import com.sanbot.opensdk.function.unit.interfaces.speech.RecognizeListener;
-import com.sanbot.opensdk.function.unit.interfaces.speech.SpeakListener;
 
 import java.util.Date;
 
@@ -51,6 +35,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
     LED speechLed = new LED(LED.PART_ALL,LED. MODE_BLUE,(new Integer(10)).byteValue(),(new Integer(3)).byteValue());
 
     TextView textView;
+    Button goForward,goBackward,turnLeft,turnRight,mainSpeak;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,11 +54,49 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
             }
             initListener();
 
-            Button button;
+            goForward = findViewById(R.id.goForward);
+            goBackward = findViewById(R.id.goBackward);
+            turnLeft = findViewById(R.id.turnLeft);
+            turnRight = findViewById(R.id.turnRight);
+            mainSpeak = findViewById(R.id.button_mainButton_speak);
 
-            button = findViewById(R.id.button_mainButton_speak);
+            goForward.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    NoAngleWheelMotion noAngleWheelMotion = new NoAngleWheelMotion(
+                            NoAngleWheelMotion.ACTION_FORWARD, 5,1000
+                    );
+                    wheelMotionManager.doNoAngleMotion(noAngleWheelMotion);
+                }
+            });
 
-            button.setOnClickListener(new View.OnClickListener() {
+            goBackward.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    NoAngleWheelMotion noAngleWheelMotion = new NoAngleWheelMotion(
+                            NoAngleWheelMotion.ACTION_BACK, 5,1000
+                    );
+                    wheelMotionManager.doNoAngleMotion(noAngleWheelMotion);
+                }
+            });
+
+            turnLeft.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    RelativeAngleWheelMotion relativeAngleWheelMotion = new RelativeAngleWheelMotion(RelativeAngleWheelMotion.TURN_LEFT, 5,90);
+                    wheelMotionManager.doRelativeAngleMotion(relativeAngleWheelMotion);
+                }
+            });
+
+            turnRight.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    RelativeAngleWheelMotion relativeAngleWheelMotion = new RelativeAngleWheelMotion(RelativeAngleWheelMotion.TURN_RIGHT, 5,90);
+                    wheelMotionManager.doRelativeAngleMotion(relativeAngleWheelMotion);
+                }
+            });
+
+            mainSpeak.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     //speechManager.startSpeak("Uga Buga Uga Tunga");
@@ -163,6 +186,9 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
                         wheelMotionManager.doRelativeAngleMotion(relativeAngleWheelMotion);
                     }
 
+                    //
+                    // speechManager.doWakeUp();
+
                     //if(FaceManager.)Simo fai a singletone per gettare le faccie
 
                     //hardWareManager.setLED(rageLed);
@@ -173,6 +199,8 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
                 public void onStopRecognize() {
                     Toast.makeText(MainActivity.this, "Stop", Toast.LENGTH_SHORT).show();
                     System.out.println("stop recognize");
+
+                    //speechManager.doWakeUp();
                 }
 
                 @Override
@@ -183,6 +211,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
 
                 @Override
                 public void onRecognizeVolume(int i) {
+                    //Toast.makeText(MainActivity.this, "Vol", Toast.LENGTH_SHORT).show();
                     System.out.println("Problema al volume");
                 }
 
@@ -194,6 +223,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
 
                 @Override
                 public boolean onRecognizeResult(@NonNull Grammar grammar) {
+                    Toast.makeText(MainActivity.this, "Stop", Toast.LENGTH_SHORT).show();
                     //只有在配置了RECOGNIZE_MODE为1，且返回为true的情况下，才会拦截
 
                     String text = grammar.getText().toLowerCase();
@@ -216,6 +246,8 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
                     return true;
                 }
             });
+
+
         }
 
 
