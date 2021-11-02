@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -62,6 +63,8 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
             turnRight = findViewById(R.id.turnRight);
             mainSpeak = findViewById(R.id.button_mainButton_speak);
             stop = findViewById(R.id.button_mainButton_stop);
+            stop.setEnabled(false);
+            stop.setHighlightColor(000000);
 
             goForward.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -159,8 +162,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
                 @Override
                 public void onClick(View view) {
                     //speechManager.startSpeak("Sto zitt");
-
-                    talk("Ok basta",rageLed);
+                    stop();
                     Toast.makeText(MainActivity.this, "Fine", Toast.LENGTH_LONG).show();
                 }
             });
@@ -198,7 +200,11 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
     }
 
     private void stop(){
-        speechManager.pauseSpeak();
+        new Handler().postDelayed(() -> {
+            speechManager.startSpeak("Ok basta");
+        },0);
+        stop.setEnabled(false);
+        stop.setHighlightColor(000000);
     }
 
     private void initListener() {
@@ -218,7 +224,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
                 public void onRecognizeText(RecognizeTextBean recognizeTextBean) {
                     String text = recognizeTextBean.getText().toLowerCase();
                     textView.setText(recognizeTextBean.getText());
-
+                    stop.setEnabled(true);
                     if (text.contains("ciao")) {
                         long time = new Date().getTime();
                         if (time % 2 == 1) {
