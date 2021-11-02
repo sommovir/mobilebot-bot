@@ -162,9 +162,11 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
         runOnUiThread(new Runnable() {
             public void run() {
                 while(true){
-                    OperationResult speaking = speechManager.isSpeaking();
-                    String result = speaking.getResult();
-                    Toast.makeText(MainActivity.this, "Stop", Toast.LENGTH_LONG).show();
+                    if(speechManager!=null) {
+                        OperationResult speaking = speechManager.isSpeaking();
+                        String result = speaking.getResult();
+                        Toast.makeText(MainActivity.this, "Stop", Toast.LENGTH_LONG).show();
+                    }
                     try {
                         Thread.sleep(3000);
                     } catch (InterruptedException e) {
