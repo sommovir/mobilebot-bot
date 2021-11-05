@@ -7,7 +7,7 @@
     tools:context=".MainActivity"
     android:background="#000000">
 
-    <Button
+    <TextView
         android:id="@+id/button_mainButton"
         android:layout_width="91dp"
         android:layout_height="40dp"
@@ -25,7 +25,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.97" />
 
-    <Button
+    <TextView
         android:id="@+id/button_mainButton2"
         android:layout_width="114dp"
         android:layout_height="40dp"
@@ -43,7 +43,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.97" />
 
-    <Button
+    <TextView
         android:id="@+id/button_mainButton3"
         android:layout_width="114dp"
         android:layout_height="40dp"
@@ -61,7 +61,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.97" />
 
-    <Button
+    <TextView
         android:id="@+id/button_mainButton4"
         android:layout_width="91dp"
         android:layout_height="40dp"
@@ -79,7 +79,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.97" />
 
-    <Button
+    <TextView
         android:id="@+id/button_mainButton_reconnect"
         android:layout_width="93dp"
         android:layout_height="40dp"
@@ -96,7 +96,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.97" />
 
-    <Button
+    <TextView
         android:id="@+id/button_mainButton_speak"
         android:layout_width="242dp"
         android:layout_height="201dp"
@@ -113,7 +113,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.28" />
 
-    <Button
+    <TextView
         android:id="@+id/button_mainButton_stop"
         android:layout_width="217dp"
         android:layout_height="303dp"
@@ -130,7 +130,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.27" />
 
-    <ImageView
+    <TextView
         android:id="@+id/imageView_ServerStatus"
         android:layout_width="20dp"
         android:layout_height="20dp"

@@ -37,8 +37,8 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
     LED listeningLed = new LED(LED.PART_ALL,LED. MODE_GREEN,(new Integer(10)).byteValue(),(new Integer(3)).byteValue());
     LED speechLed = new LED(LED.PART_ALL,LED. MODE_BLUE,(new Integer(10)).byteValue(),(new Integer(3)).byteValue());
 
-    TextView textView;
-    Button goForward,goBackward,turnLeft,turnRight,mainSpeak,stop;
+    TextView textView,mainSpeak,stop;
+    Button goForward,goBackward,turnLeft,turnRight;
     private AlertDialog tableDialog = null;
 
     @Override
