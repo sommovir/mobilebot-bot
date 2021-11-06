@@ -327,6 +327,105 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
         hardWareManager.setLED(led);
     }
 
+    /**
+     * Sintetizza il testo text,
+     * @param text
+     * il testo da sintetizzare
+     * @param autolisten
+     * se true effettua l'autolisten
+     */
+    public void speakText(String text, boolean autolisten) {
+        //TOOD
+    }
+
+    /**
+     * Mosra a schermo la multichoice nel formato standardizzato del comando *multichoice*
+     * @param text
+     * il comando (sintassi da ritrovare, ndr)
+     */
+    public void showTestChoice(String text) {
+    }
+
+    /**
+     * Mostra un video hardcoded in autoplay
+     */
+    public void showVideo() {
+    }
+
+    /**
+     * Mostra una immagine hardcoded in autoplay
+     */
+    public void showImage() {
+    }
+
+    /**
+     * Mostra un immagine pubblicata in rete
+     * @param url
+     * l'URL pubblico dell'immagine da mostrare
+     */
+    public void showImage(String url) {
+    }
+
+    /**
+     * Attiva l'ascolto dopo un certo numero di millisecondi
+     * @param time
+     * il numero di millisecondi da attendere prima di mettersi in ascolto
+     */
+    public void listenAt(Long time) {
+    }
+
+    /**
+     * mostra a schermo un link
+     * @param link
+     * il link da mostrare, deve essere cliccabile
+     */
+    public void showLink(String link) {
+
+    }
+
+    /**
+     * Mostra un video con il link di youtube
+     * @param link
+     * il link da mostrare
+     */
+    public void showYouTubeVideo(String link) {
+
+    }
+
+    /**
+     * Verifica che il link in esame sia un link di youtube
+     * @param link
+     * il link da controllare. Se il link è "link farlocco" deve eseguire una procedura di test
+     * di un link certamente valido hard-coded.
+     * @return
+     * true se è un link da youtube, false altrimenti
+     */
+    private boolean isYouTubeLink(String link){
+        return true;
+    }
+
+    /**
+     * Mostra una tabella a schermo
+     * @param tabella
+     * Un array di righe secondo il formato di app-text
+     */
+    public void showGenericTable(String[] tabella) {
+    }
+
+    /**
+     * setta la grafica di modo che mostri di essere online
+     */
+    public void forceServerOnline() {
+    }
+
+    /**
+     * Resetta tutte le impostazioni grafiche e robotiche nella posizione di default
+     * @param backToNormalTime
+     * numero di millisecondi da attendere prima del ritorno al normal-time
+     */
+    public void setBackToNormalTime(Long backToNormalTime) {
+    }
+
     /*public void showTableData(String[] data){
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);

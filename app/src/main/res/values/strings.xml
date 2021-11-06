@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">mobilebot-sanbot</string>
     <string name="button">Button</string>
+
+    <string name="ip_file">serverdata</string>
+    <string name="IP_KEY">ip</string>
+    <string name="NAME_KEY">name</string>
+
 </resources>
