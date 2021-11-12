@@ -24,6 +24,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import it.cnr.istc.msanbot.MainActivity;
 import it.cnr.istc.msanbot.R;
+import it.cnr.istc.msanbot.logic.DeviceType;
 import it.cnr.istc.msanbot.logic.Settings;
 import it.cnr.istc.msanbot.logic.Topics;
 import it.cnr.istc.msanbot.logic.EventManager;
@@ -139,6 +140,7 @@ public class MQTTManager {
                         client.subscribe(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"reminder",qos);
                         client.subscribe(Topics.RESPONSES.getTopic() +"/"+clientId,qos);
                         Settings.getInstance(context,MQTTManager.this); //manda l'username se presente
+                        publish(Topics.GETDEVICE.getTopic(),clientId+":"+ DeviceType.ROBOT.getDeviceType());
                     } catch (MqttException e) {
                         e.printStackTrace();
                     }
@@ -180,6 +182,7 @@ public class MQTTManager {
                 @Override
                 public void connectComplete(boolean reconnect, String serverURI) {
                     EventManager.getInstance().serverOnline();
+                    publish(Topics.GETDEVICE.getTopic(),clientId+":"+ DeviceType.ROBOT.getDeviceType());
                     try {
                         client.subscribe("user/110/to_user/text",qos);
 
@@ -504,6 +507,31 @@ public class MQTTManager {
         try {
             client.publish(topic, message);
             Log.i("mqtt", "Message published");
+
+            // client.disconnect();
+            //Log.i("mqtt", "client disconnected");
+
+        } catch (MqttPersistenceException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+
+        } catch (MqttException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public void publish(String topic, String text){
+        //PUBLISH THE MESSAGE
+        MqttMessage message = new MqttMessage(text.getBytes(StandardCharsets.UTF_8));
+        message.setQos(2);
+        message.setRetained(false);
+
+        //String topic = "user/110/from_user";
+
+        try {
+            client.publish(topic, message);
+            Log.i(topic, "Message published");
 
             // client.disconnect();
             //Log.i("mqtt", "client disconnected");
