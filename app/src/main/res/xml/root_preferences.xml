@@ -1,0 +1,21 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/messages_header"
+        app:icon="@drawable/setting">
+
+        <EditTextPreference
+            app:key="signature"
+            app:title="@string/signature_title"
+            app:useSimpleSummaryProvider="true" />
+
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:summaryOn="L'interfaccia di Google per l'immissione di input audio è abilitata"
+            app:summaryOff="L'interfaccia di Google per l'immissione di input audio è disabilitata"
+            app:key="googleSTT"
+            app:title="@string/googlestt" />
+
+    </PreferenceCategory>
+
+
+</PreferenceScreen>
