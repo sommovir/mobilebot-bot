@@ -72,7 +72,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
             }
             initListener();
 
-            goForward = findViewById(R.id.goForward);
+            goForward = findViewById(R.id.goForwardx);
             goBackward = findViewById(R.id.goBackward);
             turnLeft = findViewById(R.id.turnLeft);
             turnRight = findViewById(R.id.turnRight);
@@ -87,9 +87,10 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
                 @Override
                 public void onClick(View view) {
                     NoAngleWheelMotion noAngleWheelMotion = new NoAngleWheelMotion(
-                            NoAngleWheelMotion.ACTION_FORWARD, 5,1000
+                            NoAngleWheelMotion.ACTION_FORWARD, 2,100
                     );
                     wheelMotionManager.doNoAngleMotion(noAngleWheelMotion);
+                    Toast.makeText(MainActivity.this,"s",Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -122,7 +123,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
             buttonTest.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    showYouTubeVideo("https://www.youtube.com/watch?v=8Lq3HyBCuAA");
+                    showLink("www.google.com");
                 }
             });
 
@@ -392,7 +393,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
         final View createPopup = getLayoutInflater().inflate(R.layout.popup_activity, null);
         dialogBuilder.setView(createPopup);
         dialog = dialogBuilder.create();
-        ImageView image = createPopup.findViewById(R.id.img);
+        ImageView image = createPopup.findViewById(R.id.image);
         Glide.with(this).load(url).into(image);
         dialog.show();
 
@@ -418,6 +419,27 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
     public void showLink(String link) {
         //Intent popupwindow = new Intent(MainActivity.this, LinkPopUpWindow.class);
         //startActivity(popupwindow);
+        dialogBuilder = new AlertDialog.Builder(MainActivity.this);
+        final View createPopup = getLayoutInflater().inflate(R.layout.popup_activity, null);
+        dialogBuilder.setView(createPopup);
+        dialog = dialogBuilder.create();
+        TextView linkPress = createPopup.findViewById(R.id.linkPress);
+        String newLink;
+        if(!(linkPress.getText().toString().startsWith("http"))){
+            newLink = "http://" + linkPress.getText().toString();;
+        }
+        else{
+            newLink = linkPress.getText().toString();
+        }
+
+        linkPress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse((newLink))));
+            }
+        });
+
+        dialog.show();
     }
 
     /**
