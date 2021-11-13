@@ -5,15 +5,18 @@ import androidx.appcompat.app.AlertDialog;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.MediaController;
 import android.widget.PopupWindow;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
 import com.sanbot.opensdk.base.TopBaseActivity;
@@ -119,7 +122,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
             buttonTest.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    showImage("https://www.itagnol.com/wp-content/uploads/2019/01/CIAO.jpg");
+                    showYouTubeVideo("https://www.youtube.com/watch?v=8Lq3HyBCuAA");
                 }
             });
 
@@ -419,11 +422,21 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
 
     /**
      * Mostra un video con il link di youtube
-     * @param link
+     * @param url
      * il link da mostrare
      */
-    public void showYouTubeVideo(String link) {
+    public void showYouTubeVideo(String url) {
+        dialogBuilder = new AlertDialog.Builder(MainActivity.this);
+        final View createPopup = getLayoutInflater().inflate(R.layout.popup_activity, null);
+        dialogBuilder.setView(createPopup);
+        dialog = dialogBuilder.create();
+        VideoView videoView = createPopup.findViewById(R.id.video);
+        videoView.setVideoURI(Uri.parse(url));
 
+        MediaController mediaController = new MediaController(this);
+        videoView.setMediaController(mediaController);
+        mediaController.setAnchorView(videoView);
+        dialog.show();
     }
 
     /**
