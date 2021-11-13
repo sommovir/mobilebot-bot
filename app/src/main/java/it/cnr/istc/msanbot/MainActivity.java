@@ -3,6 +3,7 @@ package it.cnr.istc.msanbot;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -198,10 +199,6 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
 
     }
 
-    private void autoListen(){
-        speechManager.doWakeUp();
-    }
-
     private void stop(){
         new Handler().postDelayed(() -> {
             speechManager.startSpeak("Ok basta");
@@ -256,8 +253,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
                     //if(FaceManager.)Simo fai a singletone per gettare le faccie
 
                     //hardWareManager.setLED(rageLed);
-                    autoListen();
-
+                    speechManager.doWakeUp();
                 }
 
                 @Override
@@ -338,7 +334,10 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
      * se true effettua l'autolisten
      */
     public void speakText(String text, boolean autolisten) {
-        //TOOD
+        talk(text,speechLed);
+        if(autolisten){
+            speechManager.doWakeUp();
+        }
     }
 
     /**
@@ -367,6 +366,10 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
      * l'URL pubblico dell'immagine da mostrare
      */
     public void showImage(String url) {
+        /*ImageDisplayerDialog.externalURL = url;
+        Intent idd = new Intent(MainActivity.this, ImageDisplayerDialog.class);
+        FaceActivity.this.startActivity(idd);*/
+
     }
 
     /**
@@ -486,4 +489,5 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
         // AlertDialog alertDialog = builder.create();
         //  alertDialog.show();
     }*/
+
 }
