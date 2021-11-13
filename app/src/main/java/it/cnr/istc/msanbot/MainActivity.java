@@ -119,7 +119,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
             buttonTest.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    showPopupWindowActivity();
+                    showImage("https://www.itagnol.com/wp-content/uploads/2019/01/CIAO.jpg");
                 }
             });
 
@@ -385,7 +385,13 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
      * l'URL pubblico dell'immagine da mostrare
      */
     public void showImage(String url) {
-        Glide.with(this).load(url).into(img);
+        dialogBuilder = new AlertDialog.Builder(MainActivity.this);
+        final View createPopup = getLayoutInflater().inflate(R.layout.popup_activity, null);
+        dialogBuilder.setView(createPopup);
+        dialog = dialogBuilder.create();
+        ImageView image = createPopup.findViewById(R.id.img);
+        Glide.with(this).load(url).into(image);
+        dialog.show();
 
         /*
         Intent idd = new Intent(MainActivity.this, ImageDisplayerDialog.class);
@@ -407,8 +413,8 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
      * il link da mostrare, deve essere cliccabile
      */
     public void showLink(String link) {
-        Intent popupwindow = new Intent(MainActivity.this, LinkPopUpWindow.class);
-        startActivity(popupwindow);
+        //Intent popupwindow = new Intent(MainActivity.this, LinkPopUpWindow.class);
+        //startActivity(popupwindow);
     }
 
     /**
@@ -514,16 +520,6 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
         //  alertDialog.show();
     }*/
 
-
-
-
-    public void showPopupWindowActivity(){
-        dialogBuilder = new AlertDialog.Builder(MainActivity.this);
-        final View createPopup = getLayoutInflater().inflate(R.layout.popup_activity, null);
-        dialogBuilder.setView(createPopup);
-        dialog = dialogBuilder.create();
-        dialog.show();
-    }
 
 
 }
