@@ -40,6 +40,11 @@
         <item name="android:windowNoTitle">false</item>
 
     </style>
+    
+    <style name="PopActivity">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowCloseOnTouchOutside">true</item>
+    </style>
 
 
 

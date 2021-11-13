@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.PopupWindow;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -118,11 +119,13 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
             buttonTest.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    dialogBuilder = new AlertDialog.Builder(MainActivity.this);
-                    final View createPopup = getLayoutInflater().inflate(R.layout.popup_activity, null);
-                    dialogBuilder.setView(createPopup);
-                    dialog = dialogBuilder.create();
-                    dialog.show();
+                    //dialogBuilder = new AlertDialog.Builder(MainActivity.this);
+                    //final View createPopup = getLayoutInflater().inflate(R.layout.popup_activity, null);
+                    //dialogBuilder.setView(createPopup);
+                    //dialog = dialogBuilder.create();
+                    //dialog.show();
+                    showLink("gay");
+
                 }
             });
 
@@ -410,7 +413,8 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
      * il link da mostrare, deve essere cliccabile
      */
     public void showLink(String link) {
-
+        Intent popupwindow = new Intent(MainActivity.this, LinkPopUpWindow.class);
+        startActivity(popupwindow);
     }
 
     /**
