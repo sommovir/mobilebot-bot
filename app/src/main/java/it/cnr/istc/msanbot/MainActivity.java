@@ -45,9 +45,10 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
     LED listeningLed = new LED(LED.PART_ALL,LED. MODE_GREEN,(new Integer(10)).byteValue(),(new Integer(3)).byteValue());
     LED speechLed = new LED(LED.PART_ALL,LED. MODE_BLUE,(new Integer(10)).byteValue(),(new Integer(3)).byteValue());
     ImageView img;
-
+    private AlertDialog.Builder dialogBuilder;
+    private AlertDialog dialog;
     TextView textView,mainSpeak,stop;
-    Button goForward,goBackward,turnLeft,turnRight;
+    Button goForward,goBackward,turnLeft,turnRight, buttonTest;
     private AlertDialog tableDialog = null;
 
     @Override
@@ -72,6 +73,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
             turnLeft = findViewById(R.id.turnLeft);
             turnRight = findViewById(R.id.turnRight);
             mainSpeak = findViewById(R.id.button_mainButton_speak);
+            buttonTest = findViewById(R.id.buttonTEST);
             stop = findViewById(R.id.button_mainButton_stop);
             stop.setEnabled(false);
             stop.setHighlightColor(000000);
@@ -110,6 +112,17 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
                 public void onClick(View view) {
                     RelativeAngleWheelMotion relativeAngleWheelMotion = new RelativeAngleWheelMotion(RelativeAngleWheelMotion.TURN_RIGHT, 5,90);
                     wheelMotionManager.doRelativeAngleMotion(relativeAngleWheelMotion);
+                }
+            });
+
+            buttonTest.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialogBuilder = new AlertDialog.Builder(MainActivity.this);
+                    final View createPopup = getLayoutInflater().inflate(R.layout.popup_activity, null);
+                    dialogBuilder.setView(createPopup);
+                    dialog = dialogBuilder.create();
+                    dialog.show();
                 }
             });
 
@@ -326,7 +339,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
     protected void onMainServiceConnected() {
        //listenWhenToSpeak();
        speechManager.startSpeak("Sono connesso");
-       showImage("https://publications.cnr.it/api/v1/author/image/luca.coraci");
+       //showImage("https://publications.cnr.it/api/v1/author/image/luca.coraci");
     }
 
     public void talk(String text,LED led){
@@ -360,6 +373,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
      * Mostra un video hardcoded in autoplay
      */
     public void showVideo() {
+
     }
 
     /**

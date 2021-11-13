@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:background="#000000">
+    android:background="#000000"
+    tools:context=".MainActivity">
 
     <ImageView
         android:layout_width="match_parent"
@@ -99,7 +99,7 @@
         app:layout_constraintHorizontal_bias="0.568"
         app:layout_constraintStart_toEndOf="@+id/imageView_ServerStatus"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.97"/>
+        app:layout_constraintVertical_bias="0.97" />
     <!--app:layout_constraintEnd_toStartOf="@+id/button_mainButton"-->
 
     <TextView
@@ -156,9 +156,9 @@
         android:layout_height="wrap_content"
         android:text="A"
         android:textColor="@color/colorPrimary"
+        tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="98dp"
-        tools:layout_editor_absoluteY="297dp"
-        tools:ignore="MissingConstraints" />
+        tools:layout_editor_absoluteY="297dp" />
 
     <Button
         android:id="@+id/goForward"
@@ -206,6 +206,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.371" />
+
+    <Button
+        android:id="@+id/buttonTEST"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="64dp"
+        android:text="Button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button_mainButton_stop"
+        app:layout_constraintHorizontal_bias="0.706"
+        app:layout_constraintStart_toEndOf="@+id/textView" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
