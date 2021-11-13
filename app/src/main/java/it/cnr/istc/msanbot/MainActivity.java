@@ -129,7 +129,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
             buttonTest.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    showLink("www.google.com");
+                    showYouTubeVideo("https://www.youtube.com/watch?v=7uEDehi-0XI");
                 }
             });
 
@@ -472,6 +472,8 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
         dialog.show();
 
          */
+        if(isYouTubeLink(url))
+        startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse((url))));
     }
 
     /**
