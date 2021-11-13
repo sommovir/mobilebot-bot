@@ -4,14 +4,17 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.sanbot.opensdk.base.TopBaseActivity;
 import com.sanbot.opensdk.beans.FuncConstant;
 import com.sanbot.opensdk.beans.OperationResult;
@@ -28,6 +31,8 @@ import com.sanbot.opensdk.function.unit.interfaces.hardware.InfrareListener;
 import com.sanbot.opensdk.function.unit.interfaces.media.MediaListener;
 import com.sanbot.opensdk.function.unit.interfaces.speech.RecognizeListener;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Date;
 
 public class MainActivity extends TopBaseActivity implements MediaListener{
@@ -39,6 +44,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
     LED rageLed = new LED(LED.PART_ALL,LED. MODE_RED,(new Integer(10)).byteValue(),(new Integer(3)).byteValue());
     LED listeningLed = new LED(LED.PART_ALL,LED. MODE_GREEN,(new Integer(10)).byteValue(),(new Integer(3)).byteValue());
     LED speechLed = new LED(LED.PART_ALL,LED. MODE_BLUE,(new Integer(10)).byteValue(),(new Integer(3)).byteValue());
+    ImageView img;
 
     TextView textView,mainSpeak,stop;
     Button goForward,goBackward,turnLeft,turnRight;
@@ -69,6 +75,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
             stop = findViewById(R.id.button_mainButton_stop);
             stop.setEnabled(false);
             stop.setHighlightColor(000000);
+            img = findViewById(R.id.image);
 
             goForward.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -319,6 +326,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
     protected void onMainServiceConnected() {
        //listenWhenToSpeak();
        speechManager.startSpeak("Sono connesso");
+       showImage("https://publications.cnr.it/api/v1/author/image/luca.coraci");
     }
 
     public void talk(String text,LED led){
@@ -366,7 +374,9 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
      * l'URL pubblico dell'immagine da mostrare
      */
     public void showImage(String url) {
-        /*ImageDisplayerDialog.externalURL = url;
+        Glide.with(this).load(url).into(img);
+
+        /*
         Intent idd = new Intent(MainActivity.this, ImageDisplayerDialog.class);
         FaceActivity.this.startActivity(idd);*/
 
@@ -407,7 +417,9 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
      * true se è un link da youtube, false altrimenti
      */
     private boolean isYouTubeLink(String link){
-        return true;
+        if(link.startsWith("https://www.youtube.com")) {
+            return true;
+        }return false;
     }
 
     /**

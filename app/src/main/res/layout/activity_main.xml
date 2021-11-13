@@ -7,6 +7,12 @@
     tools:context=".MainActivity"
     android:background="#000000">
 
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/image"/>
+
+
     <!--<TextView
         android:id="@+id/button_mainButton"
         android:layout_width="91dp"
