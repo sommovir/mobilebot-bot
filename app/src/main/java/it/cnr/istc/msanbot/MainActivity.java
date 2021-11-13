@@ -39,6 +39,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Date;
 
+import it.cnr.istc.msanbot.mqtt.MQTTManager;
+
 public class MainActivity extends TopBaseActivity implements MediaListener{
     //pecilli zan
     SpeechManager speechManager = (SpeechManager)getUnitManager(FuncConstant. SPEECH_MANAGER);
@@ -54,12 +56,16 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
     TextView textView,mainSpeak,stop;
     Button goForward,goBackward,turnLeft,turnRight, buttonTest;
     private AlertDialog tableDialog = null;
+    MQTTManager mqttManager = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
             register(MainActivity.class);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             super.onCreate(savedInstanceState);
+            mqttManager = new MQTTManager(this);
+            mqttManager.setMainActivity(this);
+            mqttManager.connect();
 
         try {
             setContentView(R.layout.activity_main);
@@ -426,11 +432,13 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
         TextView linkPress = createPopup.findViewById(R.id.linkPress);
         String newLink;
         if(!(linkPress.getText().toString().startsWith("http"))){
-            newLink = "http://" + linkPress.getText().toString();;
+            newLink = "http://" + link;
         }
         else{
-            newLink = linkPress.getText().toString();
+            newLink = link;
         }
+
+        linkPress.setText(newLink);
 
         linkPress.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -438,6 +446,8 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
                 startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse((newLink))));
             }
         });
+
+
 
         dialog.show();
     }
@@ -448,6 +458,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
      * il link da mostrare
      */
     public void showYouTubeVideo(String url) {
+        /*
         dialogBuilder = new AlertDialog.Builder(MainActivity.this);
         final View createPopup = getLayoutInflater().inflate(R.layout.popup_activity, null);
         dialogBuilder.setView(createPopup);
@@ -459,6 +470,8 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
         videoView.setMediaController(mediaController);
         mediaController.setAnchorView(videoView);
         dialog.show();
+
+         */
     }
 
     /**
