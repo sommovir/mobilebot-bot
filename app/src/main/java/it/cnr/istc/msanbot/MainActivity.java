@@ -119,13 +119,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
             buttonTest.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //dialogBuilder = new AlertDialog.Builder(MainActivity.this);
-                    //final View createPopup = getLayoutInflater().inflate(R.layout.popup_activity, null);
-                    //dialogBuilder.setView(createPopup);
-                    //dialog = dialogBuilder.create();
-                    //dialog.show();
-                    showLink("gay");
-
+                    showPopupWindowActivity();
                 }
             });
 
@@ -519,5 +513,17 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
         // AlertDialog alertDialog = builder.create();
         //  alertDialog.show();
     }*/
+
+
+
+
+    public void showPopupWindowActivity(){
+        dialogBuilder = new AlertDialog.Builder(MainActivity.this);
+        final View createPopup = getLayoutInflater().inflate(R.layout.popup_activity, null);
+        dialogBuilder.setView(createPopup);
+        dialog = dialogBuilder.create();
+        dialog.show();
+    }
+
 
 }
