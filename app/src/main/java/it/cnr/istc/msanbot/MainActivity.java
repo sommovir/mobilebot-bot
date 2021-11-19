@@ -93,7 +93,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
                 @Override
                 public void onClick(View view) {
                     NoAngleWheelMotion noAngleWheelMotion = new NoAngleWheelMotion(
-                            NoAngleWheelMotion.ACTION_FORWARD, 2,100
+                            NoAngleWheelMotion.ACTION_LEFT_FORWARD, 2,100
                     );
                     wheelMotionManager.doNoAngleMotion(noAngleWheelMotion);
                     Toast.makeText(MainActivity.this,"s",Toast.LENGTH_SHORT).show();
@@ -260,14 +260,8 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
                             talk("lei è molto cortese",speechLed);
                         }
                     }
-                    if(text.contains("lui")){
-                        talk("Combattenti di terra, di mare e dell'aria! Camicie nere della rivoluzione e delle legioni! Uomini e donne d'Italia, dell'Impero e del regno d'Albania! Ascoltate!\n" +
-                                "\n" +
-                                "L'ora segnata dal destino batte nel cielo della nostra patria. L'ora delle decisioni irrevocabili. La dichiarazione di guerra è già stata consegnata agli ambasciatori di Gran Bretagna e di Francia.\n" +
-                                "\n" +
-                                "Scendiamo in campo contro le democrazie plutocratiche e reazionarie dell'Occidente, che, in ogni tempo, hanno ostacolato la marcia, e spesso insidiato l'esistenza medesima del popolo italiano.\n" +
-                                "\n" +
-                                "Alcuni lustri della storia più recente si possono riassumere in queste parole: frasi, promesse, minacce, ricatti e, alla fine, quale coronamento dell'edificio, l'ignobile assedio societario di cinquantadue stati. La nostra coscienza è assolutamente tranquilla. Con voi il mondo intero è testimone che l'Italia del Littorio ha fatto quanto era umanamente possibile per evitare la tormenta che sconvolge l'Europa; ma tutto fu vano.",rageLed);
+                    if(text.contains("prova")){
+                        talk("prova discorso lungo lunghissimissssssimo",rageLed);
                     }
                     if(text.equals("girati")){
                         RelativeAngleWheelMotion relativeAngleWheelMotion = new RelativeAngleWheelMotion(RelativeAngleWheelMotion.TURN_LEFT, 5,180);

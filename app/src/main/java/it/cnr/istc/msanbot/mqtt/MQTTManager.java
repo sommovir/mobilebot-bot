@@ -41,7 +41,7 @@ public class MQTTManager {
     boolean test = false;
     private MainActivity mainActivity = null;
     private static Context context = null;
-    public static String ip = "192.168.43.112";
+    public static String ip = "95.247.49.142";
     public MqttMessage lastMessage = null;
     public String lastTopic = null;
 
@@ -51,7 +51,7 @@ public class MQTTManager {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(context.getString(R.string.IP_KEY), m_text);
         editor.apply();
-        ip = m_text;
+        //ip = m_text;
         connect();
     }
 
