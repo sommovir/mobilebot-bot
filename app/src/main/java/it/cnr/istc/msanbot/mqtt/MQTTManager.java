@@ -3,6 +3,7 @@ package it.cnr.istc.msanbot.mqtt;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.widget.Toast;
 
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
@@ -41,7 +42,7 @@ public class MQTTManager {
     boolean test = false;
     private MainActivity mainActivity = null;
     private static Context context = null;
-    public static String ip = "95.247.49.142";
+    public static String ip = "87.7.210.109";
     public MqttMessage lastMessage = null;
     public String lastTopic = null;
 
@@ -51,7 +52,7 @@ public class MQTTManager {
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(context.getString(R.string.IP_KEY), m_text);
         editor.apply();
-        //ip = m_text;
+        ip = m_text;
         connect();
     }
 
@@ -67,8 +68,6 @@ public class MQTTManager {
 
     public MQTTManager(Context context){  //ws://server:port/mqtt      tcp://151.15.31.217:1883
         System.out.println("Costruttore MQTT..");
-
-
 
         this.context = context;
         System.out.println("Costruttore MQTT Costruito");
@@ -94,19 +93,36 @@ public class MQTTManager {
     }
 
     public void connect()  {
+        try{
+
+        System.out.printf("Connesso");
         SharedPreferences sharedPref = context.getSharedPreferences(
                 context.getString(R.string.ip_file), Context.MODE_PRIVATE);
         if(sharedPref != null){
-            ip = sharedPref.getString(context.getString(R.string.IP_KEY), "not found");
-            System.out.println("SHARED IP: "+ip);
+            //ip = this.ip;//sharedPref.getString(context.getString(R.string.IP_KEY), "not found");
+            System.out.println("DB PRESENTE");
+        }
+
+        try{
+        System.out.printf("\"tcp://\"+ip+\":8883\"" + "ay");}
+        catch (Throwable ex){
+            ex.printStackTrace();
         }
 
         if(client != null){
+            System.out.printf("CLient pieno");
 
             client.close();
         }
 
-        client = new MqttAndroidClient(context, "tcp://"+ip+":1883", clientId);
+
+
+
+
+        client = new MqttAndroidClient(context, "tcp://" + ip + ":8883", clientId);
+
+
+        System.out.printf("\"tcp://\"+ip+\":8883\"" + clientId);
         //MqttPingSender pingSender = new MqttPingSenderL(this);
         //client = new MqttAsyncClient("tcp://"+ip+":1883", clientId, new MemoryPersistence(), pingSender);
         try {
@@ -118,6 +134,7 @@ public class MQTTManager {
                 return;
             }
             IMqttToken token = client.connect(mqttConnectOptions);
+            System.out.printf("Va tutto bene");
 
             token.setActionCallback(new IMqttActionListener() {
                 @Override
@@ -251,6 +268,10 @@ public class MQTTManager {
 
         } catch (MqttException e) {
             e.printStackTrace();
+        }}
+        catch (Throwable ex){
+            Toast.makeText(context,"Errore",Toast.LENGTH_SHORT).show();
+            ex.printStackTrace();
         }
     }
 

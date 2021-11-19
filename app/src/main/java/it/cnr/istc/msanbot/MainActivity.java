@@ -60,12 +60,11 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-            register(MainActivity.class);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            super.onCreate(savedInstanceState);
-            mqttManager = new MQTTManager(this);
-            mqttManager.setMainActivity(this);
-            mqttManager.connect();
+        register(MainActivity.class);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        super.onCreate(savedInstanceState);
+
+
 
         try {
             setContentView(R.layout.activity_main);
@@ -93,10 +92,10 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
                 @Override
                 public void onClick(View view) {
                     NoAngleWheelMotion noAngleWheelMotion = new NoAngleWheelMotion(
-                            NoAngleWheelMotion.ACTION_LEFT_FORWARD, 2,100
+                            NoAngleWheelMotion.ACTION_LEFT_FORWARD, 2, 100
                     );
                     wheelMotionManager.doNoAngleMotion(noAngleWheelMotion);
-                    Toast.makeText(MainActivity.this,"s",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "s", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -104,7 +103,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
                 @Override
                 public void onClick(View view) {
                     NoAngleWheelMotion noAngleWheelMotion = new NoAngleWheelMotion(
-                            NoAngleWheelMotion.ACTION_BACK, 2,10
+                            NoAngleWheelMotion.ACTION_BACK, 2, 10
                     );
                     wheelMotionManager.doNoAngleMotion(noAngleWheelMotion);
                 }
@@ -113,7 +112,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
             turnLeft.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    RelativeAngleWheelMotion relativeAngleWheelMotion = new RelativeAngleWheelMotion(RelativeAngleWheelMotion.TURN_LEFT, 5,90);
+                    RelativeAngleWheelMotion relativeAngleWheelMotion = new RelativeAngleWheelMotion(RelativeAngleWheelMotion.TURN_LEFT, 5, 90);
                     wheelMotionManager.doRelativeAngleMotion(relativeAngleWheelMotion);
                 }
             });
@@ -121,7 +120,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
             turnRight.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    RelativeAngleWheelMotion relativeAngleWheelMotion = new RelativeAngleWheelMotion(RelativeAngleWheelMotion.TURN_RIGHT, 5,90);
+                    RelativeAngleWheelMotion relativeAngleWheelMotion = new RelativeAngleWheelMotion(RelativeAngleWheelMotion.TURN_RIGHT, 5, 90);
                     wheelMotionManager.doRelativeAngleMotion(relativeAngleWheelMotion);
                 }
             });
@@ -129,7 +128,9 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
             buttonTest.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    showYouTubeVideo("https://www.youtube.com/watch?v=7uEDehi-0XI");
+                    mqttManager = new MQTTManager(MainActivity.this);
+                    mqttManager.setMainActivity(MainActivity.this);
+                    Toast.makeText(MainActivity.this, "Bababoey", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -197,7 +198,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
                     Toast.makeText(MainActivity.this, "Fine", Toast.LENGTH_LONG).show();
                 }
             });
-        }catch(Exception ex) {
+        } catch (Exception ex) {
             Toast.makeText(MainActivity.this, ex.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
@@ -496,6 +497,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
      * setta la grafica di modo che mostri di essere online
      */
     public void forceServerOnline() {
+
     }
 
     /**
@@ -504,6 +506,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
      * numero di millisecondi da attendere prima del ritorno al normal-time
      */
     public void setBackToNormalTime(Long backToNormalTime) {
+        NoAngleWheelMotion noAngleWheelMotion = new NoAngleWheelMotion(NoAngleWheelMotion.ACTION_RESET, 1);
     }
 
     /*public void showTableData(String[] data){
