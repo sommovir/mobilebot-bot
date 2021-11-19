@@ -60,5 +60,15 @@ public class EventManager {
     }
 
 
+    public void speak(String text){
+        for (ConnectionEventListener listener : connectionEventListenerList) {
+            System.out.println("CALLING LISTENER");
+            listener.speak(text);
+        }
+    }
+
+
+
+
 
 }

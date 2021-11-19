@@ -51,13 +51,14 @@ public class MQTTManager {
     private static final String DIRECTION_FORWARD = "forward";
     private static final String TAKE_PIC = "takepic";
     private static final String RECEIVE_PIC = "receive_pic";
+    private static final String ip = "87.7.210.109";
     private Context context;
     MqttClient client = null;
 
 
     private MQTTManager(){
         clientId = MqttClient.generateClientId();
-        System.out.println("clied id = "+clientId);
+        System.out.println("client id = "+clientId);
     }
 
     public static MQTTManager getInstance(){
@@ -72,7 +73,7 @@ public class MQTTManager {
     public void connect(final Context context) {
         try {
             this.context = context;
-            client = new MqttClient("tcp://192.168.67.186:1883", clientId, new MemoryPersistence());
+            client = new MqttClient("tcp://" + ip + ":1883", clientId, new MemoryPersistence());
 
             client.setCallback(new MqttCallback() {
                 @Override
@@ -227,6 +228,21 @@ public class MQTTManager {
             });
 
 
+
+            client.subscribe(Topics.RESPONSES.getTopic() + "/" + clientId, new IMqttMessageListener() {
+                @Override
+                public void messageArrived(String topic, MqttMessage message) throws Exception {
+
+                    System.out.println(topic + "\t" + clientId);
+
+                    byte[] payload = message.getPayload();
+                    String sss = new String(payload);
+                    EventManager.getInstance().speak(sss);
+
+                }
+            });
+
+
             client.subscribe(MOVE_TOPIC, new IMqttMessageListener() {
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
@@ -316,4 +332,7 @@ public class MQTTManager {
     }
 
 
+    public String getId() {
+        return this.clientId;
+    }
 }

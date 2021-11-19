@@ -39,9 +39,12 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Date;
 
+import it.cnr.istc.msanbot.logic.ConnectionEventListener;
+import it.cnr.istc.msanbot.logic.EventManager;
+import it.cnr.istc.msanbot.logic.Topics;
 import it.cnr.istc.msanbot.mqtt.MQTTManager;
 
-public class MainActivity extends TopBaseActivity implements MediaListener{
+public class MainActivity extends TopBaseActivity implements MediaListener, ConnectionEventListener {
     //pecilli zan
     SpeechManager speechManager = (SpeechManager)getUnitManager(FuncConstant. SPEECH_MANAGER);
     HardWareManager hardWareManager = (HardWareManager)getUnitManager(FuncConstant.HARDWARE_MANAGER);
@@ -62,7 +65,9 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
     protected void onCreate(Bundle savedInstanceState) {
         register(MainActivity.class);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         super.onCreate(savedInstanceState);
+
 
 
 
@@ -129,6 +134,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
                 @Override
                 public void onClick(View view) {
                     MQTTManager.getInstance().connect(MainActivity.this);
+                    EventManager.getInstance().addConnectionEventListener(MainActivity.this);
                 }
             });
 
@@ -249,6 +255,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
                 @Override
                 public void onRecognizeText(RecognizeTextBean recognizeTextBean) {
                     String text = recognizeTextBean.getText().toLowerCase();
+                    MQTTManager.getInstance().publish(Topics.CHAT.getTopic() + "/" + MQTTManager.getInstance().getId(), text);
                     textView.setText(recognizeTextBean.getText());
                     stop.setEnabled(true);
                     if (text.contains("ciao")) {
@@ -505,6 +512,21 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
      */
     public void setBackToNormalTime(Long backToNormalTime) {
         NoAngleWheelMotion noAngleWheelMotion = new NoAngleWheelMotion(NoAngleWheelMotion.ACTION_RESET, 1);
+    }
+
+    @Override
+    public void serverOnline() {
+
+    }
+
+    @Override
+    public void serverOffline() {
+
+    }
+
+    @Override
+    public void speak(String text) {
+        talk(text, speechLed);
     }
 
     /*public void showTableData(String[] data){

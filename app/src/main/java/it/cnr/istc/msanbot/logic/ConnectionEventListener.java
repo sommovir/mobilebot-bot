@@ -6,5 +6,7 @@ public interface ConnectionEventListener {
 
     public void serverOffline();
 
+    public void speak(String text);
+
 
 }
