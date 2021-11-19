@@ -44,7 +44,7 @@ public class Settings {
             //googleSpeechEnabled = Boolean.parseBoolean(sharedPref.getString("googleSTT", "false"));
             System.out.println("PREFERENCE FOUND: google -> "+googleSpeechEnabled);
             if(!username.equals("gino")) {
-                manager.changeName(username);
+               // manager.changeName(username);
             }
 
             sharedPref.registerOnSharedPreferenceChangeListener(new SharedPreferences.OnSharedPreferenceChangeListener() {
@@ -56,7 +56,7 @@ public class Settings {
                     if(key.equals("signature")){
                         username = sharedPreferences.getString("signature", "gino");
                         System.out.println("SIGNATUREEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-                        manager.changeName(username);
+                       // manager.changeName(username);
                     }
                 }
             });

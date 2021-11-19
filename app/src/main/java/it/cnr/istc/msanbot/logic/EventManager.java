@@ -1,5 +1,8 @@
 package it.cnr.istc.msanbot.logic;
 
+import com.sanbot.opensdk.beans.FuncConstant;
+import com.sanbot.opensdk.function.unit.SpeechManager;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,7 +14,6 @@ public class EventManager {
 
     private List<ConnectionEventListener> connectionEventListenerList = new LinkedList<>();
     private List<MediaEventListener> mediaEventListeners = new LinkedList<>();
-
     private EventManager(){
 
     }

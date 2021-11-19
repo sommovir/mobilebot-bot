@@ -128,9 +128,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener{
             buttonTest.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mqttManager = new MQTTManager(MainActivity.this);
-                    mqttManager.setMainActivity(MainActivity.this);
-                    Toast.makeText(MainActivity.this, "Bababoey", Toast.LENGTH_SHORT).show();
+                    MQTTManager.getInstance().connect(MainActivity.this);
                 }
             });
 

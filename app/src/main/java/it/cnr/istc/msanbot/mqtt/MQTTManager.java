@@ -9,13 +9,19 @@ import android.widget.Toast;
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
+import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -36,224 +42,46 @@ import it.cnr.istc.msanbot.logic.LoggingTag;
  */
 public class MQTTManager {
 
-    private static final String clientId = generateClientId(); // "user-110";
-    MqttAndroidClient client = null;
-    //MqttAsyncClient client = null;
-    boolean test = false;
-    private MainActivity mainActivity = null;
-    private static Context context = null;
-    public static String ip = "87.7.210.109";
-    public MqttMessage lastMessage = null;
-    public String lastTopic = null;
+    private static MQTTManager _instance = null;
+    String clientId = "robottino";
+    // MqttAndroidClient client = null;
+    private final String IM_ALIVE_TOPIC = "imalive";
+    private static final String SPEECH_TOPIC = "speech";
+    private static final String MOVE_TOPIC = "move"; //direction:speed:quantity
+    private static final String DIRECTION_FORWARD = "forward";
+    private static final String TAKE_PIC = "takepic";
+    private static final String RECEIVE_PIC = "receive_pic";
+    private Context context;
+    MqttClient client = null;
 
-    public void updateIP(String m_text) {
-        SharedPreferences sharedPref = context.getSharedPreferences(
-                context.getString(R.string.ip_file), Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(context.getString(R.string.IP_KEY), m_text);
-        editor.apply();
-        ip = m_text;
-        connect();
+
+    private MQTTManager(){
+        clientId = MqttClient.generateClientId();
+        System.out.println("clied id = "+clientId);
     }
 
-    public void repeat(){
-        if(lastMessage != null){
-            parseMessage(lastTopic, lastMessage);
+    public static MQTTManager getInstance(){
+        if(_instance == null){
+            _instance = new MQTTManager();
         }
+        return _instance;
     }
 
-    public void setMainActivity(MainActivity mainActivity) {
-        this.mainActivity = mainActivity;
-    }
-
-    public MQTTManager(Context context){  //ws://server:port/mqtt      tcp://151.15.31.217:1883
-        System.out.println("Costruttore MQTT..");
-
-        this.context = context;
-        System.out.println("Costruttore MQTT Costruito");
-        if(test) return;
-        connect();
 
 
-    }
-
-    public boolean isConnected(){
-        if(client == null){
-            return false;
-        }
-        return client.isConnected();
-    }
-
-    private static String generateClientId(){
-        return "id@"+(new Date().getTime());
-    }
-
-    public void setContext(Context context) {
-        this.context = context;
-    }
-
-    public void connect()  {
-        try{
-
-        System.out.printf("Connesso");
-        SharedPreferences sharedPref = context.getSharedPreferences(
-                context.getString(R.string.ip_file), Context.MODE_PRIVATE);
-        if(sharedPref != null){
-            //ip = this.ip;//sharedPref.getString(context.getString(R.string.IP_KEY), "not found");
-            System.out.println("DB PRESENTE");
-        }
-
-        try{
-        System.out.printf("\"tcp://\"+ip+\":8883\"" + "ay");}
-        catch (Throwable ex){
-            ex.printStackTrace();
-        }
-
-        if(client != null){
-            System.out.printf("CLient pieno");
-
-            client.close();
-        }
-
-
-
-
-
-        client = new MqttAndroidClient(context, "tcp://" + ip + ":8883", clientId);
-
-
-        System.out.printf("\"tcp://\"+ip+\":8883\"" + clientId);
-        //MqttPingSender pingSender = new MqttPingSenderL(this);
-        //client = new MqttAsyncClient("tcp://"+ip+":1883", clientId, new MemoryPersistence(), pingSender);
+    public void connect(final Context context) {
         try {
-            final int qos = 1;
-            MqttConnectOptions mqttConnectOptions = new MqttConnectOptions();
-            mqttConnectOptions.setCleanSession(true);
-            mqttConnectOptions.setAutomaticReconnect(true);
-            if(client.isConnected()){
-                return;
-            }
-            IMqttToken token = client.connect(mqttConnectOptions);
-            System.out.printf("Va tutto bene");
+            this.context = context;
+            client = new MqttClient("tcp://192.168.67.186:1883", clientId, new MemoryPersistence());
 
-            token.setActionCallback(new IMqttActionListener() {
-                @Override
-                public void onSuccess(IMqttToken asyncActionToken) {
-                    // We are connected
-                    System.out.println("Client connesso!");
-                    System.out.println("SUCCESSONE");
-                    EventManager.getInstance().serverOnline();
-                    try {
-                        client.subscribe("user/110/to_user/text",qos);
-                        client.subscribe("user/110/to_user/face",qos);
-                        client.subscribe("user/110/to_user/command",qos);
-                        client.subscribe("user/110/to_user/table",qos);
-                        client.subscribe(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"face",qos);
-                        client.subscribe(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"table",qos);
-                        client.subscribe(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"youtube",qos);
-                        client.subscribe(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"link",qos);
-                        client.subscribe(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"img",qos);
-                        client.subscribe(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"listen",qos);
-                        client.subscribe(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"reminder",qos);
-                        client.subscribe(Topics.RESPONSES.getTopic() +"/"+clientId,qos);
-                        Settings.getInstance(context,MQTTManager.this); //manda l'username se presente
-                        publish(Topics.GETDEVICE.getTopic(),clientId+":"+ DeviceType.ROBOT.getDeviceType());
-                    } catch (MqttException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-
-                @Override
-                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                    // Something went wrong e.g. connection timeout or firewall problems
-                    exception.printStackTrace();
-                    System.out.println("FALLIMENTO TOTALE");
-                    EventManager.getInstance().serverOffline();
-
-                    Thread reconnectionThread = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            try {
-                                Thread.sleep(10000);
-                                connect();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-
-                        }
-                    });
-                    //FUNZIONAVA
-                    //reconnectionThread.start();
-
-
-                }
-            });
-
-            //SUBSCRIBE
-
-
-
-            client.setCallback(new MqttCallbackExtended() {
-                @Override
-                public void connectComplete(boolean reconnect, String serverURI) {
-                    EventManager.getInstance().serverOnline();
-                    publish(Topics.GETDEVICE.getTopic(),clientId+":"+ DeviceType.ROBOT.getDeviceType());
-                    try {
-                        client.subscribe("user/110/to_user/text",qos);
-
-                        client.subscribe("user/110/to_user/face",qos);
-                        client.subscribe("user/110/to_user/command",qos);
-                        client.subscribe("user/110/to_user/table",qos);
-                        client.subscribe("user/110/to_user/link",qos);
-                        client.subscribe("user/110/to_user/command/vtable",qos);
-                        client.subscribe("user/110/to_user/command/youtube",qos);
-                        client.subscribe(Topics.RESPONSES.getTopic() +"/"+clientId,qos);
-                        client.subscribe(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"face",qos);
-                        client.subscribe(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"table",qos);
-                        client.subscribe(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"youtube",qos);
-                        client.subscribe(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"link",qos);
-                        client.subscribe(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"img",qos);
-                        client.subscribe(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"listen",qos);
-                        client.subscribe(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"reminder",qos);
-                    } catch (MqttException e) {
-                        e.printStackTrace();
-                    }
-                }
-
+            client.setCallback(new MqttCallback() {
                 @Override
                 public void connectionLost(Throwable cause) {
-                    System.out.println("Connection Lost");
-                    EventManager.getInstance().serverOffline();
-
-                    //FUNZIONAVA
-                    /*
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        public void run() {
-                            Toast.makeText(context, "reconnecting in 10 seconds", Toast.LENGTH_LONG).show();
-                            try {
-                                Thread.sleep(10000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            connect();
-                        }
-                    });
-                    */
-
 
                 }
 
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
-
-                    if(!(new String(message.getPayload())).equals("repeat")) {
-                        lastMessage = message;
-                        lastTopic = topic;
-                    }
-
-                    parseMessage(topic,message);
 
                 }
 
@@ -263,308 +91,229 @@ public class MQTTManager {
                 }
             });
 
+            MqttConnectOptions opt = new MqttConnectOptions();
+            opt.setCleanSession(true);
+            opt.setAutomaticReconnect(true);
 
+            client.connect(opt);
 
+            subscribe();
 
-        } catch (MqttException e) {
+            imalive();
+
+        } catch (Exception e) {
             e.printStackTrace();
-        }}
-        catch (Throwable ex){
-            Toast.makeText(context,"Errore",Toast.LENGTH_SHORT).show();
-            ex.printStackTrace();
+            System.out.println("Non riesco a connettermi");
+            StringWriter errors = new StringWriter();
+            e.printStackTrace(new PrintWriter(errors));
+            System.out.println("Non va");
+            Toast toast = Toast.makeText(context, errors.toString(), Toast.LENGTH_LONG);
+            toast.setMargin(50, 50);
+            toast.show();
         }
     }
 
-    public String parseMultiText(String multitext){
-        String[] tokens = multitext.split("%");
-        int nextInt = ThreadLocalRandom.current().nextInt(0, tokens.length);
-        return tokens[nextInt];
-    }
-
-    public void parseMessage(String topic, MqttMessage message){
-        System.out.println("TOPIC: "+topic);
-        if(topic.equals(Topics.RESPONSES.getTopic() +"/"+clientId)){
-            mainActivity.forceServerOnline();
-            String text = (new String(message.getPayload(),StandardCharsets.UTF_8));
-            text.replace("<AT>","@");
-            System.out.println("TEXT = "+ text);
-
-            if(text.contains("%")){
-                text = parseMultiText(text);
-                System.out.println("Multi text detected: ["+text+"] is the chosen one");
-            }
-            if(text.startsWith("<AUTOLISTEN>")){
-                text = text.replace("<AUTOLISTEN>", "");
-                mainActivity.speakText(text, true);
-            }else {
-                mainActivity.speakText(text, false);
-            }
-
-        }
-        if(topic.endsWith("to_user/command")){
-            String text = (new String(message.getPayload()));
-            System.out.println("TEXT = "+ text);
-            if(text.startsWith("multichoice")) {
-                System.out.println("MULTI CHOICE");
-                mainActivity.showTestChoice(text);
-            }
-            if(text.equals("video")) {
-                mainActivity.showVideo();
-            }
-            if(text.equals("test image")) {
-                mainActivity.showImage();
-            }
-            if(text.equals("repeat")) {
-                repeat();
 
 
-            }
-            if(text.startsWith("test image ")) {
+           /* IMqttToken token = client.connect();
 
-                mainActivity.showImage(text.split(" ")[2]);
-            }
+            token.setActionCallback(new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    // We are connected
+                    //Log.d(TAG, "onSuccess");
+                    System.out.println("on Success");
+                    try{
 
-        }
-        if(topic.equals(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"img")){
-            String imglink = (new String(message.getPayload()));
-            mainActivity.showImage(imglink);
-        }
-        if(topic.equals(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"reminder")){
+                        EventManager.getInstance().speak("sto per inviare un test");
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        imalive();
+                        //EventManager.getInstance().speak("segnale inviato");
+
+                        //Thread.sleep(2000);
+
+                        //EventManager.getInstance().speak("Mi sono connesso");
+
+                        //Thread.sleep(2000);
+
+                        subscribe();
+
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        StringWriter errors = new StringWriter();
+                        e.printStackTrace(new PrintWriter(errors));
+                        EventManager.getInstance().speak("non funziona una ceppa");
+                        Toast toast=Toast.makeText(context,errors.toString(),Toast.LENGTH_LONG);
+                        toast.setMargin(50,50);
+                        toast.show();
+
+                    }
+
+                }
+
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    // Something went wrong e.g. connection timeout or firewall problems
+                    System.out.println("on Failure");
+
+                }
+            });*/
+
+
+
+
+    //SUBSCRIBE PHASE
+
+
+
+
+
+    private void subscribe() {
+        while(!client.isConnected()){
+            System.out.println("aspetto");
             try {
-                String reminderData = (new String(message.getPayload()));
-
-                String reminderText = reminderData.split("<:>")[0];
-                String reminderTime = reminderData.split("<:>")[1];
-                int hh = Integer.parseInt(reminderTime.split(":")[0]);
-                int mm = Integer.parseInt(reminderTime.split(":")[1]);
-                // LocalDateTime localDateTime = LocalDate.now().atTime(LocalTime.parse(reminderTime)); API 26
-                //System.out.println("LOCAL DATE TIME ALARM -> "+localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));  API 26
-
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                Date date = sdf.parse(reminderTime);
-
-                Calendar calendar = GregorianCalendar.getInstance(); // creates a new calendar instance
-                calendar.setTime(date);
-
-
-            }catch(Exception ex){
-                ex.printStackTrace();
-            }
-
-
-
-        }
-        if(topic.equals(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"listen")){
-            // Toast.makeText(context, "autoListen set", Toast.LENGTH_LONG).show();
-            String mmm = new String(message.getPayload());
-            if(mmm.equals("auto")){
-               // mainActivity.setAutoListen();
-            }else {
-                Long time = Long.parseLong(mmm);
-                mainActivity.listenAt(time);
+                Thread.sleep(1500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
-        if(topic.endsWith("to_user/link") || topic.equals(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"link")){
-            String link = (new String(message.getPayload()));
-            System.out.println("Link da mostrare: "+link);
-            mainActivity.showLink(link);
-        }
-        if(topic.endsWith("to_user/table")){
-            String tabello = (new String(message.getPayload()));
-            System.out.println("TABLE = "+ tabello);
-            String[] tabella = tabello.split("<ROW>");
-            //CHECK IF IT IS DELETABLE
-            //mainActivity.showTableData(tabella);
-        }
-        if(topic.endsWith("to_user/command/youtube")|| topic.equals(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"youtube")){
-            System.out.println("richiesta test video youtube standard");
-            String m = (new String(message.getPayload(),StandardCharsets.UTF_8));
-            if(m.equals("test")) {
-                mainActivity.showYouTubeVideo("link farlocco");
-            }else{
-                System.out.println("sending real video to screen");
-                //https://youtu.be/BAVRCFQFeG4
-                String id  = m.split("\\.be/")[1];
-                System.out.println("youtube video id: "+id);
-                mainActivity.showYouTubeVideo(id);
+        if(client.isConnected()){
+            System.out.println("Quasi ascolto");
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }else{
+            System.out.println("Tada");
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
-        if(topic.endsWith("to_user/command/vtable")|| topic.equals(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"table")){
-            String tabello = (new String(message.getPayload()));
-            System.out.println("TABLE = "+ tabello);
-            String[] tabella = tabello.split("<ROW>");
-            mainActivity.showGenericTable(tabella);
-        }
-        //TO REFACTOR
-        if(topic.endsWith("to_user/command/game1")){
-            String text = (new String(message.getPayload()));
-            System.out.println("TEXT = "+ text);
-            String[] tabella = text.split("!");
+        int qos = 1;
+        try {
+
+            client.subscribe(TAKE_PIC, new IMqttMessageListener() {
+                @Override
+                public void messageArrived(String topic, MqttMessage message) throws Exception {
+
+                    System.out.println("Vogliono vedere");
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    //EventManager.getInstance().takePicture();
+                }
+            });
+
+
+
+            client.subscribe(SPEECH_TOPIC, new IMqttMessageListener() {
+                @Override
+                public void messageArrived(String topic, MqttMessage message) throws Exception {
+
+                    byte[] payload = message.getPayload();
+                    String sss = new String(payload);
+                    System.out.println(sss);
+                }
+            });
+
+
+            client.subscribe(MOVE_TOPIC, new IMqttMessageListener() {
+                @Override
+                public void messageArrived(String topic, MqttMessage message) throws Exception {
+                    try {
+
+                        byte[] payload = message.getPayload();
+                        String sss = new String(payload);
+                        String[] split = sss.split(":");
+                        String direction = split[0];
+                        int speed = Integer.parseInt(split[1]);
+                        int quantity = Integer.parseInt(split[2]);
+                        if (direction.equals(DIRECTION_FORWARD)) {
+                            System.out.println("Avanti");
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        StringWriter errors = new StringWriter();
+                        e.printStackTrace(new PrintWriter(errors));
+                        Toast toast = Toast.makeText(context, errors.toString(), Toast.LENGTH_LONG);
+                        toast.setMargin(50, 50);
+                        toast.show();
+                    }
+                }
+            });
+
+        }catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("aspeErr nella pubtto");
+            StringWriter errors = new StringWriter();
+            e.printStackTrace(new PrintWriter(errors));
+            Toast toast=Toast.makeText(context,errors.toString(),Toast.LENGTH_LONG);
+            toast.setMargin(50,50);
+            toast.show();
         }
 
 
-        if(topic.endsWith("to_user/face") || topic.equals(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"face")){
-            String text = (new String(message.getPayload()));
-
-            System.out.println("FACE CHANGE DETECTED: "+text);
-
-            if(text.contains(",")){
-                System.out.println("timeout detected");
-                Long backToNormalTime = null;
-                String stringytime = text.split(",")[1];
-                backToNormalTime = Long.parseLong(stringytime);
-                mainActivity.setBackToNormalTime(backToNormalTime);
-                text = text.split(",")[0];
-            }
-            /*
-            TODO DA SBLOCCARE QUESTE E GENERARE I RISPETTIVI METODI
-            if(text.equals("fun")){
-                mainActivity.ilRisoAbbonda();
-            }
-            if(text.equals("love")){
-                mainActivity.innamorati();
-            }
-            if(text.equals("sad")){
-                mainActivity.intristiscitiAnimosamente();
-            }
-            if(text.equals("cry")){
-                mainActivity.piangi();
-            }
-            if(text.equals("question")){
-                mainActivity.esprimiQualcheDubbio();
-            }
-            if(text.equals("rage")){
-                mainActivity.incazzati();
-            }
-             */
-        }
     }
 
-    public void changeName(String username){
-        MqttMessage message = new MqttMessage(username.getBytes(StandardCharsets.UTF_8));
-        message.setQos(2);
-        message.setRetained(false);
-
-        //String topic = "user/110/from_user";
-        String topic = Topics.USERNAME.getTopic() +"/"+clientId;
-
-        try {
-            client.publish(topic, message);
-            Log.i("mqtt", "Message published");
-
-            // client.disconnect();
-            //Log.i("mqtt", "client disconnected");
-
-        } catch (MqttPersistenceException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-
-        } catch (MqttException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-    public void buttonPressed(LoggingTag tag){
-        MqttMessage message = new MqttMessage(tag.getTag().getBytes(StandardCharsets.UTF_8));
-        message.setQos(2);
-        message.setRetained(false);
-
-        //String topic = "user/110/from_user";
-        String topic = Topics.BUTTON_PRESSED.getTopic() +"/"+clientId;
-
-        try {
-            client.publish(topic, message);
-            Log.i("mqtt", "Message published");
-
-            // client.disconBUTTON_PRESSEDnect();
-            //Log.i("mqtt", "client disconnected");
-
-        } catch (MqttPersistenceException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-
-        } catch (MqttException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-    public void remoteLog(String text){
-        MqttMessage message = new MqttMessage(text.getBytes(StandardCharsets.UTF_8));
-        message.setQos(2);
-        message.setRetained(false);
-
-        //String topic = "user/110/from_user";
-        String topic = Topics.LOG.getTopic() +"/"+clientId;
-
-        try {
-            client.publish(topic, message);
-            Log.i("mqtt", "Message published");
-
-            // client.disconBUTTON_PRESSEDnect();
-            //Log.i("mqtt", "client disconnected");
-
-        } catch (MqttPersistenceException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-
-        } catch (MqttException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-
-    public void publish(String text){
-        //PUBLISH THE MESSAGE
-        MqttMessage message = new MqttMessage(text.getBytes(StandardCharsets.UTF_8));
-        message.setQos(2);
-        message.setRetained(false);
-
-        //String topic = "user/110/from_user";
-        String topic = Topics.CHAT.getTopic() +"/"+clientId;
-
-        try {
-            client.publish(topic, message);
-            Log.i("mqtt", "Message published");
-
-            // client.disconnect();
-            //Log.i("mqtt", "client disconnected");
-
-        } catch (MqttPersistenceException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-
-        } catch (MqttException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+    public void imalive(){
+        this.publish(IM_ALIVE_TOPIC, "robottino");
     }
 
     public void publish(String topic, String text){
-        //PUBLISH THE MESSAGE
-        MqttMessage message = new MqttMessage(text.getBytes(StandardCharsets.UTF_8));
-        message.setQos(2);
-        message.setRetained(false);
-
-        //String topic = "user/110/from_user";
-
         try {
+
+
+            //byte[] encodedPayload = new byte[0];
+
+            //encodedPayload = text.getBytes("UTF-8");
+            MqttMessage message = new MqttMessage(text.getBytes());
             client.publish(topic, message);
-            Log.i(topic, "Message published");
-
-            // client.disconnect();
-            //Log.i("mqtt", "client disconnected");
-
-        } catch (MqttPersistenceException e) {
-            // TODO Auto-generated catch block
+        } catch (Exception e) {
             e.printStackTrace();
-
-        } catch (MqttException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            System.out.println("Err pub");
+            StringWriter errors = new StringWriter();
+            e.printStackTrace(new PrintWriter(errors));
+            Toast toast=Toast.makeText(context,errors.toString(),Toast.LENGTH_LONG);
+            toast.setMargin(50,50);
+            toast.show();
         }
     }
+
+    public void sendPicture(byte [] image){
+        try {
+
+
+            //byte[] encodedPayload = new byte[0];
+
+            //encodedPayload = text.getBytes("UTF-8");
+            MqttMessage message = new MqttMessage(image);
+            client.publish(RECEIVE_PIC, message);
+            System.out.println("Mandata");
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Again err");
+            StringWriter errors = new StringWriter();
+            e.printStackTrace(new PrintWriter(errors));
+            Toast toast=Toast.makeText(context,errors.toString(),Toast.LENGTH_LONG);
+            toast.setMargin(50,50);
+            toast.show();
+        }
+    }
+
 
 }
