@@ -98,7 +98,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
             buttonTest = findViewById(R.id.buttonTEST);
             stop = findViewById(R.id.button_mainButton_stop);
             stop.setEnabled(false);
-            stop.setHighlightColor(000000);
+            stop.setBackgroundResource(R.drawable.stop_disabled);
             img = findViewById(R.id.image);
 
             goForward.setOnClickListener(new View.OnClickListener() {
@@ -244,7 +244,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
             speechManager.startSpeak("Ok basta");
         },0);
         stop.setEnabled(false);
-        stop.setHighlightColor(000000);
+        stop.setBackgroundResource(R.drawable.stop_disabled);
     }
 
     private void initListener() {
