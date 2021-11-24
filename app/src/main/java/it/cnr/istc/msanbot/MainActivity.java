@@ -3,17 +3,23 @@ package it.cnr.istc.msanbot;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.MediaController;
 import android.widget.PopupWindow;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -38,6 +44,8 @@ import com.sanbot.opensdk.function.unit.interfaces.speech.RecognizeListener;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import it.cnr.istc.msanbot.logic.ConnectionEventListener;
 import it.cnr.istc.msanbot.logic.EventManager;
@@ -45,7 +53,6 @@ import it.cnr.istc.msanbot.logic.Topics;
 import it.cnr.istc.msanbot.mqtt.MQTTManager;
 
 public class MainActivity extends TopBaseActivity implements MediaListener, ConnectionEventListener {
-    //pecilli zan
     SpeechManager speechManager = (SpeechManager)getUnitManager(FuncConstant. SPEECH_MANAGER);
     HardWareManager hardWareManager = (HardWareManager)getUnitManager(FuncConstant.HARDWARE_MANAGER);
     SystemManager systemManager = (SystemManager)getUnitManager(FuncConstant.SYSTEM_MANAGER);
@@ -60,6 +67,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
     Button goForward,goBackward,turnLeft,turnRight, buttonTest;
     private AlertDialog tableDialog = null;
     MQTTManager mqttManager = null;
+    private Map<String,Boolean> colorCellMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -496,6 +504,96 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
      * Un array di righe secondo il formato di app-text
      */
     public void showGenericTable(String[] tabella) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        Context dialogContext = builder.getContext();
+        LayoutInflater inflater = LayoutInflater.from(dialogContext);
+        View alertView = inflater.inflate(R.layout.table_dialog, null);
+        builder.setView(alertView);
+        TableLayout tableLayout = (TableLayout)alertView.findViewById(R.id.tableLayout);
+        int row = 0;
+        boolean continueTable = false;
+        for( String d : tabella){
+            String[] split = d.split("<CELL>");
+            TableRow tableRow = new TableRow(dialogContext);
+            tableRow.setPadding(3,3,3,3);
+            TableRow.LayoutParams layoutParams = new TableRow.LayoutParams
+                    (0, TableRow.LayoutParams.WRAP_CONTENT, 1.0f);
+            layoutParams.setMargins(3,3,3,3);
+            tableRow.setLayoutParams(layoutParams);
+
+            for (final String cella : split) {
+                final TextView textView1 = new TextView(dialogContext);
+                final String cellText;
+                if(row == 0){
+                    textView1.setTypeface(null, Typeface.BOLD);
+                    if(cella.contains("<CONTINUE>")){
+                        cellText = cella.replace("<CONTINUE>","");
+                        continueTable =true;
+                    }else{
+                        cellText = cella;
+                    }
+                }else{
+                    cellText = cella;
+                    GradientDrawable gd = new GradientDrawable(
+                            //  GradientDrawable.Orientation.TOP_BOTTOM,
+                            // new int[] {0xFFe5edef,0xFFcedde0});
+                    );
+                    // gd.setCornerRadius(6);
+                    gd.setColor(0xFFe9eca0);  // #e9eca0
+                    gd.setStroke(1, 0xFF000000);
+                    textView1.setBackground(gd);
+                }
+                textView1.setPadding(5,5,5,5);
+                // textView1.setLayoutParams(new TableRow.LayoutParams
+                //         (TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT, 1.0f));
+                textView1.setTextSize(18);
+                textView1.setText(cellText);
+                colorCellMap.put(""+cellText,Boolean.FALSE);
+                if(row != 0) {
+                    textView1.setOnClickListener(new View.OnClickListener() {
+                                                     @Override
+                                                     public void onClick(View v) {
+                                                         if (colorCellMap.get("" + cellText)) {
+                                                             System.out.println("TRUE");
+                                                             textView1.setBackgroundColor(0xFFFFFFFF);
+                                                             colorCellMap.put("" + cellText, Boolean.FALSE);
+                                                         } else {
+                                                             System.out.println("FALSE");
+                                                             textView1.setBackgroundColor(0xFF00FF00);
+                                                             colorCellMap.put("" + cellText, Boolean.TRUE);
+                                                         }
+
+                                                     }
+                                                 }
+
+                    );
+                }
+
+
+                tableRow.addView(textView1,layoutParams);
+
+            }
+            row++;
+            tableLayout.addView(tableRow);
+        }
+        builder.setCancelable(true);
+        //AlertDialog alertDialog =
+
+        if(!continueTable){
+            if(this.tableDialog != null){
+                this.tableDialog.cancel();
+                this.tableDialog.dismiss();
+                this.tableDialog = builder.create();
+            }else{
+                this.tableDialog = builder.create();
+            }
+            tableDialog.show();
+        }else{
+            AlertDialog tempTable = builder.create();
+            tempTable.show();
+        }
+
     }
 
     /**
