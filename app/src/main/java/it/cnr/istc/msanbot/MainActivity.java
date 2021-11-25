@@ -292,7 +292,8 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
     private void initListener() {
 
             talk("Inizio a sentire",listeningLed);
-
+            stop.setEnabled(false);
+            stop.setBackgroundResource(R.drawable.stop_disabled);
             textView = findViewById(R.id.textView);
             hardWareManager.setOnHareWareListener(new InfrareListener() {
                 @Override
@@ -308,6 +309,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                     MQTTManager.getInstance().publish(Topics.CHAT.getTopic() + "/" + MQTTManager.getInstance().getId(), text);
                     textView.setText(recognizeTextBean.getText());
                     stop.setEnabled(true);
+                    stop.setBackgroundResource(R.drawable.stop);
                     if (text.contains("ciao")) {
                         long time = new Date().getTime();
                         if (time % 2 == 1) {
