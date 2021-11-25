@@ -3,6 +3,7 @@ package it.cnr.istc.msanbot;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -50,10 +51,12 @@ import java.util.Map;
 
 import it.cnr.istc.msanbot.logic.ConnectionEventListener;
 import it.cnr.istc.msanbot.logic.EventManager;
+import it.cnr.istc.msanbot.logic.FaceType;
+import it.cnr.istc.msanbot.logic.RobotEventListener;
 import it.cnr.istc.msanbot.logic.Topics;
 import it.cnr.istc.msanbot.mqtt.MQTTManager;
 
-public class MainActivity extends TopBaseActivity implements MediaListener, ConnectionEventListener {
+public class MainActivity extends TopBaseActivity implements MediaListener, ConnectionEventListener, RobotEventListener {
     SpeechManager speechManager = (SpeechManager)getUnitManager(FuncConstant. SPEECH_MANAGER);
     HardWareManager hardWareManager = (HardWareManager)getUnitManager(FuncConstant.HARDWARE_MANAGER);
     SystemManager systemManager = (SystemManager)getUnitManager(FuncConstant.SYSTEM_MANAGER);
@@ -66,6 +69,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
     private AlertDialog dialog;
     TextView textView,mainSpeak,stop;
     Button goForward,goBackward,turnLeft,turnRight, buttonTest;
+    ImageView background;
     private AlertDialog tableDialog = null;
     MQTTManager mqttManager = null;
     private Map<String,Boolean> colorCellMap = new HashMap<>();
@@ -76,6 +80,8 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         super.onCreate(savedInstanceState);
+
+        RobotManager.getInstance().addRobotEventListener(this);
 
 
 
@@ -100,6 +106,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
             stop = findViewById(R.id.button_mainButton_stop);
             stop.setEnabled(false);
             stop.setBackgroundResource(R.drawable.stop_disabled);
+            background = findViewById(R.id.Background);
             img = findViewById(R.id.image);
 
             goForward.setOnClickListener(new View.OnClickListener() {
@@ -148,8 +155,10 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
             });
 
             mainSpeak.setOnClickListener(new View.OnClickListener() {
+                @SuppressLint("ResourceAsColor")
                 @Override
                 public void onClick(View view) {
+                    background.setBackgroundColor(android.R.color.black);
                     //speechManager.startSpeak("Uga Buga Uga Tunga");
                     //systemManager.showEmotion(EmotionsType.SMILE);
                     speechManager.doWakeUp();
@@ -630,6 +639,21 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
     @Override
     public void speak(String text) {
         talk(text, speechLed);
+    }
+
+    @Override
+    public void FaceChanged(FaceType face) {
+        switch (face){
+            case SAD:
+                background.setBackgroundResource(R.drawable.cry);
+            break;
+            case LOVE:
+                background.setBackgroundResource(R.drawable.love);
+            break;
+            case OUTRAGE:
+                background.setBackgroundResource(R.drawable.flame);
+            break;
+        }
     }
 
     /*public void showTableData(String[] data){
