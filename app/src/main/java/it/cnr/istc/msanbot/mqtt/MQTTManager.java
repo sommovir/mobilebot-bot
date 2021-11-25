@@ -1,41 +1,21 @@
 package it.cnr.istc.msanbot.mqtt;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.util.Log;
 import android.widget.Toast;
 
-
-import org.eclipse.paho.android.service.MqttAndroidClient;
-import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
-import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
-import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.concurrent.ThreadLocalRandom;
 
-import it.cnr.istc.msanbot.MainActivity;
-import it.cnr.istc.msanbot.R;
-import it.cnr.istc.msanbot.logic.DeviceType;
-import it.cnr.istc.msanbot.logic.Settings;
-import it.cnr.istc.msanbot.logic.Topics;
 import it.cnr.istc.msanbot.logic.EventManager;
-import it.cnr.istc.msanbot.logic.LoggingTag;
+import it.cnr.istc.msanbot.logic.Topics;
 
 /**
  * Created by Luca Coraci [luca.coraci@istc.cnr.it] on 18/06/2020.

@@ -80,19 +80,19 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.97" />-->
 
-    <ImageView
+    <TextView
         android:id="@+id/imageView_ServerStatus"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:layout_marginEnd="600dp"
-        android:layout_marginBottom="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/gdot_red_16"
+        android:gravity="center"
+        android:text=""
+        android:textAlignment="center"
+        android:textSize="10dp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.16"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.98"
-        app:srcCompat="@drawable/gdot_red_16" />
+        app:layout_constraintVertical_bias="0.97" />
 
     <TextView
         android:id="@+id/button_mainButton_reconnect"

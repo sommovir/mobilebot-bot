@@ -14,8 +14,6 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.MediaController;
 import android.widget.PopupWindow;
 import android.widget.Button;
@@ -70,7 +68,6 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
     private AlertDialog tableDialog = null;
     MQTTManager mqttManager = null;
     private Map<String,Boolean> colorCellMap = new HashMap<>();
-    Animation server_online_animazione;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -603,10 +600,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
      * setta la grafica di modo che mostri di essere online
      */
     public void forceServerOnline() {
-        ImageView img = (ImageView) findViewById(R.id.imageView_ServerStatus);
-        img.setImageResource(R.drawable.green);
-        img.setAnimation(server_online_animazione);
-        server_online_animazione.start();
+
     }
 
     /**
@@ -620,12 +614,16 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
 
     @Override
     public void serverOnline() {
-
+        talk("Server Offline",speechLed);
+        TextView serverStatus = findViewById(R.id.imageView_ServerStatus);
+        serverStatus.setBackgroundResource(R.drawable.gdot_green_16);
     }
 
     @Override
     public void serverOffline() {
-
+        talk("Server Offline",speechLed);
+        TextView serverStatus = findViewById(R.id.imageView_ServerStatus);
+        serverStatus.setBackgroundResource(R.drawable.gdot_red_16);
     }
 
     @Override
