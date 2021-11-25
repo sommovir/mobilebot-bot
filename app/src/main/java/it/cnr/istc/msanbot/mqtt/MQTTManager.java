@@ -31,7 +31,7 @@ public class MQTTManager {
     private static final String DIRECTION_FORWARD = "forward";
     private static final String TAKE_PIC = "takepic";
     private static final String RECEIVE_PIC = "receive_pic";
-    private static final String ip = "87.7.210.109";
+    private static String ip = "192.168.67.186";
     private Context context;
     MqttClient client = null;
 
@@ -46,6 +46,10 @@ public class MQTTManager {
             _instance = new MQTTManager();
         }
         return _instance;
+    }
+
+    public void setIp(String newIp){
+        ip = newIp;
     }
 
 
