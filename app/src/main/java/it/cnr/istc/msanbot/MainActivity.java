@@ -52,6 +52,7 @@ import java.util.Map;
 
 import it.cnr.istc.msanbot.logic.ConnectionEventListener;
 import it.cnr.istc.msanbot.logic.EventManager;
+import it.cnr.istc.msanbot.logic.FaceType;
 import it.cnr.istc.msanbot.logic.Topics;
 import it.cnr.istc.msanbot.mqtt.MQTTManager;
 
@@ -63,7 +64,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
     LED rageLed = new LED(LED.PART_ALL,LED. MODE_RED,(new Integer(10)).byteValue(),(new Integer(3)).byteValue());
     LED listeningLed = new LED(LED.PART_ALL,LED. MODE_GREEN,(new Integer(10)).byteValue(),(new Integer(3)).byteValue());
     LED speechLed = new LED(LED.PART_ALL,LED. MODE_BLUE,(new Integer(10)).byteValue(),(new Integer(3)).byteValue());
-    ImageView img;
+    ImageView img, background;
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog dialog;
     TextView textView,mainSpeak,stop;
@@ -103,6 +104,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
             stop.setEnabled(false);
             stop.setBackgroundResource(R.drawable.stop_disabled);
             img = findViewById(R.id.image);
+            background = findViewById(R.id.background);
 
             goForward.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -634,7 +636,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
         talk(text, speechLed);
     }
 
-    @Override
+
     public void FaceChanged(FaceType face) {
         switch (face){
             case SAD:
