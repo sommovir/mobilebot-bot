@@ -3,6 +3,7 @@ package it.cnr.istc.msanbot;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -15,8 +16,6 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.MediaController;
 import android.widget.PopupWindow;
 import android.widget.Button;
@@ -53,10 +52,11 @@ import java.util.Map;
 import it.cnr.istc.msanbot.logic.ConnectionEventListener;
 import it.cnr.istc.msanbot.logic.EventManager;
 import it.cnr.istc.msanbot.logic.FaceType;
+import it.cnr.istc.msanbot.logic.RobotEventListener;
 import it.cnr.istc.msanbot.logic.Topics;
 import it.cnr.istc.msanbot.mqtt.MQTTManager;
 
-public class MainActivity extends TopBaseActivity implements MediaListener, ConnectionEventListener {
+public class MainActivity extends TopBaseActivity implements MediaListener, ConnectionEventListener, RobotEventListener {
     SpeechManager speechManager = (SpeechManager)getUnitManager(FuncConstant. SPEECH_MANAGER);
     HardWareManager hardWareManager = (HardWareManager)getUnitManager(FuncConstant.HARDWARE_MANAGER);
     SystemManager systemManager = (SystemManager)getUnitManager(FuncConstant.SYSTEM_MANAGER);
@@ -64,11 +64,12 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
     LED rageLed = new LED(LED.PART_ALL,LED. MODE_RED,(new Integer(10)).byteValue(),(new Integer(3)).byteValue());
     LED listeningLed = new LED(LED.PART_ALL,LED. MODE_GREEN,(new Integer(10)).byteValue(),(new Integer(3)).byteValue());
     LED speechLed = new LED(LED.PART_ALL,LED. MODE_BLUE,(new Integer(10)).byteValue(),(new Integer(3)).byteValue());
-    ImageView img, background;
+    ImageView img;
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog dialog;
     TextView textView,mainSpeak,stop;
     Button goForward,goBackward,turnLeft,turnRight, buttonTest;
+    ImageView background,serverStatus;
     private AlertDialog tableDialog = null;
     MQTTManager mqttManager = null;
     private Map<String,Boolean> colorCellMap = new HashMap<>();
@@ -79,6 +80,8 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         super.onCreate(savedInstanceState);
+
+        RobotManager.getInstance().addRobotEventListener(this);
 
 
 
@@ -103,8 +106,9 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
             stop = findViewById(R.id.button_mainButton_stop);
             stop.setEnabled(false);
             stop.setBackgroundResource(R.drawable.stop_disabled);
-            img = findViewById(R.id.image);
             background = findViewById(R.id.background);
+            serverStatus = findViewById(R.id.imageView_ServerStatus);
+            img = findViewById(R.id.image);
 
             goForward.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -152,8 +156,10 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
             });
 
             mainSpeak.setOnClickListener(new View.OnClickListener() {
+                @SuppressLint("ResourceAsColor")
                 @Override
                 public void onClick(View view) {
+                    background.setBackgroundColor(android.R.color.black);
                     //speechManager.startSpeak("Uga Buga Uga Tunga");
                     //systemManager.showEmotion(EmotionsType.SMILE);
                     speechManager.doWakeUp();
@@ -621,14 +627,14 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
     public void serverOnline() {
         talk("Server Offline",speechLed);
         //TextView serverStatus = findViewById(R.id.imageView_ServerStatus);
-        //serverStatus.setBackgroundResource(R.drawable.gdot_green_16);
+        serverStatus.setBackgroundResource(R.drawable.gdot_green_16);
     }
 
     @Override
     public void serverOffline() {
         talk("Server Offline",speechLed);
         //TextView serverStatus = findViewById(R.id.imageView_ServerStatus);
-        //serverStatus.setBackgroundResource(R.drawable.gdot_red_16);
+        serverStatus.setBackgroundResource(R.drawable.gdot_red_16);
     }
 
     @Override
@@ -636,7 +642,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
         talk(text, speechLed);
     }
 
-
+    @Override
     public void FaceChanged(FaceType face) {
         switch (face){
             case SAD:
