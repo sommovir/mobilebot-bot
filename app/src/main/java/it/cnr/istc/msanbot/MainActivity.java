@@ -56,22 +56,21 @@ import it.cnr.istc.msanbot.logic.Topics;
 import it.cnr.istc.msanbot.mqtt.MQTTManager;
 
 public class MainActivity extends TopBaseActivity implements MediaListener, ConnectionEventListener {
-    SpeechManager speechManager = (SpeechManager) getUnitManager(FuncConstant.SPEECH_MANAGER);
-    HardWareManager hardWareManager = (HardWareManager) getUnitManager(FuncConstant.HARDWARE_MANAGER);
-    SystemManager systemManager = (SystemManager) getUnitManager(FuncConstant.SYSTEM_MANAGER);
-    WheelMotionManager wheelMotionManager = (WheelMotionManager) getUnitManager(FuncConstant.WHEELMOTION_MANAGER);
-    LED rageLed = new LED(LED.PART_ALL, LED.MODE_RED, (new Integer(10)).byteValue(), (new Integer(3)).byteValue());
-    LED listeningLed = new LED(LED.PART_ALL, LED.MODE_GREEN, (new Integer(10)).byteValue(), (new Integer(3)).byteValue());
-    LED speechLed = new LED(LED.PART_ALL, LED.MODE_BLUE, (new Integer(10)).byteValue(), (new Integer(3)).byteValue());
+    SpeechManager speechManager = (SpeechManager)getUnitManager(FuncConstant. SPEECH_MANAGER);
+    HardWareManager hardWareManager = (HardWareManager)getUnitManager(FuncConstant.HARDWARE_MANAGER);
+    SystemManager systemManager = (SystemManager)getUnitManager(FuncConstant.SYSTEM_MANAGER);
+    WheelMotionManager wheelMotionManager= (WheelMotionManager)getUnitManager(FuncConstant.WHEELMOTION_MANAGER);
+    LED rageLed = new LED(LED.PART_ALL,LED. MODE_RED,(new Integer(10)).byteValue(),(new Integer(3)).byteValue());
+    LED listeningLed = new LED(LED.PART_ALL,LED. MODE_GREEN,(new Integer(10)).byteValue(),(new Integer(3)).byteValue());
+    LED speechLed = new LED(LED.PART_ALL,LED. MODE_BLUE,(new Integer(10)).byteValue(),(new Integer(3)).byteValue());
     ImageView img;
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog dialog;
-    TextView textView, mainSpeak, stop, serverStatus;
-    Button goForward, goBackward, turnLeft, turnRight, buttonTest;
+    TextView textView,mainSpeak,stop;
+    Button goForward,goBackward,turnLeft,turnRight, buttonTest;
     private AlertDialog tableDialog = null;
     MQTTManager mqttManager = null;
-    private Map<String, Boolean> colorCellMap = new HashMap<>();
-    Animation server_online_animazione;
+    private Map<String,Boolean> colorCellMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +78,8 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         super.onCreate(savedInstanceState);
+
+
 
 
         try {
@@ -98,13 +99,10 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
             turnRight = findViewById(R.id.turnRight);
             mainSpeak = findViewById(R.id.button_mainButton_speak);
             buttonTest = findViewById(R.id.buttonTEST);
-            //serverStatus = findViewById(R.id.imageView_ServerStatus);
             stop = findViewById(R.id.button_mainButton_stop);
             stop.setEnabled(false);
             stop.setBackgroundResource(R.drawable.stop_disabled);
             img = findViewById(R.id.image);
-
-            //serverStatus.setBackgroundResource(R.drawable.gdot_red_16);
 
             goForward.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -220,8 +218,8 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
         }
     }
 
-    @Deprecated
-    private void listenWhenToSpeak() {
+@Deprecated
+    private void listenWhenToSpeak(){
         try {
             runOnUiThread(new Runnable() {
                 public void run() {
@@ -238,101 +236,101 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                     }
                 }
             });
-        } catch (Throwable ex) {
+        }catch (Throwable ex){
             Toast.makeText(MainActivity.this, ex.getMessage(), Toast.LENGTH_LONG).show();
         }
 
     }
 
-    private void stop() {
+    private void stop(){
         new Handler().postDelayed(() -> {
             speechManager.startSpeak("Ok basta");
-        }, 0);
+        },0);
         stop.setEnabled(false);
         stop.setBackgroundResource(R.drawable.stop_disabled);
     }
 
     private void initListener() {
 
-        talk("Inizio a sentire", listeningLed);
+            talk("Inizio a sentire",listeningLed);
 
-        textView = findViewById(R.id.textView);
-        hardWareManager.setOnHareWareListener(new InfrareListener() {
-            @Override
-            public void infrareDistance(int part, int distance) {
+            textView = findViewById(R.id.textView);
+            hardWareManager.setOnHareWareListener(new InfrareListener() {
+                @Override
+                public void infrareDistance(int part, int distance) {
 
-            }
-        });
+                }
+            });
 
-        speechManager.setOnSpeechListener(new RecognizeListener() {
-            @Override
-            public void onRecognizeText(RecognizeTextBean recognizeTextBean) {
-                String text = recognizeTextBean.getText().toLowerCase();
-                MQTTManager.getInstance().publish(Topics.CHAT.getTopic() + "/" + MQTTManager.getInstance().getId(), text);
-                textView.setText(recognizeTextBean.getText());
-                stop.setEnabled(true);
-                if (text.contains("ciao")) {
-                    long time = new Date().getTime();
-                    if (time % 2 == 1) {
-                        talk("Ciao", speechLed);
-                    } else {
-                        talk("lei è molto cortese", speechLed);
+            speechManager.setOnSpeechListener(new RecognizeListener() {
+                @Override
+                public void onRecognizeText(RecognizeTextBean recognizeTextBean) {
+                    String text = recognizeTextBean.getText().toLowerCase();
+                    MQTTManager.getInstance().publish(Topics.CHAT.getTopic() + "/" + MQTTManager.getInstance().getId(), text);
+                    textView.setText(recognizeTextBean.getText());
+                    stop.setEnabled(true);
+                    if (text.contains("ciao")) {
+                        long time = new Date().getTime();
+                        if (time % 2 == 1) {
+                            talk("Ciao",speechLed);
+                        } else {
+                            talk("lei è molto cortese",speechLed);
+                        }
                     }
-                }
-                if (text.contains("prova")) {
-                    talk("prova discorso lungo lunghissimissssssimo", rageLed);
-                }
-                if (text.equals("girati")) {
-                    RelativeAngleWheelMotion relativeAngleWheelMotion = new RelativeAngleWheelMotion(RelativeAngleWheelMotion.TURN_LEFT, 5, 180);
-                    wheelMotionManager.doRelativeAngleMotion(relativeAngleWheelMotion);
-                }
+                    if(text.contains("prova")){
+                        talk("prova discorso lungo lunghissimissssssimo",rageLed);
+                    }
+                    if(text.equals("girati")){
+                        RelativeAngleWheelMotion relativeAngleWheelMotion = new RelativeAngleWheelMotion(RelativeAngleWheelMotion.TURN_LEFT, 5,180);
+                        wheelMotionManager.doRelativeAngleMotion(relativeAngleWheelMotion);
+                    }
 
-                //
-                // speechManager.doWakeUp();
+                    //
+                    // speechManager.doWakeUp();
 
-                //if(FaceManager.)Simo fai a singletone per gettare le faccie
+                    //if(FaceManager.)Simo fai a singletone per gettare le faccie
 
-                //hardWareManager.setLED(rageLed);
-                speechManager.doWakeUp();
-            }
-
-            @Override
-            public void onStopRecognize() {
-                Toast.makeText(MainActivity.this, "Stop", Toast.LENGTH_SHORT).show();
-                System.out.println("stop recognize");
-
-                //speechManager.doWakeUp();
-            }
-
-            @Override
-            public void onStartRecognize() {
-                Toast.makeText(MainActivity.this, "Start", Toast.LENGTH_SHORT).show();
-                System.out.println("start recognize");
-            }
-
-            @Override
-            public void onRecognizeVolume(int i) {
-                //Toast.makeText(MainActivity.this, "Vol", Toast.LENGTH_SHORT).show();
-                System.out.println("Problema al volume");
-            }
-
-            @Override
-            public void onError(int i, int i1) {
-                Toast.makeText(MainActivity.this, "err", Toast.LENGTH_SHORT).show();
-                System.out.println("error " + i + " " + i1);
-            }
-
-            @Override
-            public boolean onRecognizeResult(@NonNull Grammar grammar) {
-                Toast.makeText(MainActivity.this, "Stop", Toast.LENGTH_SHORT).show();
-                //只有在配置了RECOGNIZE_MODE为1，且返回为true的情况下，才会拦截
-
-                String text = grammar.getText().toLowerCase();
-                textView.setText(grammar.getText());
-
-                if (text.contains("schifo")) {
+                    //hardWareManager.setLED(rageLed);
                     speechManager.doWakeUp();
                 }
+
+                @Override
+                public void onStopRecognize() {
+                    Toast.makeText(MainActivity.this, "Stop", Toast.LENGTH_SHORT).show();
+                    System.out.println("stop recognize");
+
+                    //speechManager.doWakeUp();
+                }
+
+                @Override
+                public void onStartRecognize() {
+                    Toast.makeText(MainActivity.this, "Start", Toast.LENGTH_SHORT).show();
+                    System.out.println("start recognize");
+                }
+
+                @Override
+                public void onRecognizeVolume(int i) {
+                    //Toast.makeText(MainActivity.this, "Vol", Toast.LENGTH_SHORT).show();
+                    System.out.println("Problema al volume");
+                }
+
+                @Override
+                public void onError(int i, int i1) {
+                    Toast.makeText(MainActivity.this, "err", Toast.LENGTH_SHORT).show();
+                    System.out.println("error " + i + " " + i1);
+                }
+
+                @Override
+                public boolean onRecognizeResult(@NonNull Grammar grammar) {
+                    Toast.makeText(MainActivity.this, "Stop", Toast.LENGTH_SHORT).show();
+                    //只有在配置了RECOGNIZE_MODE为1，且返回为true的情况下，才会拦截
+
+                    String text = grammar.getText().toLowerCase();
+                    textView.setText(grammar.getText());
+
+                    if(text.contains("schifo")){
+                        speechManager.doWakeUp();
+                    }
 
                     /*speechManager.startSpeak("Secondo");
 
@@ -349,41 +347,42 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                         RelativeAngleWheelMotion relativeAngleWheelMotion = new RelativeAngleWheelMotion( RelativeAngleWheelMotion.TURN_LEFT, 5,180);
                         wheelMotionManager.doRelativeAngleMotion(relativeAngleWheelMotion);
                     }*/
-                return true;
-            }
-        });
+                    return true;
+                }
+            });
 
-    }
+        }
 
     @Override
     protected void onMainServiceConnected() {
-        //listenWhenToSpeak();
-        speechManager.startSpeak("Sono connesso");
-        //showImage("https://publications.cnr.it/api/v1/author/image/luca.coraci");
+       //listenWhenToSpeak();
+       speechManager.startSpeak("Sono connesso");
+       //showImage("https://publications.cnr.it/api/v1/author/image/luca.coraci");
     }
 
-    public void talk(String text, LED led) {
+    public void talk(String text,LED led){
         speechManager.startSpeak(text);
         hardWareManager.setLED(led);
     }
 
     /**
      * Sintetizza il testo text,
-     *
-     * @param text       il testo da sintetizzare
-     * @param autolisten se true effettua l'autolisten
+     * @param text
+     * il testo da sintetizzare
+     * @param autolisten
+     * se true effettua l'autolisten
      */
     public void speakText(String text, boolean autolisten) {
-        talk(text, speechLed);
-        if (autolisten) {
+        talk(text,speechLed);
+        if(autolisten){
             speechManager.doWakeUp();
         }
     }
 
     /**
      * Mosra a schermo la multichoice nel formato standardizzato del comando *multichoice*
-     *
-     * @param text il comando (sintassi da ritrovare, ndr)
+     * @param text
+     * il comando (sintassi da ritrovare, ndr)
      */
     public void showTestChoice(String text) {
     }
@@ -403,8 +402,8 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
 
     /**
      * Mostra un immagine pubblicata in rete
-     *
-     * @param url l'URL pubblico dell'immagine da mostrare
+     * @param url
+     * l'URL pubblico dell'immagine da mostrare
      */
     public void showImage(String url) {
         dialogBuilder = new AlertDialog.Builder(MainActivity.this);
@@ -423,16 +422,16 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
 
     /**
      * Attiva l'ascolto dopo un certo numero di millisecondi
-     *
-     * @param time il numero di millisecondi da attendere prima di mettersi in ascolto
+     * @param time
+     * il numero di millisecondi da attendere prima di mettersi in ascolto
      */
     public void listenAt(Long time) {
     }
 
     /**
      * mostra a schermo un link
-     *
-     * @param link il link da mostrare, deve essere cliccabile
+     * @param link
+     * il link da mostrare, deve essere cliccabile
      */
     public void showLink(String link) {
         //Intent popupwindow = new Intent(MainActivity.this, LinkPopUpWindow.class);
@@ -443,9 +442,10 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
         dialog = dialogBuilder.create();
         TextView linkPress = createPopup.findViewById(R.id.linkPress);
         String newLink;
-        if (!(linkPress.getText().toString().startsWith("http"))) {
+        if(!(linkPress.getText().toString().startsWith("http"))){
             newLink = "http://" + link;
-        } else {
+        }
+        else{
             newLink = link;
         }
 
@@ -459,13 +459,14 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
         });
 
 
+
         dialog.show();
     }
 
     /**
      * Mostra un video con il link di youtube
-     *
-     * @param url il link da mostrare
+     * @param url
+     * il link da mostrare
      */
     public void showYouTubeVideo(String url) {
         /*
@@ -482,28 +483,28 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
         dialog.show();
 
          */
-        if (isYouTubeLink(url))
-            startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse((url))));
+        if(isYouTubeLink(url))
+        startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse((url))));
     }
 
     /**
      * Verifica che il link in esame sia un link di youtube
-     *
-     * @param link il link da controllare. Se il link è "link farlocco" deve eseguire una procedura di test
-     *             di un link certamente valido hard-coded.
-     * @return true se è un link da youtube, false altrimenti
+     * @param link
+     * il link da controllare. Se il link è "link farlocco" deve eseguire una procedura di test
+     * di un link certamente valido hard-coded.
+     * @return
+     * true se è un link da youtube, false altrimenti
      */
-    private boolean isYouTubeLink(String link) {
-        if (link.startsWith("https://www.youtube.com")) {
+    private boolean isYouTubeLink(String link){
+        if(link.startsWith("https://www.youtube.com")) {
             return true;
-        }
-        return false;
+        }return false;
     }
 
     /**
      * Mostra una tabella a schermo
-     *
-     * @param tabella Un array di righe secondo il formato di app-text
+     * @param tabella
+     * Un array di righe secondo il formato di app-text
      */
     public void showGenericTable(String[] tabella) {
 
@@ -512,30 +513,30 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
         LayoutInflater inflater = LayoutInflater.from(dialogContext);
         View alertView = inflater.inflate(R.layout.table_dialog, null);
         builder.setView(alertView);
-        TableLayout tableLayout = (TableLayout) alertView.findViewById(R.id.tableLayout);
+        TableLayout tableLayout = (TableLayout)alertView.findViewById(R.id.tableLayout);
         int row = 0;
         boolean continueTable = false;
-        for (String d : tabella) {
+        for( String d : tabella){
             String[] split = d.split("<CELL>");
             TableRow tableRow = new TableRow(dialogContext);
-            tableRow.setPadding(3, 3, 3, 3);
+            tableRow.setPadding(3,3,3,3);
             TableRow.LayoutParams layoutParams = new TableRow.LayoutParams
                     (0, TableRow.LayoutParams.WRAP_CONTENT, 1.0f);
-            layoutParams.setMargins(3, 3, 3, 3);
+            layoutParams.setMargins(3,3,3,3);
             tableRow.setLayoutParams(layoutParams);
 
             for (final String cella : split) {
                 final TextView textView1 = new TextView(dialogContext);
                 final String cellText;
-                if (row == 0) {
+                if(row == 0){
                     textView1.setTypeface(null, Typeface.BOLD);
-                    if (cella.contains("<CONTINUE>")) {
-                        cellText = cella.replace("<CONTINUE>", "");
-                        continueTable = true;
-                    } else {
+                    if(cella.contains("<CONTINUE>")){
+                        cellText = cella.replace("<CONTINUE>","");
+                        continueTable =true;
+                    }else{
                         cellText = cella;
                     }
-                } else {
+                }else{
                     cellText = cella;
                     GradientDrawable gd = new GradientDrawable(
                             //  GradientDrawable.Orientation.TOP_BOTTOM,
@@ -546,34 +547,34 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                     gd.setStroke(1, 0xFF000000);
                     textView1.setBackground(gd);
                 }
-                textView1.setPadding(5, 5, 5, 5);
+                textView1.setPadding(5,5,5,5);
                 // textView1.setLayoutParams(new TableRow.LayoutParams
                 //         (TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT, 1.0f));
                 textView1.setTextSize(18);
                 textView1.setText(cellText);
-                colorCellMap.put("" + cellText, Boolean.FALSE);
-                if (row != 0) {
+                colorCellMap.put(""+cellText,Boolean.FALSE);
+                if(row != 0) {
                     textView1.setOnClickListener(new View.OnClickListener() {
-                         @Override
-                         public void onClick(View v) {
-                             if (colorCellMap.get("" + cellText)) {
-                                 System.out.println("TRUE");
-                                 textView1.setBackgroundColor(0xFFFFFFFF);
-                                 colorCellMap.put("" + cellText, Boolean.FALSE);
-                             } else {
-                                 System.out.println("FALSE");
-                                 textView1.setBackgroundColor(0xFF00FF00);
-                                 colorCellMap.put("" + cellText, Boolean.TRUE);
-                             }
+                                                     @Override
+                                                     public void onClick(View v) {
+                                                         if (colorCellMap.get("" + cellText)) {
+                                                             System.out.println("TRUE");
+                                                             textView1.setBackgroundColor(0xFFFFFFFF);
+                                                             colorCellMap.put("" + cellText, Boolean.FALSE);
+                                                         } else {
+                                                             System.out.println("FALSE");
+                                                             textView1.setBackgroundColor(0xFF00FF00);
+                                                             colorCellMap.put("" + cellText, Boolean.TRUE);
+                                                         }
 
-                         }
-                     }
+                                                     }
+                                                 }
 
                     );
                 }
 
 
-                tableRow.addView(textView1, layoutParams);
+                tableRow.addView(textView1,layoutParams);
 
             }
             row++;
@@ -582,16 +583,16 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
         builder.setCancelable(true);
         //AlertDialog alertDialog =
 
-        if (!continueTable) {
-            if (this.tableDialog != null) {
+        if(!continueTable){
+            if(this.tableDialog != null){
                 this.tableDialog.cancel();
                 this.tableDialog.dismiss();
                 this.tableDialog = builder.create();
-            } else {
+            }else{
                 this.tableDialog = builder.create();
             }
             tableDialog.show();
-        } else {
+        }else{
             AlertDialog tempTable = builder.create();
             tempTable.show();
         }
@@ -602,16 +603,13 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
      * setta la grafica di modo che mostri di essere online
      */
     public void forceServerOnline() {
-        //ImageView img = (ImageView) findViewById(R.id.imageView_ServerStatus);
-        //img.setImageResource(R.drawable.green);
-        //img.setAnimation(server_online_animazione);
-        //server_online_animazione.start();
+
     }
 
     /**
      * Resetta tutte le impostazioni grafiche e robotiche nella posizione di default
-     *
-     * @param backToNormalTime numero di millisecondi da attendere prima del ritorno al normal-time
+     * @param backToNormalTime
+     * numero di millisecondi da attendere prima del ritorno al normal-time
      */
     public void setBackToNormalTime(Long backToNormalTime) {
         NoAngleWheelMotion noAngleWheelMotion = new NoAngleWheelMotion(NoAngleWheelMotion.ACTION_RESET, 1);
@@ -619,19 +617,36 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
 
     @Override
     public void serverOnline() {
-        talk("Server Online", speechLed);
+        talk("Server Offline",speechLed);
+        //TextView serverStatus = findViewById(R.id.imageView_ServerStatus);
         //serverStatus.setBackgroundResource(R.drawable.gdot_green_16);
     }
 
     @Override
     public void serverOffline() {
-        talk("Server Offline", speechLed);
+        talk("Server Offline",speechLed);
+        //TextView serverStatus = findViewById(R.id.imageView_ServerStatus);
         //serverStatus.setBackgroundResource(R.drawable.gdot_red_16);
     }
 
     @Override
     public void speak(String text) {
         talk(text, speechLed);
+    }
+
+    @Override
+    public void FaceChanged(FaceType face) {
+        switch (face){
+            case SAD:
+                background.setBackgroundResource(R.drawable.cry);
+            break;
+            case LOVE:
+                background.setBackgroundResource(R.drawable.love);
+            break;
+            case OUTRAGE:
+                background.setBackgroundResource(R.drawable.flame);
+            break;
+        }
     }
 
     /*public void showTableData(String[] data){
@@ -691,6 +706,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
         // AlertDialog alertDialog = builder.create();
         //  alertDialog.show();
     }*/
+
 
 
 }

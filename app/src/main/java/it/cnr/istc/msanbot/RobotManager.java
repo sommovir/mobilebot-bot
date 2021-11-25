@@ -5,13 +5,18 @@ import com.sanbot.opensdk.function.beans.EmotionsType;
 import com.sanbot.opensdk.function.unit.HardWareManager;
 import com.sanbot.opensdk.function.unit.SystemManager;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import it.cnr.istc.msanbot.logic.FaceType;
+import it.cnr.istc.msanbot.logic.RobotEventListener;
 
 public class RobotManager {
 
     private static RobotManager _instance = null;
+    private List<RobotEventListener> robotEventListeners = new LinkedList<>();
 
-    SystemManager systemManager;
+    private SystemManager systemManager;
 
     public static RobotManager getInstance() {
         if(_instance == null){
@@ -22,6 +27,10 @@ public class RobotManager {
 
     private RobotManager(){
 
+    }
+
+    public void addRobotEventListener (RobotEventListener listener){
+        this.robotEventListeners.add(listener);
     }
 
     public void setSystemManager(SystemManager systemManager) {
@@ -77,27 +86,36 @@ public class RobotManager {
                 break;
             }
         }
-
     }
 
     private void normalFaceAnimationStart(){
-        //TODO normal face animation
+        for (RobotEventListener listener : robotEventListeners) {
+            listener.FaceChanged(FaceType.NORMAL);
+        }
     }
 
     private void piangiAnimationStart(){
-        //TODO piangi face animation
+        for (RobotEventListener listener : robotEventListeners) {
+            listener.FaceChanged(FaceType.SAD);
+        }
     }
 
     private void kissAnimationStart(){
-        //TODO kiss face animation
+        for (RobotEventListener listener : robotEventListeners) {
+            listener.FaceChanged(FaceType.LOVE);
+        }
     }
 
     private void smileAnimationStart(){
-        //TODO smile face animation
+        for (RobotEventListener listener : robotEventListeners) {
+            listener.FaceChanged(FaceType.LAUGH);
+        }
     }
 
     private void angryAnimationStart(){
-        //TODO angry face animation
+        for (RobotEventListener listener : robotEventListeners) {
+            listener.FaceChanged(FaceType.OUTRAGE);
+        }
     }
 
 }
