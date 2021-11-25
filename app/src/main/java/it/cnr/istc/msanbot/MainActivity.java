@@ -189,6 +189,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                 @Override
                 public void onClick(View view) {
                     recSymbol.setVisibility(View.VISIBLE);
+                    mainSpeak.setBackgroundResource(R.drawable.speak_button_green);
                     background.setBackgroundColor(android.R.color.black);
                     //speechManager.startSpeak("Uga Buga Uga Tunga");
                     //systemManager.showEmotion(EmotionsType.SMILE);
@@ -309,6 +310,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                     String text = recognizeTextBean.getText().toLowerCase();
                     MQTTManager.getInstance().publish(Topics.CHAT.getTopic() + "/" + MQTTManager.getInstance().getId(), text);
                     textView.setText(recognizeTextBean.getText());
+                    mainSpeak.setBackgroundResource(R.drawable.speak_button);
                     stop.setEnabled(true);
                     stop.setBackgroundResource(R.drawable.stop);
                     if (text.contains("ciao")) {
