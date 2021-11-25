@@ -8,6 +8,7 @@ import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
@@ -56,48 +57,50 @@ public class MQTTManager {
 
 
     public void connect(final Context context) {
-        try {
-            this.context = context;
-            client = new MqttClient("tcp://" + ip + ":1883", clientId, new MemoryPersistence());
+        synchronized (this) {
+            try {
+                this.context = context;
+                client = new MqttClient("tcp://" + ip + ":1883", clientId, new MemoryPersistence());
 
-            client.setCallback(new MqttCallback() {
-                @Override
-                public void connectionLost(Throwable cause) {
+                client.setCallback(new MqttCallback() {
+                    @Override
+                    public void connectionLost(Throwable cause) {
 
-                }
+                    }
 
-                @Override
-                public void messageArrived(String topic, MqttMessage message) throws Exception {
+                    @Override
+                    public void messageArrived(String topic, MqttMessage message) throws Exception {
 
-                }
+                    }
 
-                @Override
-                public void deliveryComplete(IMqttDeliveryToken token) {
+                    @Override
+                    public void deliveryComplete(IMqttDeliveryToken token) {
 
-                }
-            });
+                    }
+                });
 
-            MqttConnectOptions opt = new MqttConnectOptions();
-            opt.setCleanSession(true);
-            opt.setAutomaticReconnect(true);
+                MqttConnectOptions opt = new MqttConnectOptions();
+                opt.setCleanSession(true);
+                opt.setAutomaticReconnect(true);
 
-            client.connect(opt);
+                client.connect(opt);
 
-            subscribe();
+                subscribe();
 
-            imalive();
+                imalive();
 
-            EventManager.getInstance().serverOnline();
+                EventManager.getInstance().serverOnline();
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Non riesco a connettermi");
-            StringWriter errors = new StringWriter();
-            e.printStackTrace(new PrintWriter(errors));
-            System.out.println("Non va");
-            Toast toast = Toast.makeText(context, errors.toString(), Toast.LENGTH_LONG);
-            toast.setMargin(50, 50);
-            toast.show();
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Non riesco a connettermi");
+                StringWriter errors = new StringWriter();
+                e.printStackTrace(new PrintWriter(errors));
+                System.out.println("Non va");
+                Toast toast = Toast.makeText(context, errors.toString(), Toast.LENGTH_LONG);
+                toast.setMargin(50, 50);
+                toast.show();
+            }
         }
     }
 
@@ -319,7 +322,14 @@ public class MQTTManager {
     }
 
     public void disconnect(){
-
+        synchronized (this) {
+            try {
+                client.disconnect();
+                client.close();
+            } catch (MqttException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
