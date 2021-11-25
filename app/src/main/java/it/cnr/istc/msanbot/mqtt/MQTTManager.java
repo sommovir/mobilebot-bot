@@ -14,6 +14,7 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import it.cnr.istc.msanbot.logic.ConnectionEventListener;
 import it.cnr.istc.msanbot.logic.EventManager;
 import it.cnr.istc.msanbot.logic.Topics;
 
@@ -31,7 +32,7 @@ public class MQTTManager {
     private static final String DIRECTION_FORWARD = "forward";
     private static final String TAKE_PIC = "takepic";
     private static final String RECEIVE_PIC = "receive_pic";
-    private static String ip = "192.168.67.186";
+    private static String ip;
     private Context context;
     MqttClient client = null;
 
@@ -85,6 +86,8 @@ public class MQTTManager {
             subscribe();
 
             imalive();
+
+            EventManager.getInstance().serverOnline();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -313,6 +316,10 @@ public class MQTTManager {
             toast.setMargin(50,50);
             toast.show();
         }
+    }
+
+    public void disconnect(){
+
     }
 
 

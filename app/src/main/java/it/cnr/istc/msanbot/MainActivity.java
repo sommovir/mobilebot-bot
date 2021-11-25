@@ -7,6 +7,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -16,6 +17,7 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.MediaController;
 import android.widget.PopupWindow;
 import android.widget.Button;
@@ -82,6 +84,9 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
         super.onCreate(savedInstanceState);
 
         RobotManager.getInstance().addRobotEventListener(this);
+        EventManager.getInstance().addConnectionEventListener(this);
+
+
 
 
 
@@ -150,10 +155,36 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
             buttonTest.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    MQTTManager.getInstance().disconnect();
                     MQTTManager.getInstance().connect(MainActivity.this);
                     EventManager.getInstance().addConnectionEventListener(MainActivity.this);
                 }
             });
+
+            serverStatus.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialogBuilder = new AlertDialog.Builder(MainActivity.this);
+                    final View createPopup = getLayoutInflater().inflate(R.layout.popup_activity, null);
+                    dialogBuilder.setView(createPopup);
+                    dialog = dialogBuilder.create();
+
+                    EditText newIpEditText = createPopup.findViewById(R.id.newIpEditText);
+                    Button setNewIp = createPopup.findViewById(R.id.setBtn);
+
+                    setNewIp.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            MQTTManager.getInstance().setIp(newIpEditText.getText().toString());
+                            talk("Nuovo ip settato", speechLed);
+                        }
+                    });
+
+                    dialog.show();
+                }
+            });
+
+
 
             mainSpeak.setOnClickListener(new View.OnClickListener() {
                 @SuppressLint("ResourceAsColor")
@@ -625,16 +656,16 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
 
     @Override
     public void serverOnline() {
-        talk("Server Offline",speechLed);
+        talk("Server Online",speechLed);
         //TextView serverStatus = findViewById(R.id.imageView_ServerStatus);
-        serverStatus.setBackgroundResource(R.drawable.gdot_green_16);
+        serverStatus.setColorFilter(Color.argb(255, 0, 255, 0));
     }
 
     @Override
     public void serverOffline() {
         talk("Server Offline",speechLed);
         //TextView serverStatus = findViewById(R.id.imageView_ServerStatus);
-        serverStatus.setBackgroundResource(R.drawable.gdot_red_16);
+        serverStatus.setColorFilter(Color.argb(255, 0, 255, 0));
     }
 
     @Override
