@@ -80,24 +80,26 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.97" />-->
 
-    <TextView
+    <!--<TextView
         android:id="@+id/imageView_ServerStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/gdot_red_16"
         android:gravity="center"
-        android:text=""
         android:textAlignment="center"
-        android:textSize="10dp"
-        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/button_mainButton_reconnect"
+        app:layout_constraintHorizontal_bias="0.568"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.97" />
+        app:layout_constraintVertical_bias="0.97" />-->
 
     <TextView
         android:id="@+id/button_mainButton_reconnect"
-        android:layout_width="93dp"
-        android:layout_height="40dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="622dp"
+        android:layout_marginBottom="11dp"
         android:background="@drawable/reconnect"
         android:gravity="center"
         android:text=""
@@ -105,9 +107,8 @@
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.568"
-        app:layout_constraintStart_toEndOf="@+id/imageView_ServerStatus"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
         app:layout_constraintVertical_bias="0.97" />
     <!--app:layout_constraintEnd_toStartOf="@+id/button_mainButton"-->
 
@@ -130,8 +131,8 @@
 
     <TextView
         android:id="@+id/button_mainButton_stop"
-        android:layout_width="217dp"
-        android:layout_height="303dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:background="@drawable/stop"
         android:gravity="center"
         android:text=""
@@ -140,20 +141,26 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.931"
-        app:layout_constraintStart_toEndOf="@+id/button_mainButton_speak"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.27" />
+        app:layout_constraintVertical_bias="0.277" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="98dp"
+        android:layout_marginTop="297dp"
+        android:layout_marginEnd="391dp"
+        android:layout_marginBottom="44dp"
         android:text="A"
         android:textColor="@color/colorPrimary"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="98dp"
-        tools:layout_editor_absoluteY="297dp" />
+        app:layout_constraintBottom_toTopOf="@+id/button_mainButton_reconnect"
+        app:layout_constraintEnd_toStartOf="@+id/button_mainButton_stop"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="MissingConstraints" />
 
     <Button
         android:id="@+id/goForwardx"

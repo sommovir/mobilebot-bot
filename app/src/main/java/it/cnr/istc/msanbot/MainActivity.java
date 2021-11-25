@@ -5,6 +5,7 @@ import androidx.appcompat.app.AlertDialog;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -615,15 +616,15 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
     @Override
     public void serverOnline() {
         talk("Server Offline",speechLed);
-        TextView serverStatus = findViewById(R.id.imageView_ServerStatus);
-        serverStatus.setBackgroundResource(R.drawable.gdot_green_16);
+        //TextView serverStatus = findViewById(R.id.imageView_ServerStatus);
+        //serverStatus.setBackgroundResource(R.drawable.gdot_green_16);
     }
 
     @Override
     public void serverOffline() {
         talk("Server Offline",speechLed);
-        TextView serverStatus = findViewById(R.id.imageView_ServerStatus);
-        serverStatus.setBackgroundResource(R.drawable.gdot_red_16);
+        //TextView serverStatus = findViewById(R.id.imageView_ServerStatus);
+        //serverStatus.setBackgroundResource(R.drawable.gdot_red_16);
     }
 
     @Override
