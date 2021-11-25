@@ -292,8 +292,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
     private void initListener() {
 
             talk("Inizio a sentire",listeningLed);
-            stop.setEnabled(false);
-            stop.setBackgroundResource(R.drawable.stop_disabled);
+
             textView = findViewById(R.id.textView);
             hardWareManager.setOnHareWareListener(new InfrareListener() {
                 @Override
@@ -307,8 +306,6 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                 public void onRecognizeText(RecognizeTextBean recognizeTextBean) {
                     String text = recognizeTextBean.getText().toLowerCase();
                     MQTTManager.getInstance().publish(Topics.CHAT.getTopic() + "/" + MQTTManager.getInstance().getId(), text);
-                    stop.setEnabled(true);
-                    stop.setBackgroundResource(R.drawable.stop);
                     textView.setText(recognizeTextBean.getText());
                     stop.setEnabled(true);
                     if (text.contains("ciao")) {
@@ -476,6 +473,18 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
      * il link da mostrare, deve essere cliccabile
      */
     public void showLink(String link) {
+        //Intent popupwindow = new Intent(MainActivity.this, LinkPopUpWindow.class);
+        //startActivity(popupwindow);
+        dialogBuilder = new AlertDialog.Builder(MainActivity.this);
+        final View createPopup = getLayoutInflater().inflate(R.layout.popup_activity, null);
+        dialogBuilder.setView(createPopup);
+        dialog = dialogBuilder.create();
+        TextView linkPress = createPopup.findViewById(R.id.linkPress);
+        String newLink;
+        if(!(linkPress.getText().toString().startsWith("http"))){
+            newLink = "http://" + link;
+        }
+        else{
             newLink = link;
         }
 
