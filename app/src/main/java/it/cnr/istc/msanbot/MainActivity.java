@@ -71,7 +71,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
     private AlertDialog dialog;
     TextView textView,mainSpeak,stop;
     Button goForward,goBackward,turnLeft,turnRight, buttonTest;
-    ImageView background,serverStatus;
+    ImageView background,serverStatus,recSymbol;
     private AlertDialog tableDialog = null;
     MQTTManager mqttManager = null;
     private Map<String,Boolean> colorCellMap = new HashMap<>();
@@ -86,12 +86,10 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
         RobotManager.getInstance().addRobotEventListener(this);
         EventManager.getInstance().addConnectionEventListener(this);
 
-
-
-
-
-
         try {
+            recSymbol = findViewById(R.id.recSymbol);
+            recSymbol.setVisibility(View.INVISIBLE);
+
             setContentView(R.layout.activity_main);
             RobotManager.getInstance().setSystemManager(systemManager);
             if (speechManager == null) {
@@ -190,6 +188,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                 @SuppressLint("ResourceAsColor")
                 @Override
                 public void onClick(View view) {
+                    recSymbol.setVisibility(View.VISIBLE);
                     background.setBackgroundColor(android.R.color.black);
                     //speechManager.startSpeak("Uga Buga Uga Tunga");
                     //systemManager.showEmotion(EmotionsType.SMILE);
@@ -285,6 +284,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
         new Handler().postDelayed(() -> {
             speechManager.startSpeak("Ok basta");
         },0);
+        recSymbol.setVisibility(View.INVISIBLE);
         stop.setEnabled(false);
         stop.setBackgroundResource(R.drawable.stop_disabled);
     }
@@ -305,6 +305,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
             speechManager.setOnSpeechListener(new RecognizeListener() {
                 @Override
                 public void onRecognizeText(RecognizeTextBean recognizeTextBean) {
+                    recSymbol.setVisibility(View.INVISIBLE);
                     String text = recognizeTextBean.getText().toLowerCase();
                     MQTTManager.getInstance().publish(Topics.CHAT.getTopic() + "/" + MQTTManager.getInstance().getId(), text);
                     textView.setText(recognizeTextBean.getText());
