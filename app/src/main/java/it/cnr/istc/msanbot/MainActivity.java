@@ -156,19 +156,12 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                 @Override
                 public void onClick(View view) {
 
-                    SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.putString("name", "Alberto");
-                    editor.apply();
-                    System.out.println("Done name changed" + name);
-                    talk("ora è" + name,false,rageLed);
-
                     dialogBuilder = new AlertDialog.Builder(MainActivity.this);
                     final View createPopup = getLayoutInflater().inflate(R.layout.popup_activity, null);
                     dialogBuilder.setView(createPopup);
                     dialog = dialogBuilder.create();
 
-                    EditText newNameEditText = createPopup.findViewById(R.id.newIpEditText);
+                    EditText newNameEditText = createPopup.findViewById(R.id.newDataEditText);
                     Button setNewName= createPopup.findViewById(R.id.setBtn);
 
                     setNewName.setOnClickListener(new View.OnClickListener() {
@@ -197,7 +190,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                     dialogBuilder.setView(createPopup);
                     dialog = dialogBuilder.create();
 
-                    EditText newIpEditText = createPopup.findViewById(R.id.newIpEditText);
+                    EditText newIpEditText = createPopup.findViewById(R.id.newDataEditText);
                     Button setNewIp = createPopup.findViewById(R.id.setBtn);
 
                     setNewIp.setOnClickListener(new View.OnClickListener() {
