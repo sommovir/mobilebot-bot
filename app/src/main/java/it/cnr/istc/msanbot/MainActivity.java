@@ -32,6 +32,7 @@ import com.sanbot.opensdk.beans.OperationResult;
 import com.sanbot.opensdk.function.beans.LED;
 import com.sanbot.opensdk.function.beans.speech.Grammar;
 import com.sanbot.opensdk.function.beans.speech.RecognizeTextBean;
+import com.sanbot.opensdk.function.beans.speech.SpeakStatus;
 import com.sanbot.opensdk.function.beans.wheelmotion.NoAngleWheelMotion;
 import com.sanbot.opensdk.function.beans.wheelmotion.RelativeAngleWheelMotion;
 import com.sanbot.opensdk.function.unit.HardWareManager;
@@ -41,6 +42,7 @@ import com.sanbot.opensdk.function.unit.WheelMotionManager;
 import com.sanbot.opensdk.function.unit.interfaces.hardware.InfrareListener;
 import com.sanbot.opensdk.function.unit.interfaces.media.MediaListener;
 import com.sanbot.opensdk.function.unit.interfaces.speech.RecognizeListener;
+import com.sanbot.opensdk.function.unit.interfaces.speech.SpeakListener;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -323,6 +325,18 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
 
                 }
             });
+
+            speechManager.setOnSpeechListener(new SpeakListener() {
+                @Override
+                public void onSpeakStatus(@NonNull SpeakStatus speakStatus) {
+                    System.out.println("================================================== >> PROGRESS: "+speakStatus.getProgress());
+                    System.out.println("================================================== >> STATUS TEXT: "+speakStatus.getText());
+                    System.out.println("================================================== >> STATUS ID: "+speakStatus.getId());
+                    System.out.println("================================================== >> STATUS ID: "+speakStatus.getEngine());
+
+                }
+            });
+
 
             speechManager.setOnSpeechListener(new RecognizeListener() {
                 @Override
