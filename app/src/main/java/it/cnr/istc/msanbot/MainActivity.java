@@ -109,7 +109,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
             recSymbol.setVisibility(View.INVISIBLE);
 
             SharedPreferences namePref = getSharedPreferences("prefs", MODE_PRIVATE);
-            String name = namePref.getString("name", "Luca");
+            name = namePref.getString("name", "Luca");
             System.out.println(name);
 
             initListener();
@@ -158,12 +158,12 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
 
                     SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
                     SharedPreferences.Editor editor = prefs.edit();
-                    editor.putString("name", "Francesco fiorello");
+                    editor.putString("name", "Alberto");
                     editor.apply();
                     System.out.println("Done name changed" + name);
                     talk("ora è" + name,false,rageLed);
 
-                    /*ialogBuilder = new AlertDialog.Builder(MainActivity.this);
+                    dialogBuilder = new AlertDialog.Builder(MainActivity.this);
                     final View createPopup = getLayoutInflater().inflate(R.layout.popup_activity, null);
                     dialogBuilder.setView(createPopup);
                     dialog = dialogBuilder.create();
@@ -177,14 +177,14 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                             if(newNameEditText.getText().toString() != null && !newNameEditText.getText().toString().isEmpty()){
                                 SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
                                 SharedPreferences.Editor editor = prefs.edit();
-                                editor.putString("firstStart", newNameEditText.getText().toString());
+                                editor.putString("name", newNameEditText.getText().toString());
                                 editor.apply();
                                 dialog.cancel();
                             }
                         }
                     });
 
-                    dialog.show();*/
+                    dialog.show();
 
                 }
             });
