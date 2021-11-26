@@ -87,8 +87,8 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
         EventManager.getInstance().addConnectionEventListener(this);
 
         try {
-            recSymbol = findViewById(R.id.recSymbol);
-            recSymbol.setVisibility(View.INVISIBLE);
+            //recSymbol = findViewById(R.id.recSymbol);
+            //recSymbol.setVisibility(View.INVISIBLE);
 
             setContentView(R.layout.activity_main);
             RobotManager.getInstance().setSystemManager(systemManager);
@@ -98,7 +98,6 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                 //Toast.makeText(MainActivity.this, "MI AMMAZZO", Toast.LENGTH_LONG).show();
                 speechManager.startSpeak("NON SONO NULL");
             }
-            initListener();
 
             goForward = findViewById(R.id.goForwardx);
             goBackward = findViewById(R.id.goBackward);
@@ -112,6 +111,9 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
             background = findViewById(R.id.background);
             serverStatus = findViewById(R.id.imageView_ServerStatus);
             img = findViewById(R.id.image);
+
+            initListener();
+            connect();
 
             goForward.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -153,9 +155,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
             buttonTest.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    MQTTManager.getInstance().disconnect();
-                    MQTTManager.getInstance().connect(MainActivity.this);
-                    EventManager.getInstance().addConnectionEventListener(MainActivity.this);
+
                 }
             });
 
@@ -169,6 +169,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
 
                     EditText newIpEditText = createPopup.findViewById(R.id.newIpEditText);
                     Button setNewIp = createPopup.findViewById(R.id.setBtn);
+                    newIpEditText.setText("192.168.67.187");
 
                     setNewIp.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -183,17 +184,16 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
             });
 
 
-
             mainSpeak.setOnClickListener(new View.OnClickListener() {
                 @SuppressLint("ResourceAsColor")
                 @Override
                 public void onClick(View view) {
-                    recSymbol.setVisibility(View.VISIBLE);
+                    //recSymbol.setVisibility(View.VISIBLE);
                     mainSpeak.setBackgroundResource(R.drawable.speak_button_green);
                     background.setBackgroundColor(android.R.color.black);
                     //speechManager.startSpeak("Uga Buga Uga Tunga");
                     //systemManager.showEmotion(EmotionsType.SMILE);
-                    speechManager.doWakeUp();
+                    wakeUp(false);
                     //listenWhenToSpeak();
                     //initListener();
 
@@ -285,7 +285,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
         new Handler().postDelayed(() -> {
             speechManager.startSpeak("Ok basta");
         },0);
-        recSymbol.setVisibility(View.INVISIBLE);
+        //recSymbol.setVisibility(View.INVISIBLE);
         stop.setEnabled(false);
         stop.setBackgroundResource(R.drawable.stop_disabled);
     }
@@ -306,7 +306,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
             speechManager.setOnSpeechListener(new RecognizeListener() {
                 @Override
                 public void onRecognizeText(RecognizeTextBean recognizeTextBean) {
-                    recSymbol.setVisibility(View.INVISIBLE);
+                    //recSymbol.setVisibility(View.INVISIBLE);
                     String text = recognizeTextBean.getText().toLowerCase();
                     MQTTManager.getInstance().publish(Topics.CHAT.getTopic() + "/" + MQTTManager.getInstance().getId(), text);
                     textView.setText(recognizeTextBean.getText());
@@ -335,7 +335,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                     //if(FaceManager.)Simo fai a singletone per gettare le faccie
 
                     //hardWareManager.setLED(rageLed);
-                    speechManager.doWakeUp();
+                    wakeUp(false);
                 }
 
                 @Override
@@ -369,12 +369,6 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                     Toast.makeText(MainActivity.this, "Stop", Toast.LENGTH_SHORT).show();
                     //只有在配置了RECOGNIZE_MODE为1，且返回为true的情况下，才会拦截
 
-                    String text = grammar.getText().toLowerCase();
-                    textView.setText(grammar.getText());
-
-                    if(text.contains("schifo")){
-                        speechManager.doWakeUp();
-                    }
 
                     /*speechManager.startSpeak("Secondo");
 
@@ -419,7 +413,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
     public void speakText(String text, boolean autolisten) {
         talk(text,speechLed);
         if(autolisten){
-            speechManager.doWakeUp();
+            wakeUp(false);
         }
     }
 
@@ -750,6 +744,24 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
         // AlertDialog alertDialog = builder.create();
         //  alertDialog.show();
     }*/
+
+    public void wakeUp(boolean force){
+        if(force){
+        speechManager.doWakeUp();}
+        else{
+            if(speechManager.getSpeechStatus().getResult().equals("0")){
+                speechManager.doWakeUp();
+            }
+        }
+
+    }
+
+    public void connect(){
+        MQTTManager.getInstance().setIp("192.168.67.187");
+        MQTTManager.getInstance().disconnect();
+        MQTTManager.getInstance().connect(MainActivity.this);
+        EventManager.getInstance().addConnectionEventListener(MainActivity.this);
+    }
 
 
 

@@ -324,8 +324,10 @@ public class MQTTManager {
     public void disconnect(){
         synchronized (this) {
             try {
-                client.disconnect();
-                client.close();
+                if(client!= null) {
+                    client.disconnect();
+                    client.close();
+                }
             } catch (MqttException e) {
                 e.printStackTrace();
             }
