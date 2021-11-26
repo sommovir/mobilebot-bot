@@ -6,29 +6,24 @@ import androidx.appcompat.app.AlertDialog;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.MediaController;
-import android.widget.PopupWindow;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
 import com.sanbot.opensdk.base.TopBaseActivity;
@@ -47,8 +42,6 @@ import com.sanbot.opensdk.function.unit.interfaces.hardware.InfrareListener;
 import com.sanbot.opensdk.function.unit.interfaces.media.MediaListener;
 import com.sanbot.opensdk.function.unit.interfaces.speech.RecognizeListener;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -73,11 +66,12 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog dialog;
     TextView textView,mainSpeak,stop;
-    Button goForward,goBackward,turnLeft,turnRight, buttonTest;
+    Button goForward,goBackward,turnLeft,turnRight, buttonName;
     ImageView background,serverStatus,recSymbol;
     private AlertDialog tableDialog = null;
     MQTTManager mqttManager = null;
     private Map<String,Boolean> colorCellMap = new HashMap<>();
+    String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,12 +80,13 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
 
         super.onCreate(savedInstanceState);
 
+        SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
+        String name = prefs.getString("firstStart", "ciro");
+
         RobotManager.getInstance().addRobotEventListener(this);
         EventManager.getInstance().addConnectionEventListener(this);
 
         try {
-            recSymbol = findViewById(R.id.recSymbol);
-            recSymbol.setVisibility(View.INVISIBLE);
 
             setContentView(R.layout.activity_main);
             RobotManager.getInstance().setSystemManager(systemManager);
@@ -101,20 +96,25 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                 //Toast.makeText(MainActivity.this, "MI AMMAZZO", Toast.LENGTH_LONG).show();
                 speechManager.startSpeak("NON SONO NULL");
             }
-            initListener();
-
             goForward = findViewById(R.id.goForwardx);
             goBackward = findViewById(R.id.goBackward);
             turnLeft = findViewById(R.id.turnLeft);
             turnRight = findViewById(R.id.turnRight);
             mainSpeak = findViewById(R.id.button_mainButton_speak);
-            buttonTest = findViewById(R.id.buttonTEST);
+            buttonName = findViewById(R.id.buttonTEST);
             stop = findViewById(R.id.button_mainButton_stop);
             stop.setEnabled(false);
             stop.setBackgroundResource(R.drawable.stop_disabled);
             background = findViewById(R.id.background);
             serverStatus = findViewById(R.id.imageView_ServerStatus);
             img = findViewById(R.id.image);
+            recSymbol = findViewById(R.id.recording);
+            recSymbol.setVisibility(View.INVISIBLE);
+
+            initListener();
+            connect();
+
+
 
             goForward.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -153,12 +153,38 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                 }
             });
 
-            buttonTest.setOnClickListener(new View.OnClickListener() {
+            buttonName.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    MQTTManager.getInstance().disconnect();
-                    MQTTManager.getInstance().connect(MainActivity.this);
-                    EventManager.getInstance().addConnectionEventListener(MainActivity.this);
+
+                    SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString("firstStart", "Ale");
+                    editor.apply();
+
+                    /*ialogBuilder = new AlertDialog.Builder(MainActivity.this);
+                    final View createPopup = getLayoutInflater().inflate(R.layout.popup_activity, null);
+                    dialogBuilder.setView(createPopup);
+                    dialog = dialogBuilder.create();
+
+                    EditText newNameEditText = createPopup.findViewById(R.id.newIpEditText);
+                    Button setNewName= createPopup.findViewById(R.id.setBtn);
+
+                    setNewName.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if(newNameEditText.getText().toString() != null && !newNameEditText.getText().toString().isEmpty()){
+                                SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
+                                SharedPreferences.Editor editor = prefs.edit();
+                                editor.putString("firstStart", newNameEditText.getText().toString());
+                                editor.apply();
+                                dialog.cancel();
+                            }
+                        }
+                    });
+
+                    dialog.show();*/
+
                 }
             });
 
@@ -403,7 +429,8 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
     @Override
     protected void onMainServiceConnected() {
        //listenWhenToSpeak();
-       speechManager.startSpeak("Sono connesso");
+       speechManager.startSpeak("Ciao" + name);
+
        //showImage("https://publications.cnr.it/api/v1/author/image/luca.coraci");
     }
 
@@ -781,6 +808,13 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
         // AlertDialog alertDialog = builder.create();
         //  alertDialog.show();
     }*/
+
+    public void connect(){
+        MQTTManager.getInstance().setIp("192.168.67.187");
+        MQTTManager.getInstance().disconnect();
+        MQTTManager.getInstance().connect(MainActivity.this);
+        EventManager.getInstance().addConnectionEventListener(MainActivity.this);
+    }
 
 
 

@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
-    tools:context=".MainActivity"
-    >
+    tools:context=".MainActivity">
 
 
     <!--<TextView
@@ -97,17 +96,6 @@
         app:layout_constraintTop_toBottomOf="@+id/button_mainButton_speak"
         app:layout_constraintVertical_bias="0.401" />-->
 
-    <ImageView
-        android:id="@+id/recSymbol"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:contentDescription="outside"
-        android:scaleType="centerCrop"
-        android:src="@drawable/rec"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/background"
@@ -116,22 +104,34 @@
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
+
+    <!--app:layout_constraintEnd_toStartOf="@+id/button_mainButton"-->
+
+    <ImageView
+        android:id="@+id/recording"
+        android:layout_width="50dp"
+        android:visibility="invisible"
+        android:layout_height="50dp"
+        android:layout_marginStart="136dp"
+        android:layout_marginTop="56dp"
+        android:src="@drawable/ic_baseline_brightness_1_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_mainButton_speak" />
 
     <ImageView
         android:id="@+id/imageView_ServerStatus"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginStart="36dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginStart="136dp"
         android:src="@drawable/ic_baseline_brightness_1_24"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/button_mainButton_speak"
         app:layout_constraintStart_toStartOf="parent"
-        />
-
-    <!--app:layout_constraintEnd_toStartOf="@+id/button_mainButton"-->
+        app:tint="@color/colorPrimary" />
 
     <TextView
         android:id="@+id/button_mainButton_speak"
@@ -154,7 +154,7 @@
         android:id="@+id/button_mainButton_stop"
         android:layout_width="0dp"
         android:layout_height="303dp"
-        android:background="@drawable/stop"
+        android:background="@drawable/stop_disabled"
         android:gravity="center"
         android:text=""
         android:textAlignment="center"
@@ -169,16 +169,21 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="164dp"
-        android:layout_marginBottom="56dp"
+
         android:text="A"
         android:textColor="@color/colorPrimary"
+
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/background"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="@+id/background"
+        app:layout_constraintTop_toTopOf="@+id/background"
+        app:layout_constraintVertical_bias="0.903"
         tools:ignore="MissingConstraints" />
 
     <Button
         android:id="@+id/goForwardx"
+        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Forward"
@@ -194,6 +199,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TurnLeft"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.439"
@@ -207,6 +213,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="68dp"
         android:text="Backward"
+        android:visibility="gone"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.53"
         app:layout_constraintStart_toStartOf="parent"
@@ -217,6 +225,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TURN RIGHT"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.609"
@@ -228,9 +237,9 @@
         android:id="@+id/buttonTEST"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="296dp"
-        android:layout_marginBottom="88dp"
-        android:text="Button"
+        android:layout_marginEnd="272dp"
+        android:layout_marginBottom="64dp"
+        android:text="Set name"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -246,8 +255,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.025" />
-
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
