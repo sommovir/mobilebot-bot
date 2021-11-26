@@ -57,7 +57,7 @@ import it.cnr.istc.msanbot.logic.Topics;
 import it.cnr.istc.msanbot.mqtt.MQTTManager;
 
 public class MainActivity extends TopBaseActivity implements MediaListener, ConnectionEventListener, RobotEventListener {
-    SpeechManager speechManager = (SpeechManager)getUnitManager(FuncConstant. SPEECH_MANAGER);
+    SpeechManager speechManager = null;
     HardWareManager hardWareManager = (HardWareManager)getUnitManager(FuncConstant.HARDWARE_MANAGER);
     SystemManager systemManager = (SystemManager)getUnitManager(FuncConstant.SYSTEM_MANAGER);
     WheelMotionManager wheelMotionManager= (WheelMotionManager)getUnitManager(FuncConstant.WHEELMOTION_MANAGER);
@@ -81,7 +81,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         super.onCreate(savedInstanceState);
-
+        this.speechManager = (SpeechManager)getUnitManager(FuncConstant. SPEECH_MANAGER);
         RobotManager.getInstance().addRobotEventListener(this);
         EventManager.getInstance().addConnectionEventListener(this);
 
