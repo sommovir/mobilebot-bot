@@ -51,6 +51,7 @@ import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 import it.cnr.istc.msanbot.logic.ConnectionEventListener;
 import it.cnr.istc.msanbot.logic.EventManager;
@@ -404,6 +405,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
     }
 
     public void talk(String text,LED led){
+        text = chooseRandomText(text);
         speechManager.startSpeak(text);
         hardWareManager.setLED(led);
     }
@@ -419,6 +421,18 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
         talk(text,speechLed);
         if(autolisten){
             speechManager.doWakeUp();
+        }
+    }
+
+
+    public String chooseRandomText(String text){
+        if(!text.contains("%")){
+            return text;
+        }
+        else{
+            String[] tokens = text.split("%");
+            int nextInt = ThreadLocalRandom.current().nextInt(0, tokens.length);
+            return tokens[nextInt];
         }
     }
 
