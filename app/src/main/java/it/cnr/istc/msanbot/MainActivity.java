@@ -80,9 +80,6 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
 
         super.onCreate(savedInstanceState);
 
-        SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
-        String name = prefs.getString("firstStart", "ciro");
-
         RobotManager.getInstance().addRobotEventListener(this);
         EventManager.getInstance().addConnectionEventListener(this);
 
@@ -101,7 +98,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
             turnLeft = findViewById(R.id.turnLeft);
             turnRight = findViewById(R.id.turnRight);
             mainSpeak = findViewById(R.id.button_mainButton_speak);
-            buttonName = findViewById(R.id.buttonTEST);
+            buttonName = findViewById(R.id.buttonName);
             stop = findViewById(R.id.button_mainButton_stop);
             stop.setEnabled(false);
             stop.setBackgroundResource(R.drawable.stop_disabled);
@@ -111,10 +108,12 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
             recSymbol = findViewById(R.id.recording);
             recSymbol.setVisibility(View.INVISIBLE);
 
+            SharedPreferences namePref = getSharedPreferences("prefs", MODE_PRIVATE);
+            String name = namePref.getString("name", "Luca");
+            System.out.println(name);
+
             initListener();
             connect();
-
-
 
             goForward.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -159,8 +158,10 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
 
                     SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
                     SharedPreferences.Editor editor = prefs.edit();
-                    editor.putString("firstStart", "Ale");
+                    editor.putString("name", "Francesco fiorello");
                     editor.apply();
+                    System.out.println("Done name changed" + name);
+                    talk("ora è" + name,false,rageLed);
 
                     /*ialogBuilder = new AlertDialog.Builder(MainActivity.this);
                     final View createPopup = getLayoutInflater().inflate(R.layout.popup_activity, null);
@@ -203,14 +204,13 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                         @Override
                         public void onClick(View view) {
                             MQTTManager.getInstance().setIp(newIpEditText.getText().toString());
-                            talk("Nuovo ip settato",false, speechLed);
+                            talk("Nuovo ip settato", false, speechLed);
                         }
                     });
 
                     dialog.show();
                 }
             });
-
 
 
             mainSpeak.setOnClickListener(new View.OnClickListener() {
@@ -430,6 +430,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
     protected void onMainServiceConnected() {
        //listenWhenToSpeak();
        speechManager.startSpeak("Ciao" + name);
+        System.out.println(name);
 
        //showImage("https://publications.cnr.it/api/v1/author/image/luca.coraci");
     }
