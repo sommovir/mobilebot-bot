@@ -96,8 +96,6 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                 //Toast.makeText(MainActivity.this, "MI AMMAZZO", Toast.LENGTH_LONG).show();
                 speechManager.startSpeak("NON SONO NULL");
             }
-            OperationResult operationResult = speechManager. isSpeaking();
-            System.out.println(operationResult.getResult().toString());
             goForward = findViewById(R.id.goForwardx);
             goBackward = findViewById(R.id.goBackward);
             turnLeft = findViewById(R.id.turnLeft);
@@ -119,8 +117,8 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
 
             System.out.println("inizio");
             //showInfo();
-            //initListener();
-            //connect();
+            initListener();
+            connect();
 
             goForward.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -458,8 +456,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
     protected void onMainServiceConnected() {
        //listenWhenToSpeak();
 
-        System.out.println(operationResult.getResult().toString());
-        speechManager.startSpeak("CiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiao" + name);
+        speechManager.startSpeak("Ciao" + name);
 
 
 

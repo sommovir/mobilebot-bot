@@ -104,6 +104,16 @@ public class MQTTManager {
         }
     }
 
+    public String getAutoListenPhrase(String s){
+        String[] split = s.split(">");
+        return split[2];
+    }
+
+    public Long getAutoListenDelay(String s){
+        s = s.substring(s.indexOf(":") + 1, s.length() - 1);
+        return Long.parseLong(s);
+    }
+
 
 
            /* IMqttToken token = client.connect();
