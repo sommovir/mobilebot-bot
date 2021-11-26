@@ -706,7 +706,13 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
 
     @Override
     public void speak(String text) {
-        talk(text, false, speechLed);
+        if(text.startsWith("<AUTOLISTEN>")){
+            text = text.replace("<AUTOLISTEN>","");
+            talk(text, true, speechLed);
+        }else{
+            talk(text, false, speechLed);
+        }
+
     }
 
     @Override
