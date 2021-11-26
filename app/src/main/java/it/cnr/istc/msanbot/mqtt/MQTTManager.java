@@ -36,6 +36,8 @@ public class MQTTManager {
     private static String ip;
     private Context context;
     MqttClient client = null;
+    private static final Long autoListenBaseDelay  = 200L;
+    private static final Long autoListenBaseDefault = 500L;
 
 
     private MQTTManager(){
@@ -110,6 +112,9 @@ public class MQTTManager {
     }
 
     public Long getAutoListenDelay(String s){
+        if(!s.contains("ROBOT-TIME")){
+            return autoListenBaseDelay * s.length() + autoListenBaseDefault;
+        }
         s = s.substring(s.indexOf(":") + 1, s.length() - 1);
         return Long.parseLong(s);
     }
@@ -237,6 +242,12 @@ public class MQTTManager {
 
                     byte[] payload = message.getPayload();
                     String sss = new String(payload);
+                    if(sss.contains("<AUTOLISTEN>")){
+                        Long autoListenDelay = getAutoListenDelay(sss);
+                        String purePhrase = getAutoListenPhrase(sss);
+                        EventManager.getInstance().forceAutoListen(autoListenDelay);
+                        sss = purePhrase;
+                    }
                     EventManager.getInstance().speak(sss);
 
                 }

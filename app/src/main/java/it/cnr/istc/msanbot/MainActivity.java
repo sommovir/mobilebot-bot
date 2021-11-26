@@ -202,7 +202,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                         @Override
                         public void onClick(View view) {
                             MQTTManager.getInstance().setIp(newIpEditText.getText().toString());
-                            talk("Nuovo ip settato", false, speechLed);
+                            talk("Nuovo ip settato" , speechLed);
                         }
                     });
 
@@ -318,7 +318,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
 
     private void initListener() {
 
-            talk("Inizio a sentire", false, listeningLed);
+            talk("Inizio a sentire", listeningLed);
             stop.setEnabled(false);
             stop.setBackgroundResource(R.drawable.stop_disabled);
             textView = findViewById(R.id.textView);
@@ -369,16 +369,16 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                     if (text.contains("ciao")) {
                         long time = new Date().getTime();
                         if (time % 2 == 1) {
-                            talk("Ciao",false,speechLed);
+                            talk("Ciao",speechLed);
                         } else {
-                            talk("lei è molto cortese",false,speechLed);
+                            talk("lei è molto cortese",speechLed);
                         }
                     }
                     if(text.contains("prova")){
-                        talk("prova discorso lungo lunghissimissssssimo",false,rageLed);
+                        talk("prova discorso lungo lunghissimissssssimo",rageLed);
                     }
                     if(text.contains("listen")){
-                        talk("inizio test della funzione di auto minchia",true,rageLed);
+                        talk("inizio test della funzione di auto minchia",rageLed);
                     }
                     if(text.equals("girati")){
                         RelativeAngleWheelMotion relativeAngleWheelMotion = new RelativeAngleWheelMotion(RelativeAngleWheelMotion.TURN_LEFT, 5,180);
@@ -469,46 +469,11 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
      * Sintetizza il testo text,
      * @param text
      * il testo da sintetizzare
-     * @param autolisten
-     * se true effettua l'autolisten
      */
-    public void talk(String text, boolean autolisten,LED led) {
+    public void talk(String text,LED led) {
         text = chooseRandomText(text);
         speechManager.startSpeak(text);
         hardWareManager.setLED(led);
-        if(autolisten){
-            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    long limit = 60;
-                    int i = 0;
-                    System.out.println("INIT AUTOFUCKING");
-                    while(true) {
-                        System.out.println("--- RESULT: "+speechManager.isSpeaking().getResult());
-                        System.out.println("---- DESCPRITION: "+speechManager.isSpeaking().getDescription());
-                        System.out.println("---- describeContents: "+speechManager.isSpeaking().describeContents());
-                        System.out.println(speechManager.isSpeaking().getDescription());
-                        if(i >= 60 ){
-                            System.out.println("LIMIT REACHED. RIP");
-                            break;
-                        }
-                        if (speechManager.isSpeaking().getResult().equals("0") && false) {
-                            System.out.println("Stop blatering.");
-                            speechManager.doWakeUp();
-                            break;
-                        }else{
-                            try {
-                                Thread.sleep(500);
-                                i++;
-                            }catch(Exception ex){
-                                ex.printStackTrace();
-                            }
-                            System.out.println("still speaking.. ");
-                        }
-                    }
-                }
-            }, 500);
-        }
     }
 
     public void showInfo(){
@@ -768,14 +733,14 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
 
     @Override
     public void serverOnline() {
-        talk("Server Online",false, speechLed);
+        talk("Server Online", speechLed);
         //TextView serverStatus = findViewById(R.id.imageView_ServerStatus);
         serverStatus.setColorFilter(Color.argb(255, 0, 255, 0));
     }
 
     @Override
     public void serverOffline() {
-        talk("Server Offline",false, speechLed);
+        talk("Server Offline", speechLed);
         //TextView serverStatus = findViewById(R.id.imageView_ServerStatus);
         serverStatus.setColorFilter(Color.argb(255, 0, 255, 0));
     }
@@ -784,16 +749,26 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
     public void speak(String text) {
         if(text.startsWith("<AUTOLISTEN>")){
             text = text.replace("<AUTOLISTEN>","");
-            talk(text, true, speechLed);
+            talk(text, speechLed);
             //speechManager.startSpeak(text);
             showInfo();
         }else{
-            talk(text, false, speechLed);
+            talk(text , speechLed);
             //speechManager.startSpeak(text);
             showInfo();
             speechManager.onRecognizeStop();
         }
 
+    }
+
+    @Override
+    public void forceAutoListenDelay(Long autoListenDelay) {
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                speechManager.doWakeUp();
+            }
+        }, autoListenDelay);
     }
 
     @Override

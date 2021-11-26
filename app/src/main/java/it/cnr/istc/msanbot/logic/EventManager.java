@@ -66,4 +66,11 @@ public class EventManager {
             listener.speak(text);
         }
     }
+
+    public void forceAutoListen(Long autoListenDelay) {
+        for (ConnectionEventListener listener : connectionEventListenerList) {
+            System.out.println("CALLING LISTENER");
+            listener.forceAutoListenDelay(autoListenDelay);
+        }
+    }
 }
