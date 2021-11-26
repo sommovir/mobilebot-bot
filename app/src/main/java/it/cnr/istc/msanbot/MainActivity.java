@@ -112,6 +112,8 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
             name = namePref.getString("name", "Luca");
             System.out.println(name);
 
+            System.out.println("inizio");
+            showInfo();
             initListener();
             connect();
 
@@ -162,12 +164,12 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                     dialog = dialogBuilder.create();
 
                     EditText newNameEditText = createPopup.findViewById(R.id.newDataEditText);
-                    Button setNewName= createPopup.findViewById(R.id.setBtn);
+                    Button setNewName = createPopup.findViewById(R.id.setBtn);
 
                     setNewName.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            if(newNameEditText.getText().toString() != null && !newNameEditText.getText().toString().isEmpty()){
+                            if (newNameEditText.getText().toString() != null && !newNameEditText.getText().toString().isEmpty()) {
                                 SharedPreferences prefs = getSharedPreferences("prefs", MODE_PRIVATE);
                                 SharedPreferences.Editor editor = prefs.edit();
                                 editor.putString("name", newNameEditText.getText().toString());
@@ -429,6 +431,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
     }
 
 
+
     /**
      * Sintetizza il testo text,
      * @param text
@@ -456,7 +459,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                             System.out.println("LIMIT REACHED. RIP");
                             break;
                         }
-                        if (speechManager.isSpeaking().getResult().equals("0")) {
+                        if (speechManager.isSpeaking().getResult().equals("0") && false) {
                             System.out.println("Stop blatering.");
                             speechManager.doWakeUp();
                             break;
@@ -473,6 +476,13 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                 }
             }, 500);
         }
+    }
+
+    public void showInfo(){
+        System.out.println("--- RESULT: "+speechManager.isSpeaking().getResult());
+        System.out.println("---- DESCPRITION: "+speechManager.isSpeaking().getDescription());
+        System.out.println("---- describeContents: "+speechManager.isSpeaking().describeContents());
+        System.out.println(speechManager.isSpeaking().getDescription());
     }
 
 
@@ -741,9 +751,14 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
     public void speak(String text) {
         if(text.startsWith("<AUTOLISTEN>")){
             text = text.replace("<AUTOLISTEN>","");
-            talk(text, true, speechLed);
+            //talk(text, true, speechLed);
+            speechManager.startSpeak(text);
+            showInfo();
         }else{
-            talk(text, false, speechLed);
+            //talk(text, false, speechLed);
+            speechManager.startSpeak(text);
+            showInfo();
+            speechManager.onRecognizeStop();
         }
 
     }
