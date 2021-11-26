@@ -36,7 +36,6 @@ import com.sanbot.opensdk.beans.OperationResult;
 import com.sanbot.opensdk.function.beans.LED;
 import com.sanbot.opensdk.function.beans.speech.Grammar;
 import com.sanbot.opensdk.function.beans.speech.RecognizeTextBean;
-import com.sanbot.opensdk.function.beans.speech.SpeakStatus;
 import com.sanbot.opensdk.function.beans.wheelmotion.NoAngleWheelMotion;
 import com.sanbot.opensdk.function.beans.wheelmotion.RelativeAngleWheelMotion;
 import com.sanbot.opensdk.function.unit.HardWareManager;
@@ -46,7 +45,6 @@ import com.sanbot.opensdk.function.unit.WheelMotionManager;
 import com.sanbot.opensdk.function.unit.interfaces.hardware.InfrareListener;
 import com.sanbot.opensdk.function.unit.interfaces.media.MediaListener;
 import com.sanbot.opensdk.function.unit.interfaces.speech.RecognizeListener;
-import com.sanbot.opensdk.function.unit.interfaces.speech.SpeakListener;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -78,7 +76,6 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
     private AlertDialog tableDialog = null;
     MQTTManager mqttManager = null;
     private Map<String,Boolean> colorCellMap = new HashMap<>();
-    private boolean isSpeaking = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,8 +88,8 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
         EventManager.getInstance().addConnectionEventListener(this);
 
         try {
-            //recSymbol = findViewById(R.id.recSymbol);
-            //recSymbol.setVisibility(View.INVISIBLE);
+            recSymbol = findViewById(R.id.recSymbol);
+            recSymbol.setVisibility(View.INVISIBLE);
 
             setContentView(R.layout.activity_main);
             RobotManager.getInstance().setSystemManager(systemManager);
@@ -102,6 +99,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                 //Toast.makeText(MainActivity.this, "MI AMMAZZO", Toast.LENGTH_LONG).show();
                 speechManager.startSpeak("NON SONO NULL");
             }
+            initListener();
 
             goForward = findViewById(R.id.goForwardx);
             goBackward = findViewById(R.id.goBackward);
@@ -115,9 +113,6 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
             background = findViewById(R.id.background);
             serverStatus = findViewById(R.id.imageView_ServerStatus);
             img = findViewById(R.id.image);
-            stop.setEnabled(false);
-            stop.setBackgroundResource(R.drawable.stop_disabled);
-            initListener();
 
             goForward.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -189,16 +184,16 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
             });
 
 
+
             mainSpeak.setOnClickListener(new View.OnClickListener() {
                 @SuppressLint("ResourceAsColor")
                 @Override
                 public void onClick(View view) {
-                    //recSymbol.setVisibility(View.VISIBLE);
+                    recSymbol.setVisibility(View.VISIBLE);
                     background.setBackgroundColor(android.R.color.black);
                     //speechManager.startSpeak("Uga Buga Uga Tunga");
                     //systemManager.showEmotion(EmotionsType.SMILE);
                     speechManager.doWakeUp();
-
                     //listenWhenToSpeak();
                     //initListener();
 
@@ -290,15 +285,16 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
         new Handler().postDelayed(() -> {
             speechManager.startSpeak("Ok basta");
         },0);
-        //recSymbol.setVisibility(View.INVISIBLE);
+        recSymbol.setVisibility(View.INVISIBLE);
         stop.setEnabled(false);
-        isSpeaking = false;
         stop.setBackgroundResource(R.drawable.stop_disabled);
     }
 
     private void initListener() {
 
             talk("Inizio a sentire",listeningLed);
+            stop.setEnabled(false);
+            stop.setBackgroundResource(R.drawable.stop_disabled);
             textView = findViewById(R.id.textView);
             hardWareManager.setOnHareWareListener(new InfrareListener() {
                 @Override
@@ -307,22 +303,10 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                 }
             });
 
-        speechManager.setOnSpeechListener(new SpeakListener() {
-            @Override
-            public void onSpeakStatus(@NonNull SpeakStatus speakStatus) {
-
-                textView.setText("Stato:" + speakStatus.getProgress() );
-                if(speakStatus.getProgress() == 100 && isSpeaking == true && speechManager.isSpeaking().getResult().equals("0")){
-                    isSpeaking = false;
-                    speechManager.doWakeUp();
-                }
-            }
-        });
-
             speechManager.setOnSpeechListener(new RecognizeListener() {
                 @Override
                 public void onRecognizeText(RecognizeTextBean recognizeTextBean) {
-                    //recSymbol.setVisibility(View.INVISIBLE);
+                    recSymbol.setVisibility(View.INVISIBLE);
                     String text = recognizeTextBean.getText().toLowerCase();
                     MQTTManager.getInstance().publish(Topics.CHAT.getTopic() + "/" + MQTTManager.getInstance().getId(), text);
                     textView.setText(recognizeTextBean.getText());
@@ -350,6 +334,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                     //if(FaceManager.)Simo fai a singletone per gettare le faccie
 
                     //hardWareManager.setLED(rageLed);
+                    speechManager.doWakeUp();
                 }
 
                 @Override
@@ -419,7 +404,6 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
     }
 
     public void talk(String text,LED led){
-        isSpeaking = true;
         speechManager.startSpeak(text);
         hardWareManager.setLED(led);
     }

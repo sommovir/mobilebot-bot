@@ -327,8 +327,10 @@ public class MQTTManager {
                 return;
             }
             try {
-                client.disconnect();
-                client.close();
+                if(client!= null) {
+                    client.disconnect();
+                    client.close();
+                }
             } catch (MqttException e) {
                 e.printStackTrace();
             }
