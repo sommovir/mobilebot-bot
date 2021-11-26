@@ -444,16 +444,26 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    long limit = 60;
+                    int i = 0;
                     System.out.println("INIT AUTOFUCKING");
                     while(true) {
                         System.out.println("--- RESULT: "+speechManager.isSpeaking().getResult());
+                        System.out.println("---- DESCPRITION: "+speechManager.isSpeaking().getDescription());
+                        System.out.println("---- describeContents: "+speechManager.isSpeaking().describeContents());
+                        System.out.println(speechManager.isSpeaking().getDescription());
+                        if(i >= 60 ){
+                            System.out.println("LIMIT REACHED. RIP");
+                            break;
+                        }
                         if (speechManager.isSpeaking().getResult().equals("0")) {
                             System.out.println("Stop blatering.");
                             speechManager.doWakeUp();
                             break;
                         }else{
                             try {
-                                Thread.sleep(300);
+                                Thread.sleep(500);
+                                i++;
                             }catch(Exception ex){
                                 ex.printStackTrace();
                             }
