@@ -57,7 +57,7 @@ import it.cnr.istc.msanbot.logic.Topics;
 import it.cnr.istc.msanbot.mqtt.MQTTManager;
 
 public class MainActivity extends TopBaseActivity implements MediaListener, ConnectionEventListener, RobotEventListener {
-    SpeechManager speechManager = null;
+    SpeechManager speechManager = (SpeechManager) getUnitManager(FuncConstant.SPEECH_MANAGER);
     HardWareManager hardWareManager = (HardWareManager)getUnitManager(FuncConstant.HARDWARE_MANAGER);
     SystemManager systemManager = (SystemManager)getUnitManager(FuncConstant.SYSTEM_MANAGER);
     WheelMotionManager wheelMotionManager= (WheelMotionManager)getUnitManager(FuncConstant.WHEELMOTION_MANAGER);
@@ -80,8 +80,8 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
         register(MainActivity.class);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+
         super.onCreate(savedInstanceState);
-        this.speechManager = (SpeechManager)getUnitManager(FuncConstant. SPEECH_MANAGER);
         RobotManager.getInstance().addRobotEventListener(this);
         EventManager.getInstance().addConnectionEventListener(this);
 
@@ -95,6 +95,8 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                 //Toast.makeText(MainActivity.this, "MI AMMAZZO", Toast.LENGTH_LONG).show();
                 speechManager.startSpeak("NON SONO NULL");
             }
+            OperationResult operationResult = speechManager. isSpeaking();
+            System.out.println(operationResult.getResult().toString());
             goForward = findViewById(R.id.goForwardx);
             goBackward = findViewById(R.id.goBackward);
             turnLeft = findViewById(R.id.turnLeft);
@@ -115,9 +117,9 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
             System.out.println(name);
 
             System.out.println("inizio");
-            showInfo();
-            initListener();
-            connect();
+            //showInfo();
+            //initListener();
+            //connect();
 
             goForward.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -438,8 +440,11 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
     @Override
     protected void onMainServiceConnected() {
        //listenWhenToSpeak();
-       speechManager.startSpeak("Ciao" + name);
-        System.out.println(name);
+
+        System.out.println(operationResult.getResult().toString());
+        speechManager.startSpeak("CiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiaoCiao" + name);
+
+
 
        //showImage("https://publications.cnr.it/api/v1/author/image/luca.coraci");
     }
@@ -765,12 +770,12 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
     public void speak(String text) {
         if(text.startsWith("<AUTOLISTEN>")){
             text = text.replace("<AUTOLISTEN>","");
-            //talk(text, true, speechLed);
-            speechManager.startSpeak(text);
+            talk(text, true, speechLed);
+            //speechManager.startSpeak(text);
             showInfo();
         }else{
-            //talk(text, false, speechLed);
-            speechManager.startSpeak(text);
+            talk(text, false, speechLed);
+            //speechManager.startSpeak(text);
             showInfo();
             speechManager.onRecognizeStop();
         }
