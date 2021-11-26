@@ -326,7 +326,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                         talk("prova discorso lungo lunghissimissssssimo",false,rageLed);
                     }
                     if(text.contains("listen")){
-                        talk("inizio test della funzione di auto listen",true,rageLed);
+                        talk("inizio test della funzione di auto minchia",true,rageLed);
                     }
                     if(text.equals("girati")){
                         RelativeAngleWheelMotion relativeAngleWheelMotion = new RelativeAngleWheelMotion(RelativeAngleWheelMotion.TURN_LEFT, 5,180);
@@ -339,7 +339,6 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                     //if(FaceManager.)Simo fai a singletone per gettare le faccie
 
                     //hardWareManager.setLED(rageLed);
-                    speechManager.doWakeUp();
                 }
 
                 @Override
