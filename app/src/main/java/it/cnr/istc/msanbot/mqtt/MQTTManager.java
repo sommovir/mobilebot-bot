@@ -323,6 +323,9 @@ public class MQTTManager {
 
     public void disconnect(){
         synchronized (this) {
+            if(client == null || !client.isConnected()){
+                return;
+            }
             try {
                 client.disconnect();
                 client.close();
