@@ -14,6 +14,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -176,7 +177,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                         @Override
                         public void onClick(View view) {
                             MQTTManager.getInstance().setIp(newIpEditText.getText().toString());
-                            talk("Nuovo ip settato", speechLed);
+                            talk("Nuovo ip settato",false, speechLed);
                         }
                     });
 
@@ -293,7 +294,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
 
     private void initListener() {
 
-            talk("Inizio a sentire",listeningLed);
+            talk("Inizio a sentire", false, listeningLed);
             stop.setEnabled(false);
             stop.setBackgroundResource(R.drawable.stop_disabled);
             textView = findViewById(R.id.textView);
@@ -316,13 +317,16 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                     if (text.contains("ciao")) {
                         long time = new Date().getTime();
                         if (time % 2 == 1) {
-                            talk("Ciao",speechLed);
+                            talk("Ciao",false,speechLed);
                         } else {
-                            talk("lei è molto cortese",speechLed);
+                            talk("lei è molto cortese",false,speechLed);
                         }
                     }
                     if(text.contains("prova")){
-                        talk("prova discorso lungo lunghissimissssssimo",rageLed);
+                        talk("prova discorso lungo lunghissimissssssimo",false,rageLed);
+                    }
+                    if(text.contains("listen")){
+                        talk("inizio test della funzione di auto listen",true,rageLed);
                     }
                     if(text.equals("girati")){
                         RelativeAngleWheelMotion relativeAngleWheelMotion = new RelativeAngleWheelMotion(RelativeAngleWheelMotion.TURN_LEFT, 5,180);
@@ -404,11 +408,6 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
        //showImage("https://publications.cnr.it/api/v1/author/image/luca.coraci");
     }
 
-    public void talk(String text,LED led){
-        text = chooseRandomText(text);
-        speechManager.startSpeak(text);
-        hardWareManager.setLED(led);
-    }
 
     /**
      * Sintetizza il testo text,
@@ -417,10 +416,30 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
      * @param autolisten
      * se true effettua l'autolisten
      */
-    public void speakText(String text, boolean autolisten) {
-        talk(text,speechLed);
+    public void talk(String text, boolean autolisten,LED led) {
+        text = chooseRandomText(text);
+        speechManager.startSpeak(text);
+        hardWareManager.setLED(led);
         if(autolisten){
-            speechManager.doWakeUp();
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    while(true) {
+                        if (speechManager.isSpeaking().getResult().equals("0")) {
+                            System.out.println("Stop blatering.");
+                            speechManager.doWakeUp();
+                            break;
+                        }else{
+                            try {
+                                Thread.sleep(300);
+                            }catch(Exception ex){
+                                ex.printStackTrace();
+                            }
+                            System.out.println("still speaking.. ");
+                        }
+                    }
+                }
+            }, 1000);
         }
     }
 
@@ -674,21 +693,21 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
 
     @Override
     public void serverOnline() {
-        talk("Server Online",speechLed);
+        talk("Server Online",false, speechLed);
         //TextView serverStatus = findViewById(R.id.imageView_ServerStatus);
         serverStatus.setColorFilter(Color.argb(255, 0, 255, 0));
     }
 
     @Override
     public void serverOffline() {
-        talk("Server Offline",speechLed);
+        talk("Server Offline",false, speechLed);
         //TextView serverStatus = findViewById(R.id.imageView_ServerStatus);
         serverStatus.setColorFilter(Color.argb(255, 0, 255, 0));
     }
 
     @Override
     public void speak(String text) {
-        talk(text, speechLed);
+        talk(text, false, speechLed);
     }
 
     @Override
