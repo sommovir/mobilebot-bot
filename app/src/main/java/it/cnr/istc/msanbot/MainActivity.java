@@ -43,6 +43,7 @@ import com.sanbot.opensdk.function.unit.interfaces.hardware.InfrareListener;
 import com.sanbot.opensdk.function.unit.interfaces.media.MediaListener;
 import com.sanbot.opensdk.function.unit.interfaces.speech.RecognizeListener;
 import com.sanbot.opensdk.function.unit.interfaces.speech.SpeakListener;
+import com.sanbot.opensdk.function.unit.interfaces.speech.WakenListener;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -323,6 +324,22 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                 @Override
                 public void infrareDistance(int part, int distance) {
 
+                }
+            });
+
+            speechManager.setOnSpeechListener(new WakenListener() {
+                @Override
+                public void onWakeUpStatus(boolean b) {
+                    System.out.println("------------------------------>>>>>>>>>>> WAKEUP: "+b);
+                }
+
+                @Override
+                public void onWakeUp() {
+                    System.out.println("------------------------------>>>>>>>>>>> WAKEUP !!!!!!!! ");
+                }
+                @Override
+                public void onSleep() {
+                    System.out.println("------------------------------>>>>>>>>>>> SLEEEEP ZZZZzzZZZ: ");
                 }
             });
 
