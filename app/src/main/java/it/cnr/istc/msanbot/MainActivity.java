@@ -451,7 +451,9 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
             new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    System.out.println("INIT AUTOFUCKING");
                     while(true) {
+                        System.out.println("--- RESULT: "+speechManager.isSpeaking().getResult());
                         if (speechManager.isSpeaking().getResult().equals("0")) {
                             System.out.println("Stop blatering.");
                             speechManager.doWakeUp();
@@ -466,7 +468,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                         }
                     }
                 }
-            }, 1000);
+            }, 500);
         }
     }
 
@@ -734,7 +736,13 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
 
     @Override
     public void speak(String text) {
-        talk(text, false, speechLed);
+        if(text.startsWith("<AUTOLISTEN>")){
+            text = text.replace("<AUTOLISTEN>","");
+            talk(text, true, speechLed);
+        }else{
+            talk(text, false, speechLed);
+        }
+
     }
 
     @Override
