@@ -456,7 +456,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
     protected void onMainServiceConnected() {
        //listenWhenToSpeak();
 
-        speechManager.startSpeak("Ciao" + name);
+        speechManager.startSpeak("Ciao " + name);
 
 
 
@@ -763,12 +763,15 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
 
     @Override
     public void forceAutoListenDelay(Long autoListenDelay) {
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
+        runOnUiThread(new Runnable() {
             public void run() {
-                speechManager.doWakeUp();
-            }
-        }, autoListenDelay);
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        speechManager.doWakeUp();
+                    }
+                }, autoListenDelay);
+            }});
     }
 
     @Override
