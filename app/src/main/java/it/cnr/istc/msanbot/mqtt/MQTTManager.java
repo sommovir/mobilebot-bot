@@ -237,6 +237,21 @@ public class MQTTManager {
 
 
 
+
+            client.subscribe(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"link", new IMqttMessageListener() {
+                @Override
+                public void messageArrived(String topic, MqttMessage message) throws Exception {
+
+                    System.out.println(topic + "\t" + clientId);
+
+                    byte[] payload = message.getPayload();
+                    String link = new String(payload);
+
+                            EventManager.getInstance().showLink(link);
+
+                }
+            });
+
             client.subscribe(Topics.RESPONSES.getTopic() + "/" + clientId, new IMqttMessageListener() {
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
