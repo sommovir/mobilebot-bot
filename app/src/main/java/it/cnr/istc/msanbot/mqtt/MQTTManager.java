@@ -209,7 +209,7 @@ public class MQTTManager {
         int qos = 1;
         try {
 
-            client.subscribe(Topics.COMMAND.getTopic(), new IMqttMessageListener() {
+            client.subscribe(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"img", new IMqttMessageListener() {
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
 
