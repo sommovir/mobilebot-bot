@@ -31,12 +31,12 @@ public class MQTTManager {
     private static final String SPEECH_TOPIC = "speech";
     private static final String MOVE_TOPIC = "move"; //direction:speed:quantity
     private static final String DIRECTION_FORWARD = "forward";
-    private static final String TAKE_PIC = "takepic";
+    //private static final String TAKE_PIC = "takepic";
     private static final String RECEIVE_PIC = "receive_pic";
     private static String ip;
     private Context context;
     MqttClient client = null;
-    private static final Long autoListenBaseDelay  = 200L;
+    private static final Long autoListenBaseDelay  = 100L;
     private static final Long autoListenBaseDefault = 500L;
 
 
@@ -55,8 +55,6 @@ public class MQTTManager {
     public void setIp(String newIp){
         ip = newIp;
     }
-
-
 
     public void connect(final Context context) {
         synchronized (this) {
@@ -107,15 +105,20 @@ public class MQTTManager {
     }
 
     public String getAutoListenPhrase(String s){
+        if(!s.contains("ROBOT-TIME")){
+            return s.split(">")[1];
+        }
         String[] split = s.split(">");
         return split[2];
     }
 
     public Long getAutoListenDelay(String s){
         if(!s.contains("ROBOT-TIME")){
+            System.out.println(autoListenBaseDelay * s.length() + autoListenBaseDefault);
             return autoListenBaseDelay * s.length() + autoListenBaseDefault;
         }
         s = s.substring(s.indexOf(":") + 1, s.length() - 1);
+        System.out.println("No if:" + Long.parseLong(s));
         return Long.parseLong(s);
     }
 
@@ -206,7 +209,7 @@ public class MQTTManager {
         int qos = 1;
         try {
 
-            client.subscribe(TAKE_PIC, new IMqttMessageListener() {
+            client.subscribe(Topics.COMMAND.getTopic(), new IMqttMessageListener() {
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
 
@@ -243,11 +246,16 @@ public class MQTTManager {
                     byte[] payload = message.getPayload();
                     String sss = new String(payload);
                     if(sss.contains("<AUTOLISTEN>")){
+                        System.out.println("Contiene autolisten");
+                        try{
                         Long autoListenDelay = getAutoListenDelay(sss);
                         String purePhrase = getAutoListenPhrase(sss);
                         EventManager.getInstance().forceAutoListen(autoListenDelay);
-                        sss = purePhrase;
+                        sss = purePhrase;}catch (Exception ex){
+                            ex.printStackTrace();
+                        }
                     }
+                    System.out.println("Frase:" + sss);
                     EventManager.getInstance().speak(sss);
 
                 }

@@ -6,6 +6,8 @@ import com.sanbot.opensdk.function.unit.SpeechManager;
 import java.util.LinkedList;
 import java.util.List;
 
+import it.cnr.istc.msanbot.MainActivity;
+
 public class EventManager {
 
     private boolean serverOnline = false;
@@ -55,7 +57,7 @@ public class EventManager {
     public void playYouTubeVideo(String id){
         for (MediaEventListener listener : mediaEventListeners) {
             System.out.println("CALLING LISTENER");
-            listener.showYoutubeVideo(id);
+            listener.showYoutubeVideoOnRobot(id);
         }
     }
 
@@ -71,6 +73,18 @@ public class EventManager {
         for (ConnectionEventListener listener : connectionEventListenerList) {
             System.out.println("CALLING LISTENER");
             listener.forceAutoListenDelay(autoListenDelay);
+        }
+    }
+
+    public void showLink(String link) {
+        for (MediaEventListener listener : mediaEventListeners) {
+            listener.showLinkOnRobot(link);
+        }
+    }
+
+    public void showImage(String link) {
+        for (MediaEventListener listener : mediaEventListeners) {
+            listener.showImageOnRobot(link);
         }
     }
 }
