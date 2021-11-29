@@ -56,7 +56,7 @@ public class EventManager {
 
     public void playYouTubeVideo(String id){
         for (MediaEventListener listener : mediaEventListeners) {
-            System.out.println("CALLING LISTENER");
+            System.out.println("CALLING LISTENER VIDEO");
             listener.showYoutubeVideoOnRobot(id);
         }
     }
@@ -83,7 +83,9 @@ public class EventManager {
     }
 
     public void showImage(String link) {
+        System.out.println("SIZE: " + mediaEventListeners.size());
         for (MediaEventListener listener : mediaEventListeners) {
+            System.out.println("djsaoijfa");
             listener.showImageOnRobot(link);
         }
     }

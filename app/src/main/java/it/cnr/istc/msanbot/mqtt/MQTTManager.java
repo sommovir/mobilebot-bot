@@ -38,23 +38,23 @@ public class MQTTManager {
     private static String ip;
     private Context context;
     MqttClient client = null;
-    private static final Long autoListenBaseDelay  = 100L;
+    private static final Long autoListenBaseDelay = 100L;
     private static final Long autoListenBaseDefault = 500L;
 
 
-    private MQTTManager(){
+    private MQTTManager() {
         clientId = MqttClient.generateClientId();
-        System.out.println("client id = "+clientId);
+        System.out.println("client id = " + clientId);
     }
 
-    public static MQTTManager getInstance(){
-        if(_instance == null){
+    public static MQTTManager getInstance() {
+        if (_instance == null) {
             _instance = new MQTTManager();
         }
         return _instance;
     }
 
-    public void setIp(String newIp){
+    public void setIp(String newIp) {
         ip = newIp;
     }
 
@@ -106,16 +106,16 @@ public class MQTTManager {
         }
     }
 
-    public String getAutoListenPhrase(String s){
-        if(!s.contains("ROBOT-TIME")){
+    public String getAutoListenPhrase(String s) {
+        if (!s.contains("ROBOT-TIME")) {
             return s.split(">")[1];
         }
         String[] split = s.split(">");
         return split[2];
     }
 
-    public Long getAutoListenDelay(String s){
-        if(!s.contains("ROBOT-TIME")){
+    public Long getAutoListenDelay(String s) {
+        if (!s.contains("ROBOT-TIME")) {
             System.out.println(autoListenBaseDelay * s.length() + autoListenBaseDefault);
             return autoListenBaseDelay * s.length() + autoListenBaseDefault;
         }
@@ -176,16 +176,11 @@ public class MQTTManager {
             });*/
 
 
-
-
     //SUBSCRIBE PHASE
 
 
-
-
-
     private void subscribe() {
-        while(!client.isConnected()){
+        while (!client.isConnected()) {
             System.out.println("aspetto");
             try {
                 Thread.sleep(1500);
@@ -193,14 +188,14 @@ public class MQTTManager {
                 e.printStackTrace();
             }
         }
-        if(client.isConnected()){
+        if (client.isConnected()) {
             System.out.println("Quasi ascolto");
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }else{
+        } else {
             System.out.println("Tada");
             try {
                 Thread.sleep(3000);
@@ -211,7 +206,7 @@ public class MQTTManager {
         int qos = 1;
         try {
 
-            client.subscribe(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"img", new IMqttMessageListener() {
+            client.subscribe(Topics.COMMAND.getTopic() + "/" + clientId + "/" + "img", new IMqttMessageListener() {
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
 
@@ -226,7 +221,6 @@ public class MQTTManager {
             });
 
 
-
             client.subscribe(SPEECH_TOPIC, new IMqttMessageListener() {
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
@@ -238,7 +232,7 @@ public class MQTTManager {
             });
 
 
-            client.subscribe(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"face", new IMqttMessageListener() {
+            client.subscribe(Topics.COMMAND.getTopic() + "/" + clientId + "/" + "face", new IMqttMessageListener() {
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
 
@@ -250,13 +244,26 @@ public class MQTTManager {
                     RobotManager.getInstance().changeFace(FaceType.of(face));
 
 
-
                 }
             });
 
 
+            client.subscribe(Topics.COMMAND.getTopic() + "/" + clientId + "/" + "link", new IMqttMessageListener() {
+                @Override
+                public void messageArrived(String topic, MqttMessage message) throws Exception {
 
-            client.subscribe(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"link", new IMqttMessageListener() {
+                    System.out.println(topic + "\t" + clientId);
+
+                    byte[] payload = message.getPayload();
+                    String link = new String(payload);
+                    System.out.println("ink:" + link);
+
+                    EventManager.getInstance().showLink(link);
+
+                }
+            });
+
+            client.subscribe(Topics.COMMAND.getTopic() + "/" + clientId + "/" + "img", new IMqttMessageListener() {
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
 
@@ -265,26 +272,14 @@ public class MQTTManager {
                     byte[] payload = message.getPayload();
                     String link = new String(payload);
 
-                            EventManager.getInstance().showLink(link);
-
-                }
-            });
-
-            client.subscribe(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"img", new IMqttMessageListener() {
-                @Override
-                public void messageArrived(String topic, MqttMessage message) throws Exception {
-
-                    System.out.println(topic + "\t" + clientId);
-
-                    byte[] payload = message.getPayload();
-                    String link = new String(payload);
+                    System.out.println("img" + link);
 
                     EventManager.getInstance().showImage(link);
 
                 }
             });
 
-            client.subscribe(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"video", new IMqttMessageListener() {
+            client.subscribe(Topics.COMMAND.getTopic() + "/" + clientId + "/" + "youtube", new IMqttMessageListener() {
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
 
@@ -292,7 +287,7 @@ public class MQTTManager {
 
                     byte[] payload = message.getPayload();
                     String link = new String(payload);
-
+                    System.out.println("Video" + link);
                     EventManager.getInstance().playYouTubeVideo(link);
 
                 }
@@ -306,13 +301,14 @@ public class MQTTManager {
 
                     byte[] payload = message.getPayload();
                     String sss = new String(payload);
-                    if(sss.contains("<AUTOLISTEN>")){
+                    if (sss.contains("<AUTOLISTEN>")) {
                         System.out.println("Contiene autolisten");
-                        try{
-                        Long autoListenDelay = getAutoListenDelay(sss);
-                        String purePhrase = getAutoListenPhrase(sss);
-                        EventManager.getInstance().forceAutoListen(autoListenDelay);
-                        sss = purePhrase;}catch (Exception ex){
+                        try {
+                            Long autoListenDelay = getAutoListenDelay(sss);
+                            String purePhrase = getAutoListenPhrase(sss);
+                            EventManager.getInstance().forceAutoListen(autoListenDelay);
+                            sss = purePhrase;
+                        } catch (Exception ex) {
                             ex.printStackTrace();
                         }
                     }
@@ -348,24 +344,24 @@ public class MQTTManager {
                 }
             });
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             System.out.println("aspeErr nella pubtto");
             StringWriter errors = new StringWriter();
             e.printStackTrace(new PrintWriter(errors));
-            Toast toast=Toast.makeText(context,errors.toString(),Toast.LENGTH_LONG);
-            toast.setMargin(50,50);
+            Toast toast = Toast.makeText(context, errors.toString(), Toast.LENGTH_LONG);
+            toast.setMargin(50, 50);
             toast.show();
         }
 
 
     }
 
-    public void imalive(){
+    public void imalive() {
         this.publish(IM_ALIVE_TOPIC, "robottino");
     }
 
-    public void publish(String topic, String text){
+    public void publish(String topic, String text) {
         try {
 
 
@@ -379,13 +375,13 @@ public class MQTTManager {
             System.out.println("Err pub");
             StringWriter errors = new StringWriter();
             e.printStackTrace(new PrintWriter(errors));
-            Toast toast=Toast.makeText(context,errors.toString(),Toast.LENGTH_LONG);
-            toast.setMargin(50,50);
+            Toast toast = Toast.makeText(context, errors.toString(), Toast.LENGTH_LONG);
+            toast.setMargin(50, 50);
             toast.show();
         }
     }
 
-    public void sendPicture(byte [] image){
+    public void sendPicture(byte[] image) {
         try {
 
 
@@ -405,19 +401,19 @@ public class MQTTManager {
             System.out.println("Again err");
             StringWriter errors = new StringWriter();
             e.printStackTrace(new PrintWriter(errors));
-            Toast toast=Toast.makeText(context,errors.toString(),Toast.LENGTH_LONG);
-            toast.setMargin(50,50);
+            Toast toast = Toast.makeText(context, errors.toString(), Toast.LENGTH_LONG);
+            toast.setMargin(50, 50);
             toast.show();
         }
     }
 
-    public void disconnect(){
+    public void disconnect() {
         synchronized (this) {
-            if(client == null || !client.isConnected()){
+            if (client == null || !client.isConnected()) {
                 return;
             }
             try {
-                if(client!= null) {
+                if (client != null) {
                     client.disconnect();
                     client.close();
                 }
