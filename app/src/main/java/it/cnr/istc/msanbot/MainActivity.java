@@ -222,6 +222,8 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
                 @Override
                 public void onClick(View view) {
                     recSymbol.setVisibility(View.VISIBLE);
+                    mainSpeak.setBackgroundResource(R.drawable.speak_button_green);
+                    background.setBackgroundColor(android.R.color.black);
                     //speechManager.startSpeak("Uga Buga Uga Tunga");
                     //systemManager.showEmotion(EmotionsType.SMILE);
                     speechManager.doWakeUp();
