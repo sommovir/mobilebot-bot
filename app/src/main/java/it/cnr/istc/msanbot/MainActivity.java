@@ -524,6 +524,13 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
         showLink(link);
     }
 
+    @Override
+    public void showTableOnRobot(String table) {
+        System.out.println("TABLE = "+ table);
+        String[] tabella = table.split("<ROW>");
+        showGenericTable(tabella);
+    }
+
     /**
      * Mostra un immagine pubblicata in rete
      *

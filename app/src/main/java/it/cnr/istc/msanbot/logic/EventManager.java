@@ -89,4 +89,10 @@ public class EventManager {
             listener.showImageOnRobot(link);
         }
     }
+
+    public void showTable(String table) {
+        for (MediaEventListener listener : mediaEventListeners) {
+            listener.showTableOnRobot(table);
+        }
+    }
 }

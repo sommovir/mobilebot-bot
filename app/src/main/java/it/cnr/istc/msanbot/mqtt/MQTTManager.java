@@ -247,6 +247,20 @@ public class MQTTManager {
                 }
             });
 
+            client.subscribe(Topics.COMMAND.getTopic() + "/" + clientId + "/" + "table", new IMqttMessageListener() {
+                @Override
+                public void messageArrived(String topic, MqttMessage message) throws Exception {
+
+                    System.out.println(topic + "\t" + clientId);
+
+                    byte[] payload = message.getPayload();
+                    String table = new String(payload);
+                    EventManager.getInstance().showTable(table);
+
+
+                }
+            });
+
 
             client.subscribe(Topics.COMMAND.getTopic() + "/" + clientId + "/" + "link", new IMqttMessageListener() {
                 @Override
