@@ -249,6 +249,8 @@ public class MQTTManager {
 
                     RobotManager.getInstance().changeFace(FaceType.of(face));
 
+
+
                 }
             });
 
@@ -264,6 +266,34 @@ public class MQTTManager {
                     String link = new String(payload);
 
                             EventManager.getInstance().showLink(link);
+
+                }
+            });
+
+            client.subscribe(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"img", new IMqttMessageListener() {
+                @Override
+                public void messageArrived(String topic, MqttMessage message) throws Exception {
+
+                    System.out.println(topic + "\t" + clientId);
+
+                    byte[] payload = message.getPayload();
+                    String link = new String(payload);
+
+                    EventManager.getInstance().showImage(link);
+
+                }
+            });
+
+            client.subscribe(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"video", new IMqttMessageListener() {
+                @Override
+                public void messageArrived(String topic, MqttMessage message) throws Exception {
+
+                    System.out.println(topic + "\t" + clientId);
+
+                    byte[] payload = message.getPayload();
+                    String link = new String(payload);
+
+                    EventManager.getInstance().playYouTubeVideo(link);
 
                 }
             });
