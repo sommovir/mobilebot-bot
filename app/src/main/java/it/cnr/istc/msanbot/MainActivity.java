@@ -53,11 +53,12 @@ import java.util.concurrent.ThreadLocalRandom;
 import it.cnr.istc.msanbot.logic.ConnectionEventListener;
 import it.cnr.istc.msanbot.logic.EventManager;
 import it.cnr.istc.msanbot.logic.FaceType;
+import it.cnr.istc.msanbot.logic.MediaEventListener;
 import it.cnr.istc.msanbot.logic.RobotEventListener;
 import it.cnr.istc.msanbot.logic.Topics;
 import it.cnr.istc.msanbot.mqtt.MQTTManager;
 
-public class MainActivity extends TopBaseActivity implements MediaListener, ConnectionEventListener, RobotEventListener {
+public class MainActivity extends TopBaseActivity implements MediaEventListener, ConnectionEventListener, RobotEventListener {
     SpeechManager speechManager = (SpeechManager) getUnitManager(FuncConstant.SPEECH_MANAGER);
     HardWareManager hardWareManager = (HardWareManager)getUnitManager(FuncConstant.HARDWARE_MANAGER);
     SystemManager systemManager = (SystemManager)getUnitManager(FuncConstant.SYSTEM_MANAGER);
@@ -85,11 +86,14 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
         super.onCreate(savedInstanceState);
         RobotManager.getInstance().addRobotEventListener(this);
         EventManager.getInstance().addConnectionEventListener(this);
+        EventManager.getInstance().addMediaEventListener(this);
 
         try {
 
             setContentView(R.layout.activity_main);
             RobotManager.getInstance().setSystemManager(systemManager);
+            //showYouTubeVideo("https://www.youtube.com/watch?v=Sjg6jgED58c");
+
             if (speechManager == null) {
                 Toast.makeText(MainActivity.this, "VI SPACCO TUTTO", Toast.LENGTH_LONG).show();
             } else {
@@ -120,6 +124,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
             initListener();
             connect();
 
+            showLink("http://www.fiorelia.istc.cnr.it/");
             goForward.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -202,7 +207,9 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
                         @Override
                         public void onClick(View view) {
                             MQTTManager.getInstance().setIp(newIpEditText.getText().toString());
+                            connect();
                             talk("Nuovo ip settato" , speechLed);
+                            dialog.cancel();
                         }
                     });
 
@@ -348,11 +355,11 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
             speechManager.setOnSpeechListener(new SpeakListener() {
                 @Override
                 public void onSpeakStatus(@NonNull SpeakStatus speakStatus) {
-                    System.out.println("================================================== >> PROGRESS: "+speakStatus.getProgress());
+                   /* System.out.println("================================================== >> PROGRESS: "+speakStatus.getProgress());
                     System.out.println("================================================== >> STATUS TEXT: "+speakStatus.getText());
                     System.out.println("================================================== >> STATUS ID: "+speakStatus.getId());
                     System.out.println("================================================== >> STATUS ID: "+speakStatus.getEngine());
-
+*/
                 }
             });
 
@@ -415,7 +422,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
 
                 @Override
                 public void onError(int i, int i1) {
-                    Toast.makeText(MainActivity.this, "err", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "err" + i + " " + i1, Toast.LENGTH_SHORT).show();
                     System.out.println("error " + i + " " + i1);
                 }
 
@@ -471,6 +478,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
      * il testo da sintetizzare
      */
     public void talk(String text,LED led) {
+
         text = chooseRandomText(text);
         speechManager.startSpeak(text);
         hardWareManager.setLED(led);
@@ -516,6 +524,21 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
     public void showImage() {
     }
 
+    @Override
+    public void showYoutubeVideoOnRobot(String link) {
+        showYouTubeVideo(link);
+    }
+
+    @Override
+    public void showImageOnRobot(String link) {
+        showImage(link);
+    }
+
+    @Override
+    public void showLinkOnRobot(String link) {
+        showLink(link);
+    }
+
     /**
      * Mostra un immagine pubblicata in rete
      * @param url
@@ -526,8 +549,15 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
         final View createPopup = getLayoutInflater().inflate(R.layout.popup_activity, null);
         dialogBuilder.setView(createPopup);
         dialog = dialogBuilder.create();
-        ImageView image = createPopup.findViewById(R.id.image);
+        ImageView image = createPopup.findViewById(R.id.img);
         Glide.with(this).load(url).into(image);
+
+        View viewById = createPopup.findViewById(R.id.newDataEditText);
+        View viewById1 = createPopup.findViewById(R.id.setBtn);
+
+        viewById.setVisibility(View.INVISIBLE);
+        viewById1.setVisibility(View.INVISIBLE);
+
         dialog.show();
 
         /*
@@ -558,14 +588,21 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
         dialog = dialogBuilder.create();
         TextView linkPress = createPopup.findViewById(R.id.linkPress);
         String newLink;
-        if(!(linkPress.getText().toString().startsWith("http"))){
-            newLink = "http://" + link;
-        }
-        else{
+        if(link.startsWith("http")){
             newLink = link;
         }
+        else{
+            newLink = "http://" + link;
+        }
+        View viewById = createPopup.findViewById(R.id.newDataEditText);
+        View viewById1 = createPopup.findViewById(R.id.setBtn);
+
+        viewById.setVisibility(View.INVISIBLE);
+        viewById1.setVisibility(View.INVISIBLE);
+
 
         linkPress.setText(newLink);
+        System.out.println(newLink);
 
         linkPress.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -747,31 +784,28 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
 
     @Override
     public void speak(String text) {
-        if(text.startsWith("<AUTOLISTEN>")){
-            text = text.replace("<AUTOLISTEN>","");
             talk(text, speechLed);
             //speechManager.startSpeak(text);
-            showInfo();
-        }else{
-            talk(text , speechLed);
-            //speechManager.startSpeak(text);
-            showInfo();
-            speechManager.onRecognizeStop();
         }
-
-    }
 
     @Override
     public void forceAutoListenDelay(Long autoListenDelay) {
+        System.out.println("Entro nel thread");
         runOnUiThread(new Runnable() {
             public void run() {
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        speechManager.doWakeUp();
+                        System.out.println("Entro nel metodo run----------------------");
+
                     }
                 }, autoListenDelay);
             }});
+    }
+
+    public void sus(){
+        speechManager.startSpeak("");
+        speechManager.doWakeUp();
     }
 
     @Override
