@@ -861,11 +861,6 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
             }});*/
     }
 
-    public void sus() {
-        speechManager.startSpeak("");
-        speechManager.doWakeUp();
-    }
-
     @Override
     public void FaceChanged(FaceType face) {
         switch (face) {
@@ -881,7 +876,12 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
         }
     }
 
-    /*public void showTableData(String[] data){
+    @Override
+    public void Move(NoAngleWheelMotion angleWheelMotion, int speed, int duration) {
+        //Bisogna fare il corpo, e perchè lo farò proprio io? -Ale
+    }
+
+    public void showTableData(String[] data){
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Informazioni");
@@ -937,7 +937,7 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
         tableDialog.show();
         // AlertDialog alertDialog = builder.create();
         //  alertDialog.show();
-    }*/
+    }
 
     public void connect() {
         MQTTManager.getInstance().setIp("192.168.67.159");

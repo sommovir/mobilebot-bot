@@ -1,6 +1,7 @@
 package it.cnr.istc.msanbot.logic;
 
 import com.sanbot.opensdk.beans.FuncConstant;
+import com.sanbot.opensdk.function.beans.wheelmotion.NoAngleWheelMotion;
 import com.sanbot.opensdk.function.unit.SpeechManager;
 
 import java.util.LinkedList;
@@ -95,4 +96,5 @@ public class EventManager {
             listener.showTableOnRobot(table);
         }
     }
+
 }

@@ -2,6 +2,7 @@ package it.cnr.istc.msanbot;
 
 import com.sanbot.opensdk.beans.FuncConstant;
 import com.sanbot.opensdk.function.beans.EmotionsType;
+import com.sanbot.opensdk.function.beans.wheelmotion.NoAngleWheelMotion;
 import com.sanbot.opensdk.function.unit.HardWareManager;
 import com.sanbot.opensdk.function.unit.SystemManager;
 
@@ -140,6 +141,12 @@ public class RobotManager {
     private void questionAnimationStart() {
         for (RobotEventListener listener : robotEventListeners) {
             listener.FaceChanged(FaceType.QUESTION);
+        }
+    }
+
+    public void moveRobot(NoAngleWheelMotion angleWheelMotion, int speed, int duration){
+        for(RobotEventListener listener : robotEventListeners){
+            listener.Move(angleWheelMotion,speed,duration);
         }
     }
 
