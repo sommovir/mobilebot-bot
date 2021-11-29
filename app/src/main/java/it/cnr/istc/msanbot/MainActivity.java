@@ -708,95 +708,105 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
      * @param tabella Un array di righe secondo il formato di app-text
      */
     public void showGenericTable(String[] tabella) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        System.out.println("Entro nel metodo run----------------------");
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                        Context dialogContext = builder.getContext();
+                        LayoutInflater inflater = LayoutInflater.from(dialogContext);
+                        View alertView = inflater.inflate(R.layout.table_dialog, null);
+                        builder.setView(alertView);
+                        TableLayout tableLayout = (TableLayout) alertView.findViewById(R.id.tableLayout);
+                        int row = 0;
+                        boolean continueTable = false;
+                        for (String d : tabella) {
+                            String[] split = d.split("<CELL>");
+                            TableRow tableRow = new TableRow(dialogContext);
+                            tableRow.setPadding(3, 3, 3, 3);
+                            TableRow.LayoutParams layoutParams = new TableRow.LayoutParams
+                                    (0, TableRow.LayoutParams.WRAP_CONTENT, 1.0f);
+                            layoutParams.setMargins(3, 3, 3, 3);
+                            tableRow.setLayoutParams(layoutParams);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        Context dialogContext = builder.getContext();
-        LayoutInflater inflater = LayoutInflater.from(dialogContext);
-        View alertView = inflater.inflate(R.layout.table_dialog, null);
-        builder.setView(alertView);
-        TableLayout tableLayout = (TableLayout) alertView.findViewById(R.id.tableLayout);
-        int row = 0;
-        boolean continueTable = false;
-        for (String d : tabella) {
-            String[] split = d.split("<CELL>");
-            TableRow tableRow = new TableRow(dialogContext);
-            tableRow.setPadding(3, 3, 3, 3);
-            TableRow.LayoutParams layoutParams = new TableRow.LayoutParams
-                    (0, TableRow.LayoutParams.WRAP_CONTENT, 1.0f);
-            layoutParams.setMargins(3, 3, 3, 3);
-            tableRow.setLayoutParams(layoutParams);
+                            for (final String cella : split) {
+                                final TextView textView1 = new TextView(dialogContext);
+                                final String cellText;
+                                if (row == 0) {
+                                    textView1.setTypeface(null, Typeface.BOLD);
+                                    if (cella.contains("<CONTINUE>")) {
+                                        cellText = cella.replace("<CONTINUE>", "");
+                                        continueTable = true;
+                                    } else {
+                                        cellText = cella;
+                                    }
+                                } else {
+                                    cellText = cella;
+                                    GradientDrawable gd = new GradientDrawable(
+                                            //  GradientDrawable.Orientation.TOP_BOTTOM,
+                                            // new int[] {0xFFe5edef,0xFFcedde0});
+                                    );
+                                    // gd.setCornerRadius(6);
+                                    gd.setColor(0xFFe9eca0);  // #e9eca0
+                                    gd.setStroke(1, 0xFF000000);
+                                    textView1.setBackground(gd);
+                                }
+                                textView1.setPadding(5, 5, 5, 5);
+                                // textView1.setLayoutParams(new TableRow.LayoutParams
+                                //         (TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT, 1.0f));
+                                textView1.setTextSize(18);
+                                textView1.setText(cellText);
+                                colorCellMap.put("" + cellText, Boolean.FALSE);
+                                if (row != 0) {
+                                    textView1.setOnClickListener(new View.OnClickListener() {
+                                                                     @Override
+                                                                     public void onClick(View v) {
+                                                                         if (colorCellMap.get("" + cellText)) {
+                                                                             System.out.println("TRUE");
+                                                                             textView1.setBackgroundColor(0xFFFFFFFF);
+                                                                             colorCellMap.put("" + cellText, Boolean.FALSE);
+                                                                         } else {
+                                                                             System.out.println("FALSE");
+                                                                             textView1.setBackgroundColor(0xFF00FF00);
+                                                                             colorCellMap.put("" + cellText, Boolean.TRUE);
+                                                                         }
 
-            for (final String cella : split) {
-                final TextView textView1 = new TextView(dialogContext);
-                final String cellText;
-                if (row == 0) {
-                    textView1.setTypeface(null, Typeface.BOLD);
-                    if (cella.contains("<CONTINUE>")) {
-                        cellText = cella.replace("<CONTINUE>", "");
-                        continueTable = true;
-                    } else {
-                        cellText = cella;
+                                                                     }
+                                                                 }
+
+                                    );
+                                }
+
+
+                                tableRow.addView(textView1, layoutParams);
+
+                            }
+                            row++;
+                            tableLayout.addView(tableRow);
+                        }
+                        builder.setCancelable(true);
+                        //AlertDialog alertDialog =
+
+                        if (!continueTable) {
+                            if (MainActivity.this.tableDialog != null) {
+                                MainActivity.this.tableDialog.cancel();
+                                MainActivity.this.tableDialog.dismiss();
+                                MainActivity.this.tableDialog = builder.create();
+                            } else {
+                                MainActivity.this.tableDialog = builder.create();
+                            }
+                            tableDialog.show();
+                        } else {
+                            AlertDialog tempTable = builder.create();
+                            tempTable.show();
+                        }
+
                     }
-                } else {
-                    cellText = cella;
-                    GradientDrawable gd = new GradientDrawable(
-                            //  GradientDrawable.Orientation.TOP_BOTTOM,
-                            // new int[] {0xFFe5edef,0xFFcedde0});
-                    );
-                    // gd.setCornerRadius(6);
-                    gd.setColor(0xFFe9eca0);  // #e9eca0
-                    gd.setStroke(1, 0xFF000000);
-                    textView1.setBackground(gd);
-                }
-                textView1.setPadding(5, 5, 5, 5);
-                // textView1.setLayoutParams(new TableRow.LayoutParams
-                //         (TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT, 1.0f));
-                textView1.setTextSize(18);
-                textView1.setText(cellText);
-                colorCellMap.put("" + cellText, Boolean.FALSE);
-                if (row != 0) {
-                    textView1.setOnClickListener(new View.OnClickListener() {
-                                                     @Override
-                                                     public void onClick(View v) {
-                                                         if (colorCellMap.get("" + cellText)) {
-                                                             System.out.println("TRUE");
-                                                             textView1.setBackgroundColor(0xFFFFFFFF);
-                                                             colorCellMap.put("" + cellText, Boolean.FALSE);
-                                                         } else {
-                                                             System.out.println("FALSE");
-                                                             textView1.setBackgroundColor(0xFF00FF00);
-                                                             colorCellMap.put("" + cellText, Boolean.TRUE);
-                                                         }
+                }, 0);
+            }});
 
-                                                     }
-                                                 }
-
-                    );
-                }
-
-
-                tableRow.addView(textView1, layoutParams);
-
-            }
-            row++;
-            tableLayout.addView(tableRow);
-        }
-        builder.setCancelable(true);
-        //AlertDialog alertDialog =
-
-        if (!continueTable) {
-            if (this.tableDialog != null) {
-                this.tableDialog.cancel();
-                this.tableDialog.dismiss();
-                this.tableDialog = builder.create();
-            } else {
-                this.tableDialog = builder.create();
-            }
-            tableDialog.show();
-        } else {
-            AlertDialog tempTable = builder.create();
-            tempTable.show();
-        }
 
     }
 
@@ -930,8 +940,8 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
     }*/
 
     public void connect() {
-        MQTTManager.getInstance().setIp("192.168.67.187");
-        MQTTManager.getInstance().disconnect();
+        MQTTManager.getInstance().setIp("192.168.67.159");
+        //MQTTManager.getInstance().disconnect();
         MQTTManager.getInstance().connect(MainActivity.this);
         EventManager.getInstance().addConnectionEventListener(MainActivity.this);
     }
