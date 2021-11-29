@@ -15,8 +15,10 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import it.cnr.istc.msanbot.RobotManager;
 import it.cnr.istc.msanbot.logic.ConnectionEventListener;
 import it.cnr.istc.msanbot.logic.EventManager;
+import it.cnr.istc.msanbot.logic.FaceType;
 import it.cnr.istc.msanbot.logic.Topics;
 
 /**
@@ -235,6 +237,20 @@ public class MQTTManager {
                 }
             });
 
+
+            client.subscribe(Topics.COMMAND.getTopic()+"/"+clientId+"/"+"face", new IMqttMessageListener() {
+                @Override
+                public void messageArrived(String topic, MqttMessage message) throws Exception {
+
+                    System.out.println(topic + "\t" + clientId);
+
+                    byte[] payload = message.getPayload();
+                    String face = new String(payload);
+
+                    RobotManager.getInstance().changeFace(FaceType.of(face));
+
+                }
+            });
 
 
 

@@ -19,17 +19,17 @@ public class RobotManager {
     private SystemManager systemManager;
 
     public static RobotManager getInstance() {
-        if(_instance == null){
+        if (_instance == null) {
             _instance = new RobotManager();
         }
         return _instance;
     }
 
-    private RobotManager(){
+    private RobotManager() {
 
     }
 
-    public void addRobotEventListener (RobotEventListener listener){
+    public void addRobotEventListener(RobotEventListener listener) {
         this.robotEventListeners.add(listener);
     }
 
@@ -39,11 +39,12 @@ public class RobotManager {
 
     /**
      * Traduce l'enum FaceType nostra nell'enum EmotionType del sanbot
+     *
      * @param face
      * @return
      */
-    public EmotionsType translateFace(FaceType face){
-        switch (face){
+    public EmotionsType translateFace(FaceType face) {
+        switch (face) {
             case NORMAL:
                 return EmotionsType.NORMAL;
             case SAD:
@@ -54,67 +55,91 @@ public class RobotManager {
                 return EmotionsType.SMILE;
             case OUTRAGE:
                 return EmotionsType.ANGRY;
+            case QUESTION:
+                return EmotionsType.QUESTION;
+            case CRY:
+                return EmotionsType.CRY;
         }
         return EmotionsType.NORMAL;
     }
 
 
-    public void changeFace(FaceType face){
+    public void changeFace(FaceType face) {
         EmotionsType sanbotFace = translateFace(face);
-        if(systemManager!=null){
+        if (systemManager != null) {
             systemManager.showEmotion(sanbotFace);
         }
-        switch(face){
-            case NORMAL: {
+        switch (face) {
+            case NORMAL:
                 normalFaceAnimationStart();
                 break;
-            }
-            case SAD: {
+            case SAD:
                 piangiAnimationStart();
                 break;
-            }
-            case LOVE: {
+
+            case LOVE:
                 kissAnimationStart();
                 break;
-            }
-            case LAUGH: {
+
+            case LAUGH:
                 smileAnimationStart();
                 break;
-            }
-            case OUTRAGE: {
+
+            case OUTRAGE:
                 angryAnimationStart();
                 break;
-            }
+
+            case CRY:
+                cryAnimationStart();
+                break;
+
+            case QUESTION:
+                questionAnimationStart();
+                break;
+
+
         }
     }
 
-    private void normalFaceAnimationStart(){
+    private void normalFaceAnimationStart() {
         for (RobotEventListener listener : robotEventListeners) {
             listener.FaceChanged(FaceType.NORMAL);
         }
     }
 
-    private void piangiAnimationStart(){
+    private void piangiAnimationStart() {
         for (RobotEventListener listener : robotEventListeners) {
             listener.FaceChanged(FaceType.SAD);
         }
     }
 
-    private void kissAnimationStart(){
+    private void kissAnimationStart() {
         for (RobotEventListener listener : robotEventListeners) {
             listener.FaceChanged(FaceType.LOVE);
         }
     }
 
-    private void smileAnimationStart(){
+    private void smileAnimationStart() {
         for (RobotEventListener listener : robotEventListeners) {
             listener.FaceChanged(FaceType.LAUGH);
         }
     }
 
-    private void angryAnimationStart(){
+    private void angryAnimationStart() {
         for (RobotEventListener listener : robotEventListeners) {
             listener.FaceChanged(FaceType.OUTRAGE);
+        }
+    }
+
+    private void cryAnimationStart() {
+        for (RobotEventListener listener : robotEventListeners) {
+            listener.FaceChanged(FaceType.CRY);
+        }
+    }
+
+    private void questionAnimationStart() {
+        for (RobotEventListener listener : robotEventListeners) {
+            listener.FaceChanged(FaceType.QUESTION);
         }
     }
 
