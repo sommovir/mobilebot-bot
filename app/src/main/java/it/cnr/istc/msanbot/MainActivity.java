@@ -105,7 +105,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
             stop = findViewById(R.id.button_mainButton_stop);
             stop.setEnabled(false);
             stop.setBackgroundResource(R.drawable.stop_disabled);
-            background = findViewById(R.id.background);
+            //background = findViewById(R.id.background);
             serverStatus = findViewById(R.id.imageView_ServerStatus);
             img = findViewById(R.id.image);
             recSymbol = findViewById(R.id.recording);
@@ -321,7 +321,7 @@ public class MainActivity extends TopBaseActivity implements MediaListener, Conn
             talk("Inizio a sentire", listeningLed);
             stop.setEnabled(false);
             stop.setBackgroundResource(R.drawable.stop_disabled);
-            textView = findViewById(R.id.textView);
+            textView = findViewById(R.id.speechRecognized);
             hardWareManager.setOnHareWareListener(new InfrareListener() {
                 @Override
                 public void infrareDistance(int part, int distance) {

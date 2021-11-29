@@ -8,7 +8,96 @@
     tools:context=".MainActivity">
 
 
-    <!--<TextView
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/button_mainButton_speak"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@drawable/speak_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="50dp"/>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:src="@drawable/stop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginEnd="50dp"
+        />
+
+
+    <TextView
+        android:id="@+id/ServerStatus_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Server Status: "
+        android:textColor="@color/row2"
+        android:textSize="30dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginStart="30dp"
+        />
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imageView_ServerStatus"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/ic_baseline_brightness_1_24"
+        app:layout_constraintBottom_toBottomOf="@+id/ServerStatus_text"
+        app:layout_constraintStart_toEndOf="@+id/ServerStatus_text"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="5dp"
+        />
+
+
+
+    <ImageView
+        android:id="@+id/recording"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:src="@drawable/ic_round_mic_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="15dp"
+        android:layout_marginEnd="30dp"
+        app:tint="#910000"
+
+        />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Recognized text"
+        android:textColor="@color/cuoricino_start"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="V 1.0"
+        android:textStyle="italic"
+        android:textColor="#FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginEnd="20dp"
+        />
+
+    <!--
+    <TextView
+    android:visibility="invisible"
         android:id="@+id/button_mainButton"
         android:layout_width="91dp"
         android:layout_height="40dp"
@@ -27,6 +116,7 @@
         app:layout_constraintVertical_bias="0.97" />
 
     <TextView
+    android:visibility="invisible"
         android:id="@+id/button_mainButton2"
         android:layout_width="114dp"
         android:layout_height="40dp"
@@ -45,6 +135,7 @@
         app:layout_constraintVertical_bias="0.97" />
 
     <TextView
+    android:visibility="invisible"
         android:id="@+id/button_mainButton3"
         android:layout_width="114dp"
         android:layout_height="40dp"
@@ -63,6 +154,7 @@
         app:layout_constraintVertical_bias="0.97" />
 
     <TextView
+    android:visibility="invisible"
         android:id="@+id/button_mainButton4"
         android:layout_width="91dp"
         android:layout_height="40dp"
@@ -80,38 +172,14 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.97" />
 
-    <TextView
-        android:id="@+id/imageView_ServerStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/appia"
-        android:gravity="center"
-        android:text=""
-        android:textAlignment="center"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.208"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_mainButton_speak"
-        app:layout_constraintVertical_bias="0.401" />-->
+
+     -->
 
 
-    <ImageView
-        android:id="@+id/background"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
 
 
-    <!--app:layout_constraintEnd_toStartOf="@+id/button_mainButton"-->
 
+    <!--
     <ImageView
         android:id="@+id/recording"
         android:layout_width="50dp"
@@ -123,7 +191,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button_mainButton_speak" />
 
+
     <ImageView
+    android:visibility="invisible"
         android:id="@+id/imageView_ServerStatus"
         android:layout_width="50dp"
         android:layout_height="50dp"
@@ -133,8 +203,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:tint="@color/colorPrimary" />
 
+        -->
+
     <TextView
-        android:id="@+id/button_mainButton_speak"
+        android:enabled="false"
+    android:visibility="invisible"
         android:layout_width="242dp"
         android:layout_height="201dp"
         android:background="@drawable/speak_button"
@@ -151,6 +224,7 @@
         app:layout_constraintVertical_bias="0.28" />
 
     <TextView
+    android:visibility="invisible"
         android:id="@+id/button_mainButton_stop"
         android:layout_width="0dp"
         android:layout_height="303dp"
@@ -166,7 +240,8 @@
         app:layout_constraintVertical_bias="0.092" />
 
     <TextView
-        android:id="@+id/textView"
+    android:visibility="invisible"
+        android:id="@+id/speechRecognized"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
@@ -174,16 +249,13 @@
         android:textColor="@color/colorPrimary"
 
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/background"
         app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintStart_toStartOf="@+id/background"
-        app:layout_constraintTop_toTopOf="@+id/background"
         app:layout_constraintVertical_bias="0.903"
         tools:ignore="MissingConstraints" />
 
     <Button
+    android:visibility="invisible"
         android:id="@+id/goForwardx"
-        android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Forward"
@@ -234,6 +306,7 @@
         app:layout_constraintVertical_bias="0.371" />
 
     <Button
+    android:visibility="invisible"
         android:id="@+id/buttonName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -244,6 +317,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
+    android:visibility="invisible"
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -255,6 +329,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.025" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
