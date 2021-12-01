@@ -3,6 +3,8 @@ package it.cnr.istc.msanbot.mqtt;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.sanbot.opensdk.function.beans.wheelmotion.NoAngleWheelMotion;
+
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -19,6 +21,7 @@ import it.cnr.istc.msanbot.RobotManager;
 import it.cnr.istc.msanbot.logic.ConnectionEventListener;
 import it.cnr.istc.msanbot.logic.EventManager;
 import it.cnr.istc.msanbot.logic.FaceType;
+import it.cnr.istc.msanbot.logic.RobotMovement;
 import it.cnr.istc.msanbot.logic.Topics;
 
 /**
@@ -123,6 +126,7 @@ public class MQTTManager {
         System.out.println("No if:" + Long.parseLong(s));
         return Long.parseLong(s);
     }
+
 
 
 
@@ -307,6 +311,28 @@ public class MQTTManager {
                 }
             });
 
+            client.subscribe(Topics.ROBOT.getTopic() + "/" + clientId + "/" + "movement", new IMqttMessageListener() {
+                @Override
+                public void messageArrived(String topic, MqttMessage message) throws Exception {
+
+                    System.out.println(topic + "\t" + clientId);
+
+                    byte[] payload = message.getPayload();
+                    String movement = new String(payload);
+
+                    String movementDirection = RobotManager.getInstance().getMovementDirection(movement);
+                    String movementVelocityGrade = RobotManager.getInstance().getMovementVelocityTurn(movement);
+
+                    if(movementDirection.equals(NoAngleWheelMotion.ACTION_TURN_LEFT) || movementDirection.equals(NoAngleWheelMotion.ACTION_TURN_RIGHT)){
+                        RobotManager.getInstance().turnRobot(RobotMovement.of(movementDirection).toSanbotMovement(),3,sanbotVelocity(movementVelocityGrade));
+                    }else{
+                        RobotManager.getInstance().moveRobot(RobotMovement.of(movementDirection).toSanbotMovement(), sanbotVelocity(movementVelocityGrade), 3);
+                    }
+                }
+            });
+
+
+
             client.subscribe(Topics.RESPONSES.getTopic() + "/" + clientId, new IMqttMessageListener() {
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
@@ -369,6 +395,15 @@ public class MQTTManager {
         }
 
 
+    }
+
+    public int sanbotVelocity(String x){
+        switch (x){
+            case "LOW":return 2;
+            case "MEDIUM":return 4;
+            case "HIGH":return 6;
+        }
+        return 2;
     }
 
     public void imalive() {

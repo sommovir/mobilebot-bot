@@ -864,7 +864,7 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
     }
 
     @Override
-    public void FaceChanged(FaceType face) {
+    public void faceChanged(FaceType face) {
         switch (face) {
             case SAD:
                 background.setBackgroundResource(R.drawable.cry);
@@ -879,7 +879,7 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
     }
 
     @Override
-    public void Move(Byte angleWheelMotion, int speed, int duration) {
+    public void move(Byte angleWheelMotion, int speed, int duration) {
         //Bisogna fare il corpo, e perchè lo farò proprio io? -Ale
         runOnUiThread(new Runnable() {
             public void run() {
@@ -889,6 +889,26 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
                         try {
                             NoAngleWheelMotion noAngleWheelMotion = new NoAngleWheelMotion(
                                     angleWheelMotion, speed, duration
+                            );
+                            wheelMotionManager.doNoAngleMotion(noAngleWheelMotion);
+                        }catch (Exception ex){
+                            ex.printStackTrace();
+                        }
+                    }
+                }, 0);
+            }});
+    }
+
+    @Override
+    public void turn(Byte angleWheelMotion, int speed, int grade) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            NoAngleWheelMotion noAngleWheelMotion = new NoAngleWheelMotion(
+                                    angleWheelMotion, speed, grade
                             );
                             wheelMotionManager.doNoAngleMotion(noAngleWheelMotion);
                         }catch (Exception ex){

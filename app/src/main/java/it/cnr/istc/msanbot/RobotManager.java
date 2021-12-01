@@ -104,50 +104,68 @@ public class RobotManager {
 
     private void normalFaceAnimationStart() {
         for (RobotEventListener listener : robotEventListeners) {
-            listener.FaceChanged(FaceType.NORMAL);
+            listener.faceChanged(FaceType.NORMAL);
         }
     }
 
     private void piangiAnimationStart() {
         for (RobotEventListener listener : robotEventListeners) {
-            listener.FaceChanged(FaceType.SAD);
+            listener.faceChanged(FaceType.SAD);
         }
     }
 
     private void kissAnimationStart() {
         for (RobotEventListener listener : robotEventListeners) {
-            listener.FaceChanged(FaceType.LOVE);
+            listener.faceChanged(FaceType.LOVE);
         }
     }
 
     private void smileAnimationStart() {
         for (RobotEventListener listener : robotEventListeners) {
-            listener.FaceChanged(FaceType.LAUGH);
+            listener.faceChanged(FaceType.LAUGH);
         }
     }
 
     private void angryAnimationStart() {
         for (RobotEventListener listener : robotEventListeners) {
-            listener.FaceChanged(FaceType.OUTRAGE);
+            listener.faceChanged(FaceType.OUTRAGE);
         }
     }
 
     private void cryAnimationStart() {
         for (RobotEventListener listener : robotEventListeners) {
-            listener.FaceChanged(FaceType.CRY);
+            listener.faceChanged(FaceType.CRY);
         }
     }
 
     private void questionAnimationStart() {
         for (RobotEventListener listener : robotEventListeners) {
-            listener.FaceChanged(FaceType.QUESTION);
+            listener.faceChanged(FaceType.QUESTION);
         }
     }
 
     public void moveRobot(Byte angleWheelMotion, int speed, int duration){
         for(RobotEventListener listener : robotEventListeners){
-            listener.Move(angleWheelMotion,speed,duration);
+            listener.move(angleWheelMotion,speed,duration);
         }
+    }
+
+    public void turnRobot(Byte angleWheelMotion, int speed, int grade){
+        for(RobotEventListener listener : robotEventListeners){
+            listener.turn(angleWheelMotion,speed,grade);
+        }
+    }
+
+    public String getMovementDirection(String x){
+        String y[] = x.split(">");
+
+        return (String) y[2].subSequence(0, y[2].length() - 2);
+    }
+
+    public String getMovementVelocityTurn(String x){
+        String y[] = x.split(">");
+
+        return (String) y[3].subSequence(0, y[3].indexOf("<"));
     }
 
 }
