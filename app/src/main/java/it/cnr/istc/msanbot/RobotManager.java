@@ -144,7 +144,7 @@ public class RobotManager {
         }
     }
 
-    public void moveRobot(NoAngleWheelMotion angleWheelMotion, int speed, int duration){
+    public void moveRobot(Byte angleWheelMotion, int speed, int duration){
         for(RobotEventListener listener : robotEventListeners){
             listener.Move(angleWheelMotion,speed,duration);
         }

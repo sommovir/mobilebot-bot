@@ -879,8 +879,24 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
     }
 
     @Override
-    public void Move(NoAngleWheelMotion angleWheelMotion, int speed, int duration) {
+    public void Move(Byte angleWheelMotion, int speed, int duration) {
         //Bisogna fare il corpo, e perchè lo farò proprio io? -Ale
+        runOnUiThread(new Runnable() {
+            public void run() {
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            NoAngleWheelMotion noAngleWheelMotion = new NoAngleWheelMotion(
+                                    angleWheelMotion, speed, duration
+                            );
+                            wheelMotionManager.doNoAngleMotion(noAngleWheelMotion);
+                        }catch (Exception ex){
+                            ex.printStackTrace();
+                        }
+                    }
+                }, 0);
+            }});
     }
 
     public void showTableData(String[] data){
