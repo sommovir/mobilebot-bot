@@ -40,6 +40,7 @@ import com.sanbot.opensdk.function.unit.SpeechManager;
 import com.sanbot.opensdk.function.unit.SystemManager;
 import com.sanbot.opensdk.function.unit.WheelMotionManager;
 import com.sanbot.opensdk.function.unit.interfaces.hardware.InfrareListener;
+import com.sanbot.opensdk.function.unit.interfaces.hardware.TouchSensorListener;
 import com.sanbot.opensdk.function.unit.interfaces.media.MediaListener;
 import com.sanbot.opensdk.function.unit.interfaces.speech.RecognizeListener;
 import com.sanbot.opensdk.function.unit.interfaces.speech.SpeakListener;
@@ -135,15 +136,29 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
                 }
             });
 
-            goBackward.setOnClickListener(new View.OnClickListener() {
+            hardWareManager.setOnHareWareListener(new TouchSensorListener() {
                 @Override
-                public void onClick(View view) {
-                    NoAngleWheelMotion noAngleWheelMotion = new NoAngleWheelMotion(
-                            NoAngleWheelMotion.ACTION_BACK, 2, 10
-                    );
-                    wheelMotionManager.doNoAngleMotion(noAngleWheelMotion);
+                public void onTouch(int i) {
+
+                }
+
+                @Override
+                public void onTouch(int i, boolean b) {
+                    if (i == 11 || i == 12 || i == 13) {
+                        speechManager.doWakeUp();
+                    }
                 }
             });
+
+                    goBackward.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            NoAngleWheelMotion noAngleWheelMotion = new NoAngleWheelMotion(
+                                    NoAngleWheelMotion.ACTION_BACK, 2, 10
+                            );
+                            wheelMotionManager.doNoAngleMotion(noAngleWheelMotion);
+                        }
+                    });
 
             turnLeft.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -392,12 +407,11 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
                     RelativeAngleWheelMotion relativeAngleWheelMotion = new RelativeAngleWheelMotion(RelativeAngleWheelMotion.TURN_LEFT, 5, 180);
                     wheelMotionManager.doRelativeAngleMotion(relativeAngleWheelMotion);
                 }
-                if(text.equals("stato batteria")){
-                    if(systemManager.getBatteryStatus() == SystemManager.STATUS_NORMAL){
-                        talk("Non sono in carica e la mia batteria e' al " + systemManager.getBatteryStatus() + " percento",speechLed);
-                    }
-                    else{
-                        talk("Sono in carica",speechLed);
+                if (text.equals("stato batteria")) {
+                    if (systemManager.getBatteryStatus() == SystemManager.STATUS_NORMAL) {
+                        talk("Non sono in carica e la mia batteria e' al " + systemManager.getBatteryStatus() + " percento", speechLed);
+                    } else {
+                        talk("Sono in carica", speechLed);
                     }
                 }
 
@@ -536,7 +550,7 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
 
     @Override
     public void showTableOnRobot(String table) {
-        System.out.println("TABLE = "+ table);
+        System.out.println("TABLE = " + table);
         String[] tabella = table.split("<ROW>");
         showGenericTable(tabella);
     }
@@ -682,8 +696,9 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
                     public void run() {
                         try {
                             System.out.println("video va dentro thread");
-                            if (isYouTubeLink(url)){
-                                startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse((url))));}
+                            if (isYouTubeLink(url)) {
+                                startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse((url))));
+                            }
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }
@@ -692,8 +707,6 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
                 }, 0);
             }
         });
-
-
 
 
     }
@@ -815,7 +828,8 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
 
                     }
                 }, 0);
-            }});
+            }
+        });
 
 
     }
@@ -899,12 +913,13 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
                                     angleWheelMotion, speed, duration
                             );
                             wheelMotionManager.doNoAngleMotion(noAngleWheelMotion);
-                        }catch (Exception ex){
+                        } catch (Exception ex) {
                             ex.printStackTrace();
                         }
                     }
                 }, 0);
-            }});
+            }
+        });
     }
 
     @Override
@@ -919,15 +934,16 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
                                     angleWheelMotion, speed, grade
                             );
                             wheelMotionManager.doNoAngleMotion(noAngleWheelMotion);
-                        }catch (Exception ex){
+                        } catch (Exception ex) {
                             ex.printStackTrace();
                         }
                     }
                 }, 0);
-            }});
+            }
+        });
     }
 
-    public void showTableData(String[] data){
+    public void showTableData(String[] data) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Informazioni");
@@ -938,21 +954,20 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
         builder.setView(alertView);
 
 
-
-        TableLayout tableLayout = (TableLayout)alertView.findViewById(R.id.tableLayout);
-        for( String d : data){
+        TableLayout tableLayout = (TableLayout) alertView.findViewById(R.id.tableLayout);
+        for (String d : data) {
 
             String[] split = d.split("<CELL>");
             String title = split[0];
             String infoinfo = split[1];
 
             TableRow tableRow = new TableRow(dialogContext);
-            tableRow.setPadding(10,10,10,10);
+            tableRow.setPadding(10, 10, 10, 10);
             tableRow.setLayoutParams(new TableRow.LayoutParams
                     (TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT, 1.0f));
 
             TextView textView1 = new TextView(dialogContext);
-            textView1.setPadding(15,15,15,15);
+            textView1.setPadding(15, 15, 15, 15);
             // textView1.setLayoutParams(new TableRow.LayoutParams
             //         (TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT, 1.0f));
             textView1.setTextSize(18);
@@ -960,7 +975,7 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
             tableRow.addView(textView1);
 
             TextView textView2 = new TextView(dialogContext);
-            textView2.setPadding(15,15,15,15);
+            textView2.setPadding(15, 15, 15, 15);
             // textView2.setLayoutParams(new TableRow.LayoutParams
             //         (TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT, 1.0f));
             textView2.setTextSize(18);
@@ -972,11 +987,11 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
         }
 
         builder.setCancelable(true);
-        if(this.tableDialog != null){
+        if (this.tableDialog != null) {
             this.tableDialog.cancel();
             this.tableDialog.dismiss();
             this.tableDialog = builder.create();
-        }else{
+        } else {
             this.tableDialog = builder.create();
         }
 
