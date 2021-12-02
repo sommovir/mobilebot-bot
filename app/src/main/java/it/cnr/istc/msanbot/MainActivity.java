@@ -92,7 +92,7 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
 
             setContentView(R.layout.activity_main);
             RobotManager.getInstance().setSystemManager(systemManager);
-            //showYouTubeVideo("https://www.youtube.com/watch?v=Sjg6jgED58c");
+            showYouTubeVideo("https://www.youtube.com/watch?v=Sjg6jgED58c");
 
             if (speechManager == null) {
                 Toast.makeText(MainActivity.this, "VI SPACCO TUTTO", Toast.LENGTH_LONG).show();

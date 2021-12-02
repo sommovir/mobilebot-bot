@@ -215,11 +215,7 @@ public class MQTTManager {
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
 
                     System.out.println("Vogliono vedere");
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    EventManager.getInstance().showImage(new String(message.getPayload()));
                     //EventManager.getInstance().takePicture();
                 }
             });
@@ -324,7 +320,7 @@ public class MQTTManager {
                     String movementVelocityGrade = RobotManager.getInstance().getMovementVelocityTurn(movement);
 
                     if(movementDirection.equals(NoAngleWheelMotion.ACTION_TURN_LEFT) || movementDirection.equals(NoAngleWheelMotion.ACTION_TURN_RIGHT)){
-                        RobotManager.getInstance().turnRobot(RobotMovement.of(movementDirection).toSanbotMovement(),3,sanbotVelocity(movementVelocityGrade));
+                        RobotManager.getInstance().turnRobot(RobotMovement.of(movementDirection).toSanbotMovement(),3,new Integer(movementVelocityGrade));
                     }else{
                         RobotManager.getInstance().moveRobot(RobotMovement.of(movementDirection).toSanbotMovement(), sanbotVelocity(movementVelocityGrade), 3);
                     }
