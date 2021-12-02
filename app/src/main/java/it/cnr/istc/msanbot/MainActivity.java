@@ -150,15 +150,15 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
                 }
             });
 
-                    goBackward.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            NoAngleWheelMotion noAngleWheelMotion = new NoAngleWheelMotion(
-                                    NoAngleWheelMotion.ACTION_BACK, 2, 10
-                            );
-                            wheelMotionManager.doNoAngleMotion(noAngleWheelMotion);
-                        }
-                    });
+            goBackward.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    NoAngleWheelMotion noAngleWheelMotion = new NoAngleWheelMotion(
+                            NoAngleWheelMotion.ACTION_BACK, 2, 10
+                    );
+                    wheelMotionManager.doNoAngleMotion(noAngleWheelMotion);
+                }
+            });
 
             turnLeft.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -838,7 +838,7 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
      * setta la grafica di modo che mostri di essere online
      */
     public void forceServerOnline() {
-
+        serverStatus.setColorFilter(Color.argb(255, 0, 255, 0));
     }
 
     /**
@@ -847,7 +847,18 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
      * @param backToNormalTime numero di millisecondi da attendere prima del ritorno al normal-time
      */
     public void setBackToNormalTime(Long backToNormalTime) {
-        NoAngleWheelMotion noAngleWheelMotion = new NoAngleWheelMotion(NoAngleWheelMotion.ACTION_RESET, 1);
+        runOnUiThread(new Runnable() {
+            public void run() {
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        NoAngleWheelMotion noAngleWheelMotion = new NoAngleWheelMotion(NoAngleWheelMotion.ACTION_RESET, 1);
+
+                    }
+                }, backToNormalTime);
+            }
+        });
+
     }
 
     @Override
