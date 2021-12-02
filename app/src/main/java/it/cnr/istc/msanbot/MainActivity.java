@@ -139,14 +139,14 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
             hardWareManager.setOnHareWareListener(new TouchSensorListener() {
                 @Override
                 public void onTouch(int i) {
-
+                    if (i == 11 || i == 12 || i == 13) {
+                        speechManager.doWakeUp();
+                    }
                 }
 
                 @Override
                 public void onTouch(int i, boolean b) {
-                    if (i == 11 || i == 12 || i == 13) {
-                        speechManager.doWakeUp();
-                    }
+
                 }
             });
 
