@@ -392,6 +392,14 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
                     RelativeAngleWheelMotion relativeAngleWheelMotion = new RelativeAngleWheelMotion(RelativeAngleWheelMotion.TURN_LEFT, 5, 180);
                     wheelMotionManager.doRelativeAngleMotion(relativeAngleWheelMotion);
                 }
+                if(text.equals("stato batteria")){
+                    if(systemManager.getBatteryStatus() == SystemManager.STATUS_NORMAL){
+                        talk("Non sono in carica e la mia batteria e' al " + systemManager.getBatteryStatus() + " percento",speechLed);
+                    }
+                    else{
+                        talk("Sono in carica",speechLed);
+                    }
+                }
 
                 //
                 // speechManager.doWakeUp();
