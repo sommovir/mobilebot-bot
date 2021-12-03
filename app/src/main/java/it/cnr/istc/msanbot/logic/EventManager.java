@@ -17,6 +17,7 @@ public class EventManager {
 
     private List<ConnectionEventListener> connectionEventListenerList = new LinkedList<>();
     private List<MediaEventListener> mediaEventListeners = new LinkedList<>();
+
     private EventManager(){
 
     }
@@ -91,9 +92,9 @@ public class EventManager {
         }
     }
 
-    public void showTable(String table) {
+    public void showTable() {
         for (MediaEventListener listener : mediaEventListeners) {
-            listener.showTableOnRobot(table);
+            listener.showCurrentTable();
         }
     }
 

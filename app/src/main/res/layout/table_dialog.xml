@@ -5,14 +5,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="150dp"
-    app:cardCornerRadius="20dp">
+    android:layout_height="250dp"
+    app:cardCornerRadius="20dp"
+    android:backgroundTint="@color/row2">
 
     <TableLayout
         android:id="@+id/tableLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#ffc000"
         android:orientation="horizontal"
         android:stretchColumns="*">
     </TableLayout>

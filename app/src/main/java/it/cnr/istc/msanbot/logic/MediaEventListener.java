@@ -9,4 +9,6 @@ public interface MediaEventListener {
     public void showLinkOnRobot(String link);
 
     public void showTableOnRobot(String table);
+
+    public void showCurrentTable();
 }

@@ -24,6 +24,7 @@ import it.cnr.istc.msanbot.logic.EventManager;
 import it.cnr.istc.msanbot.logic.FaceType;
 import it.cnr.istc.msanbot.logic.RobotMovement;
 import it.cnr.istc.msanbot.logic.Topics;
+import it.cnr.istc.msanbot.table.TableModel;
 
 /**
  * Created by Luca Coraci [luca.coraci@istc.cnr.it] on 18/06/2020.
@@ -257,12 +258,28 @@ public class MQTTManager {
             client.subscribe(Topics.COMMAND.getTopic() + "/" + clientId + "/" + "table", new IMqttMessageListener() {
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
+                    try {
+                        System.out.println(topic + "\t" + clientId);
 
-                    System.out.println(topic + "\t" + clientId);
+                        byte[] payload = message.getPayload();
+                        String tables = new String(payload);
+                        System.out.println("---->" + tables);
+                        if(tables.contains("<CONTINUE>")){
+                            String[] split = tables.split("<CONTINUE>");
+                            for(String table: split){
+                                TableModel.getInstance().addCurrentTable(table);
+                                System.out.println("TABLES: " + table);
+                            }
+                        }else {
+                            System.out.println("TABLES: " + tables);
+                            TableModel.getInstance().addCurrentTable(tables);
+                        }
+                        System.out.println("TABLE LIST SIZE: " + TableModel.getInstance().getCurrentDataTable().size());
+                        EventManager.getInstance().showTable();
+                    } catch (Exception e){
+                        e.printStackTrace();
+                    }
 
-                    byte[] payload = message.getPayload();
-                    String table = new String(payload);
-                    EventManager.getInstance().showTable(table);
 
 
                 }

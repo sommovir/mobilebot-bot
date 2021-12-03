@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.gigamole.infinitecycleviewpager.HorizontalInfiniteCycleViewPager;
+import com.google.android.material.tabs.TabLayout;
 import com.sanbot.opensdk.base.TopBaseActivity;
 import com.sanbot.opensdk.beans.FuncConstant;
 import com.sanbot.opensdk.beans.OperationResult;
@@ -45,7 +46,6 @@ import com.sanbot.opensdk.function.unit.SystemManager;
 import com.sanbot.opensdk.function.unit.WheelMotionManager;
 import com.sanbot.opensdk.function.unit.interfaces.hardware.InfrareListener;
 import com.sanbot.opensdk.function.unit.interfaces.hardware.TouchSensorListener;
-import com.sanbot.opensdk.function.unit.interfaces.media.MediaListener;
 import com.sanbot.opensdk.function.unit.interfaces.speech.RecognizeListener;
 import com.sanbot.opensdk.function.unit.interfaces.speech.SpeakListener;
 import com.sanbot.opensdk.function.unit.interfaces.speech.WakenListener;
@@ -65,6 +65,7 @@ import it.cnr.istc.msanbot.logic.MediaEventListener;
 import it.cnr.istc.msanbot.logic.RobotEventListener;
 import it.cnr.istc.msanbot.logic.Topics;
 import it.cnr.istc.msanbot.mqtt.MQTTManager;
+import it.cnr.istc.msanbot.table.TableModel;
 
 public class MainActivity extends TopBaseActivity implements MediaEventListener, ConnectionEventListener, RobotEventListener {
     SpeechManager speechManager = (SpeechManager) getUnitManager(FuncConstant.SPEECH_MANAGER);
@@ -118,7 +119,7 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
             mainSpeak = findViewById(R.id.button_mainButton_speak);
             buttonName = findViewById(R.id.buttonName);
             stop = findViewById(R.id.button_mainButton_stop);
-            viewPager = findViewById(R.id.slider);
+
             buttonTestPopup = findViewById(R.id.testBtnPopup);
             stop.setEnabled(false);
             background = findViewById(R.id.background);
@@ -199,9 +200,6 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
                                     faceChanged(FaceType.SAD);
                                 }
                             });
-
-                            SlideAdapter adapter = new SlideAdapter(testList, MainActivity.this);
-                            viewPager.setAdapter(adapter);
                         }
                     },0);
                 }
@@ -637,9 +635,37 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
 
     @Override
     public void showTableOnRobot(String table) {
+        /*
         System.out.println("TABLE = " + table);
         String[] tabella = table.split("<ROW>");
         showGenericTable(tabella);
+
+         */
+    }
+
+    @Override
+    public void showCurrentTable() {
+        System.out.println("CURRENT TABLE EVENT TRIGGERED");
+        ;
+        runOnUiThread(new Runnable() {
+            public void run() {
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mDIalog.setContentView(R.layout.table_slider);
+                        mDIalog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                        viewPager = mDIalog.findViewById(R.id.slider);
+
+                        TableLayout tableLayout = mDIalog.findViewById(R.id.tableLayout);
+
+                        SlideAdapter adapter = new SlideAdapter(mDIalog.getContext());
+                        viewPager.setAdapter(adapter);
+                        mDIalog.show();
+                    }
+                }, 0);
+            }
+        });
+
     }
 
     /**
@@ -1110,7 +1136,7 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
     }
 
     public void connect() {
-        MQTTManager.getInstance().setIp("192.168.67.187");
+        MQTTManager.getInstance().setIp("192.168.67.159");
         //MQTTManager.getInstance().disconnect();
         MQTTManager.getInstance().connect(MainActivity.this);
         EventManager.getInstance().addConnectionEventListener(MainActivity.this);

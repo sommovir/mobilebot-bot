@@ -1,26 +1,37 @@
 package it.cnr.istc.msanbot.adapter;
 
 import android.content.Context;
+import android.graphics.Typeface;
+import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.viewpager.widget.PagerAdapter;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import it.cnr.istc.msanbot.R;
+import it.cnr.istc.msanbot.logic.MediaEventListener;
+import it.cnr.istc.msanbot.table.TableModel;
 
-public class SlideAdapter extends PagerAdapter {
+public class SlideAdapter extends PagerAdapter implements MediaEventListener {
 
-    private List<String> testLista;
     private Context context;
+    private List<String> currentDataTable;
+    private Map<String, Boolean> colorCellMap = new HashMap<>();
 
-    public SlideAdapter(List<String> testLista, Context context) {
-        this.testLista = testLista;
+    public SlideAdapter(Context context) {
         this.context = context;
+        this.currentDataTable = TableModel.getInstance().getCurrentDataTable();
+        System.out.println("SLIDE CONSTRUCTOR");
     }
 
     /**
@@ -28,7 +39,7 @@ public class SlideAdapter extends PagerAdapter {
      */
     @Override
     public int getCount() {
-        return testLista.size();
+        return currentDataTable.size();
     }
 
     @Override
@@ -62,21 +73,109 @@ public class SlideAdapter extends PagerAdapter {
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         View view = LayoutInflater.from(context).inflate(R.layout.table_dialog, container, false);
 
-        try {
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view){
-                    Toast.makeText(context, "Bro hai cliccato", Toast.LENGTH_SHORT).show();
+        TableLayout tableLayout = view.findViewById(R.id.tableLayout);
+
+
+        String table = this.currentDataTable.get(position);
+        System.out.println("Posizione: " + position + "\nTable: " + currentDataTable.get(position));
+        String[] rows = table.split("<ROW>");
+
+        int row = 0;
+        boolean continueTable = false;
+        for (String d : rows) {
+            String[] split = d.split("<CELL>");
+            TableRow tableRow = new TableRow(context);
+            tableRow.setPadding(3, 3, 3, 3);
+            TableRow.LayoutParams layoutParams = new TableRow.LayoutParams
+                    (0, TableRow.LayoutParams.WRAP_CONTENT, 1.0f);
+            layoutParams.setMargins(3, 3, 3, 3);
+            tableRow.setLayoutParams(layoutParams);
+
+            for (final String cella : split) {
+                final TextView textView1 = new TextView(context);
+                final String cellText;
+                if (row == 0) {
+                    textView1.setTypeface(null, Typeface.BOLD);
+                    if (cella.contains("<CONTINUE>")) {
+                        cellText = cella.replace("<CONTINUE>", "");
+                        continueTable = true;
+                    } else {
+                        cellText = cella;
+                    }
+                } else {
+                    cellText = cella;
+                    GradientDrawable gd = new GradientDrawable(
+                            //  GradientDrawable.Orientation.TOP_BOTTOM,
+                            // new int[] {0xFFe5edef,0xFFcedde0});
+                    );
+                    // gd.setCornerRadius(6);
+                    gd.setColor(0xFFe9eca0);  // #e9eca0
+                    gd.setStroke(1, 0xFF000000);
+                    textView1.setBackground(gd);
                 }
-            });
-        } catch (Exception e){
-            e.printStackTrace();
+                textView1.setPadding(5, 5, 5, 5);
+                // textView1.setLayoutParams(new TableRow.LayoutParams
+                //         (TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT, 1.0f));
+                textView1.setTextSize(18);
+                textView1.setText(cellText);
+                colorCellMap.put("" + cellText, Boolean.FALSE);
+                if (row != 0) {
+                    textView1.setOnClickListener(new View.OnClickListener() {
+                                                     @Override
+                                                     public void onClick(View v) {
+                                                         if (colorCellMap.get("" + cellText)) {
+                                                             System.out.println("TRUE");
+                                                             textView1.setBackgroundColor(0xFFFFFFFF);
+                                                             colorCellMap.put("" + cellText, Boolean.FALSE);
+                                                         } else {
+                                                             System.out.println("FALSE");
+                                                             textView1.setBackgroundColor(0xFF00FF00);
+                                                             colorCellMap.put("" + cellText, Boolean.TRUE);
+                                                         }
+
+                                                     }
+                                                 }
+
+                    );
+                }
+
+
+                tableRow.addView(textView1, layoutParams);
+
+            }
+            row++;
+            tableLayout.addView(tableRow);
         }
 
         container.addView(view);
 
         return view;
 
+
+    }
+
+    @Override
+    public void showYoutubeVideoOnRobot(String videoLink) {
+
+    }
+
+    @Override
+    public void showImageOnRobot(String imageLink) {
+
+    }
+
+    @Override
+    public void showLinkOnRobot(String link) {
+
+    }
+
+    @Override
+    public void showTableOnRobot(String table) {
+
+    }
+
+    @Override
+    public void showCurrentTable() {
 
     }
 }
