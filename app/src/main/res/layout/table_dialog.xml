@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/tableLayout"
+
+
+<androidx.cardview.widget.CardView
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#ffc000"
-    android:orientation="horizontal"
-    android:stretchColumns="*">
-</TableLayout>
+    android:layout_height="150dp"
+    app:cardCornerRadius="20dp">
+
+    <TableLayout
+        android:id="@+id/tableLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ffc000"
+        android:orientation="horizontal"
+        android:stretchColumns="*">
+    </TableLayout>
+
+
+</androidx.cardview.widget.CardView>

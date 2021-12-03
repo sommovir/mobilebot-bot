@@ -4,11 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.gigamole.infinitecycleviewpager.HorizontalInfiniteCycleViewPager;
 import com.sanbot.opensdk.base.TopBaseActivity;
 import com.sanbot.opensdk.beans.FuncConstant;
 import com.sanbot.opensdk.beans.OperationResult;
@@ -46,11 +49,15 @@ import com.sanbot.opensdk.function.unit.interfaces.speech.RecognizeListener;
 import com.sanbot.opensdk.function.unit.interfaces.speech.SpeakListener;
 import com.sanbot.opensdk.function.unit.interfaces.speech.WakenListener;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
+import it.cnr.istc.msanbot.adapter.SlideAdapter;
 import it.cnr.istc.msanbot.logic.ConnectionEventListener;
 import it.cnr.istc.msanbot.logic.EventManager;
 import it.cnr.istc.msanbot.logic.FaceType;
@@ -70,13 +77,16 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
     ImageView img;
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog dialog;
+    Dialog mDIalog;
     TextView textView;
-    Button goForward, goBackward, turnLeft, turnRight, buttonName;
+    Button goForward, goBackward, turnLeft, turnRight, buttonName, buttonTestPopup;
     ImageView background, serverStatus, recSymbol, mainSpeak, stop,battery;
     private AlertDialog tableDialog = null;
     MQTTManager mqttManager = null;
     private Map<String, Boolean> colorCellMap = new HashMap<>();
     String name;
+    private HorizontalInfiniteCycleViewPager viewPager;
+    private List<String> testList = new ArrayList<>();
 
 
     @Override
@@ -108,6 +118,8 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
             mainSpeak = findViewById(R.id.button_mainButton_speak);
             buttonName = findViewById(R.id.buttonName);
             stop = findViewById(R.id.button_mainButton_stop);
+            viewPager = findViewById(R.id.slider);
+            buttonTestPopup = findViewById(R.id.testBtnPopup);
             stop.setEnabled(false);
             //background = findViewById(R.id.background);
             serverStatus = findViewById(R.id.imageView_ServerStatus);
@@ -127,6 +139,10 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
             stop.setImageResource(R.drawable.stop_disabled);
             mainSpeak.setImageResource(R.drawable.speak_button_green);
 
+            mDIalog = new Dialog(this);
+
+
+            /*
             runOnUiThread(new Runnable() {
                 public void run() {
                     new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
@@ -147,11 +163,11 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
                                         break;
                                 }
                                 System.out.println("battery: " + systemManager.getBatteryStatus());
-                        /*if (systemManager.getBatteryStatus() == SystemManager.STATUS_NORMAL) {
+                        if (systemManager.getBatteryStatus() == SystemManager.STATUS_NORMAL) {
                             talk("Non sono in carica e la mia batteria e' al " + systemManager.getBatteryStatus() + " percento", speechLed);
                         } else {
                             talk("Sono in carica", speechLed);
-                        }*/
+                        }
                                 try {
                                     System.out.println("Dorme");
                                     Thread.sleep(3000);
@@ -163,6 +179,37 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
                     },5000);
                 }
             });
+            */
+
+
+            testList.add("bruh");
+            testList.add("bruh");
+            testList.add("bruh");
+
+
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            buttonTestPopup.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    mDIalog.setContentView(R.layout.table_popup);
+                                    mDIalog.show();
+                                }
+                            });
+
+                            SlideAdapter adapter = new SlideAdapter(testList, MainActivity.this);
+                            viewPager.setAdapter(adapter);
+                        }
+                    },0);
+                }
+            });
+
+
+
 
             goForward.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -776,12 +823,15 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
+
                         System.out.println("Entro nel metodo run----------------------");
                         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                         Context dialogContext = builder.getContext();
                         LayoutInflater inflater = LayoutInflater.from(dialogContext);
                         View alertView = inflater.inflate(R.layout.table_dialog, null);
                         builder.setView(alertView);
+
+
                         TableLayout tableLayout = (TableLayout) alertView.findViewById(R.id.tableLayout);
                         int row = 0;
                         boolean continueTable = false;

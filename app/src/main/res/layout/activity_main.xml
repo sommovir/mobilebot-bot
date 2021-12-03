@@ -8,6 +8,15 @@
     tools:context=".MainActivity">
 
 
+    <Button
+        android:id="@+id/testBtnPopup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="test popup slide"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/button_mainButton_speak"
@@ -216,6 +225,25 @@
         app:tint="@color/colorPrimary" />
 
         -->
+
+
+    <com.gigamole.infinitecycleviewpager.HorizontalInfiniteCycleViewPager
+        android:id="@+id/slider"
+        android:layout_width="300dp"
+        android:layout_height="150dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="20dp"
+        app:icvp_interpolator="@android:anim/accelerate_decelerate_interpolator"
+        app:icvp_scroll_duration="250"
+        app:icvp_center_page_scale_offset="10dp"
+        app:icvp_min_page_scale_offset="5dp"
+        app:icvp_max_page_scale="0.8"
+        app:icvp_min_page_scale="0.55"
+        app:icvp_medium_scaled="false"
+        />
+
 
     <TextView
     android:visibility="invisible"
