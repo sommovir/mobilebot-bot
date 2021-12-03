@@ -242,7 +242,13 @@ public class MQTTManager {
                     byte[] payload = message.getPayload();
                     String face = new String(payload);
 
-                    RobotManager.getInstance().changeFace(FaceType.of(face));
+                    System.out.println("Faccia:" + face);
+                    String[] split = face.split(",");
+                    if(split.length == 2){
+                        RobotManager.getInstance().changeFace(FaceType.of(split[0]));
+                    }else{
+                        RobotManager.getInstance().changeFace(FaceType.of(face));
+                    }
 
 
                 }

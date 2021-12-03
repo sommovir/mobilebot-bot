@@ -66,10 +66,6 @@ public class RobotManager {
 
 
     public void changeFace(FaceType face) {
-        EmotionsType sanbotFace = translateFace(face);
-        if (systemManager != null) {
-            systemManager.showEmotion(sanbotFace);
-        }
         switch (face) {
             case NORMAL:
                 normalFaceAnimationStart();

@@ -32,6 +32,7 @@ import com.gigamole.infinitecycleviewpager.HorizontalInfiniteCycleViewPager;
 import com.sanbot.opensdk.base.TopBaseActivity;
 import com.sanbot.opensdk.beans.FuncConstant;
 import com.sanbot.opensdk.beans.OperationResult;
+import com.sanbot.opensdk.function.beans.EmotionsType;
 import com.sanbot.opensdk.function.beans.LED;
 import com.sanbot.opensdk.function.beans.speech.Grammar;
 import com.sanbot.opensdk.function.beans.speech.RecognizeTextBean;
@@ -52,7 +53,6 @@ import com.sanbot.opensdk.function.unit.interfaces.speech.WakenListener;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
@@ -121,7 +121,7 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
             viewPager = findViewById(R.id.slider);
             buttonTestPopup = findViewById(R.id.testBtnPopup);
             stop.setEnabled(false);
-            //background = findViewById(R.id.background);
+            background = findViewById(R.id.background);
             serverStatus = findViewById(R.id.imageView_ServerStatus);
             img = findViewById(R.id.image);
             recSymbol = findViewById(R.id.recording);
@@ -196,8 +196,7 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
                             buttonTestPopup.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    mDIalog.setContentView(R.layout.table_popup);
-                                    mDIalog.show();
+                                    faceChanged(FaceType.SAD);
                                 }
                             });
 
@@ -210,6 +209,7 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
 
 
 
+            //batteryUpdate();
 
             goForward.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -823,15 +823,12 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
-
                         System.out.println("Entro nel metodo run----------------------");
                         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                         Context dialogContext = builder.getContext();
                         LayoutInflater inflater = LayoutInflater.from(dialogContext);
                         View alertView = inflater.inflate(R.layout.table_dialog, null);
                         builder.setView(alertView);
-
-
                         TableLayout tableLayout = (TableLayout) alertView.findViewById(R.id.tableLayout);
                         int row = 0;
                         boolean continueTable = false;
@@ -990,13 +987,18 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
     public void faceChanged(FaceType face) {
         switch (face) {
             case SAD:
-                background.setBackgroundResource(R.drawable.cry);
+                //background.setBackgroundResource(R.drawable.cry);
+                systemManager.showEmotion(EmotionsType.CRY);
                 break;
             case LOVE:
-                background.setBackgroundResource(R.drawable.love);
+                systemManager.showEmotion(EmotionsType.KISS);
+                background.setImageResource(R.drawable.love);
                 break;
             case OUTRAGE:
-                background.setBackgroundResource(R.drawable.flame);
+                System.out.println("qua");
+
+                systemManager.showEmotion(EmotionsType.ANGRY);
+                background.setImageResource(R.drawable.flame);
                 break;
         }
     }
