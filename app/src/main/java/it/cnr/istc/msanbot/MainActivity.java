@@ -987,7 +987,7 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
     public void faceChanged(FaceType face) {
         switch (face) {
             case SAD:
-                //background.setBackgroundResource(R.drawable.cry);
+                background.setImageResource(R.drawable.cry);
                 systemManager.showEmotion(EmotionsType.CRY);
                 break;
             case LOVE:
@@ -995,11 +995,17 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
                 background.setImageResource(R.drawable.love);
                 break;
             case OUTRAGE:
-                System.out.println("qua");
-
                 systemManager.showEmotion(EmotionsType.ANGRY);
                 background.setImageResource(R.drawable.flame);
                 break;
+            case LAUGH:
+                systemManager.showEmotion(EmotionsType.LAUGHTER);
+                break;
+            case QUESTION:
+                systemManager.showEmotion(EmotionsType.QUESTION);
+                break;
+            default:
+                systemManager.showEmotion(EmotionsType.NORMAL);
         }
     }
 
