@@ -19,6 +19,7 @@ import java.io.StringWriter;
 
 import it.cnr.istc.msanbot.RobotManager;
 import it.cnr.istc.msanbot.logic.ConnectionEventListener;
+import it.cnr.istc.msanbot.logic.DeviceType;
 import it.cnr.istc.msanbot.logic.EventManager;
 import it.cnr.istc.msanbot.logic.FaceType;
 import it.cnr.istc.msanbot.logic.RobotMovement;
@@ -404,6 +405,7 @@ public class MQTTManager {
 
     public void imalive() {
         this.publish(IM_ALIVE_TOPIC, "robottino");
+        publish(Topics.GETDEVICE.getTopic(),clientId+":"+ DeviceType.ROBOT.getDeviceType());
     }
 
     public void publish(String topic, String text) {
