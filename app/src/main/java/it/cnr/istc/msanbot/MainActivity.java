@@ -72,7 +72,7 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
     private AlertDialog dialog;
     TextView textView;
     Button goForward, goBackward, turnLeft, turnRight, buttonName;
-    ImageView background, serverStatus, recSymbol, mainSpeak, stop;
+    ImageView background, serverStatus, recSymbol, mainSpeak, stop,battery;
     private AlertDialog tableDialog = null;
     MQTTManager mqttManager = null;
     private Map<String, Boolean> colorCellMap = new HashMap<>();
@@ -114,6 +114,7 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
             img = findViewById(R.id.image);
             recSymbol = findViewById(R.id.recording);
             recSymbol.setVisibility(View.INVISIBLE);
+            battery = findViewById(R.id.batteryStatus);
 
             SharedPreferences namePref = getSharedPreferences("prefs", MODE_PRIVATE);
             name = namePref.getString("name", "Luca");
@@ -134,6 +135,17 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
 
                             while (true) {
                                 System.out.println("Viaaaaaaaaa");
+                                switch (systemManager.getBatteryStatus()){
+                                    case 3:
+                                        battery.setImageResource(R.drawable.ic_baseline_battery_full_24);
+                                        break;
+                                    case 2:
+                                        battery.setImageResource(R.drawable.ic_baseline_battery_middle_24);
+                                        break;
+                                    default:
+                                        battery.setImageResource(R.drawable.ic_baseline_battery_empty_24);
+                                        break;
+                                }
                                 System.out.println("battery: " + systemManager.getBatteryStatus());
                         /*if (systemManager.getBatteryStatus() == SystemManager.STATUS_NORMAL) {
                             talk("Non sono in carica e la mia batteria e' al " + systemManager.getBatteryStatus() + " percento", speechLed);
