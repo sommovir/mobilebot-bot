@@ -78,6 +78,7 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
     private Map<String, Boolean> colorCellMap = new HashMap<>();
     String name;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         register(MainActivity.class);
@@ -93,7 +94,6 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
 
             setContentView(R.layout.activity_main);
             RobotManager.getInstance().setSystemManager(systemManager);
-            showYouTubeVideo("https://www.youtube.com/watch?v=Sjg6jgED58c");
 
             if (speechManager == null) {
                 Toast.makeText(MainActivity.this, "VI SPACCO TUTTO", Toast.LENGTH_LONG).show();
@@ -109,7 +109,6 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
             buttonName = findViewById(R.id.buttonName);
             stop = findViewById(R.id.button_mainButton_stop);
             stop.setEnabled(false);
-            stop.setBackgroundResource(R.drawable.stop_disabled);
             //background = findViewById(R.id.background);
             serverStatus = findViewById(R.id.imageView_ServerStatus);
             img = findViewById(R.id.image);
@@ -124,6 +123,34 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
             //showInfo();
             initListener();
             connect();
+            stop.setImageResource(R.drawable.stop_disabled);
+            mainSpeak.setImageResource(R.drawable.speak_button_green);
+
+            runOnUiThread(new Runnable() {
+                public void run() {
+                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            while (true) {
+                                System.out.println("Viaaaaaaaaa");
+                                System.out.println("battery: " + systemManager.getBatteryStatus());
+                        /*if (systemManager.getBatteryStatus() == SystemManager.STATUS_NORMAL) {
+                            talk("Non sono in carica e la mia batteria e' al " + systemManager.getBatteryStatus() + " percento", speechLed);
+                        } else {
+                            talk("Sono in carica", speechLed);
+                        }*/
+                                try {
+                                    System.out.println("Dorme");
+                                    Thread.sleep(3000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    },5000);
+                }
+            });
 
             goForward.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -136,19 +163,23 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
                 }
             });
 
-            hardWareManager.setOnHareWareListener(new TouchSensorListener() {
-                @Override
-                public void onTouch(int i) {
-                    if (i == 11 || i == 12 || i == 13) {
-                        speechManager.doWakeUp();
-                    }
-                }
+            hardWareManager.setOnHareWareListener(new
 
-                @Override
-                public void onTouch(int i, boolean b) {
+                                                          TouchSensorListener() {
+                                                              @Override
+                                                              public void onTouch(int i) {
+                                                                  if (i == 11 || i == 12 || i == 13 || i == 3 || i == 4) {
+                                                                      speechManager.doWakeUp();
+                                                                  }
+                                                              }
 
-                }
-            });
+                                                              @Override
+                                                              public void onTouch(int i, boolean b) {
+                                                                  if (i == 11 || i == 12 || i == 13 || i == 3 || i == 4) {
+                                                                      speechManager.doWakeUp();
+                                                                  }
+                                                              }
+                                                          });
 
             goBackward.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -238,7 +269,7 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
                 public void onClick(View view) {
                     recSymbol.setVisibility(View.VISIBLE);
                     mainSpeak.setBackgroundResource(R.drawable.speak_button_green);
-                    background.setBackgroundColor(android.R.color.black);
+                    //background.setBackgroundColor(android.R.color.black);
                     //speechManager.startSpeak("Uga Buga Uga Tunga");
                     //systemManager.showEmotion(EmotionsType.SMILE);
                     speechManager.doWakeUp();
@@ -297,6 +328,8 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
                 public void onClick(View view) {
                     //speechManager.startSpeak("Sto zitt");
                     stop();
+                    stop.setImageResource(R.drawable.stop_disabled);
+                    mainSpeak.setImageResource(R.drawable.speak_button_green);
                     Toast.makeText(MainActivity.this, "Fine", Toast.LENGTH_LONG).show();
                 }
             });
@@ -342,7 +375,7 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
 
         talk("Inizio a sentire", listeningLed);
         stop.setEnabled(false);
-        stop.setBackgroundResource(R.drawable.stop_disabled);
+        mainSpeak.setImageResource(R.drawable.speak_button);
         textView = findViewById(R.id.speechRecognized);
         hardWareManager.setOnHareWareListener(new InfrareListener() {
             @Override
@@ -387,8 +420,9 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
                 String text = recognizeTextBean.getText().toLowerCase();
                 MQTTManager.getInstance().publish(Topics.CHAT.getTopic() + "/" + MQTTManager.getInstance().getId(), text);
                 textView.setText(recognizeTextBean.getText());
+                stop.setImageResource(R.drawable.stop);
                 stop.setEnabled(true);
-                stop.setBackgroundResource(R.drawable.stop);
+                mainSpeak.setImageResource(R.drawable.speak_button);
                 if (text.contains("ciao")) {
                     long time = new Date().getTime();
                     if (time % 2 == 1) {
@@ -407,13 +441,7 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
                     RelativeAngleWheelMotion relativeAngleWheelMotion = new RelativeAngleWheelMotion(RelativeAngleWheelMotion.TURN_LEFT, 5, 180);
                     wheelMotionManager.doRelativeAngleMotion(relativeAngleWheelMotion);
                 }
-                if (text.equals("stato batteria")) {
-                    if (systemManager.getBatteryStatus() == SystemManager.STATUS_NORMAL) {
-                        talk("Non sono in carica e la mia batteria e' al " + systemManager.getBatteryStatus() + " percento", speechLed);
-                    } else {
-                        talk("Sono in carica", speechLed);
-                    }
-                }
+
 
                 //
                 // speechManager.doWakeUp();
@@ -1012,7 +1040,7 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
     }
 
     public void connect() {
-        MQTTManager.getInstance().setIp("192.168.67.159");
+        MQTTManager.getInstance().setIp("192.168.67.187");
         //MQTTManager.getInstance().disconnect();
         MQTTManager.getInstance().connect(MainActivity.this);
         EventManager.getInstance().addConnectionEventListener(MainActivity.this);
