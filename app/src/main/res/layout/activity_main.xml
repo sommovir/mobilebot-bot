@@ -16,6 +16,7 @@
         android:scaleType="fitXY"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
+
     <ImageView
         android:id="@+id/faceBackground"
         android:layout_width="fill_parent"
@@ -23,9 +24,18 @@
         android:src="@drawable/blue2"
         android:scaleType="fitXY"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"/>
 
-    </ImageView>
+
+    <ImageView
+        android:id="@+id/broken"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/vetrorotto" />
 
     <Button
         android:id="@+id/testBtnPopup"

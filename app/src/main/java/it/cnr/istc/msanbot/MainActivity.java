@@ -12,12 +12,16 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.GradientDrawable;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.preference.PreferenceActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.Animation;
@@ -91,8 +95,12 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
     String name;
     private HorizontalInfiniteCycleViewPager viewPager;
     private List<String> testList = new ArrayList<>();
-    private Animation animation_while_speak;
+    private Animation animation_while_speak, vetro_riparante;
     private boolean cry = false, love = false, rage = false;
+    private int blinkCounter = 0;
+    private boolean vetroSpaccato = false;
+    private ImageView vetroRotto;
+    private MediaPlayer mp_glass = null;
 
 
     @Override
@@ -105,8 +113,6 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
         RobotManager.getInstance().addRobotEventListener(this);
         EventManager.getInstance().addConnectionEventListener(this);
         EventManager.getInstance().addMediaEventListener(this);
-
-        animation_while_speak = AnimationUtils.loadAnimation(this,R.anim.audio_output);
 
         try {
 
@@ -126,6 +132,10 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
             mainSpeak = findViewById(R.id.button_mainButton_speak);
             buttonName = findViewById(R.id.buttonName);
             stop = findViewById(R.id.button_mainButton_stop);
+            vetroRotto = findViewById(R.id.broken);
+            vetroRotto.setVisibility(View.INVISIBLE);
+
+            mp_glass = MediaPlayer.create(MainActivity.this, R.raw.glass);
 
             buttonTestPopup = findViewById(R.id.testBtnPopup);
             stop.setEnabled(false);
@@ -136,6 +146,8 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
             recSymbol = findViewById(R.id.recording);
             recSymbol.setVisibility(View.INVISIBLE);
             battery = findViewById(R.id.batteryStatus);
+            vetro_riparante = AnimationUtils.loadAnimation(this,R.anim.vetrospaccato_fade);
+            animation_while_speak = AnimationUtils.loadAnimation(this,R.anim.audio_output);
 
             SharedPreferences namePref = getSharedPreferences("prefs", MODE_PRIVATE);
             name = namePref.getString("name", "Luca");
@@ -189,6 +201,64 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
                 }
             });
             */
+            background.setOnTouchListener(new View.OnTouchListener() {
+
+
+                @Override
+                public boolean onTouch(View v, final MotionEvent event) {
+                    if (event.getAction() == MotionEvent.ACTION_UP) {
+                        // lastDuration = System.currentTimeMillis() - lastDown;
+
+                        cry = false;
+                        rage = false;
+                        love = false;
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                blinkCounter++;
+                                if(blinkCounter >= 5 && !vetroSpaccato){
+                                    vetroSpaccato = true;
+                                    vetroRotto.setVisibility(View.VISIBLE);
+                                    DisplayMetrics metrics = getResources().getDisplayMetrics();
+                                    int screenX_size = metrics.widthPixels;
+                                    int screenY_size = metrics.heightPixels;
+                                    int centerImageX = (int)(screenX_size/2);
+                                    int centerImageY = (int)(screenY_size/2);
+                                    int x  = (int)event.getX();
+                                    int y  = (int)event.getY();
+                                    int deltaX  =centerImageX - x;
+                                    int deltaY  =centerImageY - y;
+
+                                    vetroRotto.setTranslationX(-deltaX);
+                                    vetroRotto.setTranslationY(-deltaY);
+                                    vetroRotto.bringToFront();
+                                    vetroRotto.setAnimation(vetro_riparante);
+                                    vetro_riparante.start();
+                                    try {
+                                        if (mp_glass.isPlaying()) {
+                                            mp_glass.pause();
+                                            mp_glass.setVolume(1f,1f);
+                                            mp_glass.seekTo(0);
+                                        } mp_glass.start();
+                                    } catch(Exception e) { e.printStackTrace(); }
+                                    speak("Hey, vacci piano.");
+                                    new Handler(Looper.getMainLooper()).postDelayed(new Runnable(){
+                                        @Override
+                                        public void run() {
+                                            blinkCounter = 0;
+                                            vetroSpaccato = false;
+                                            vetroRotto.setVisibility(View.INVISIBLE);
+
+                                        }
+                                    }, 7000);
+                                }
+                            }
+                        }, 200);
+                    }
+                    return true;
+                }
+            });
+
 
 
             testList.add("bruh");
