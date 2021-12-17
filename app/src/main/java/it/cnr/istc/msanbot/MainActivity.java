@@ -16,9 +16,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -81,13 +84,15 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
     Dialog mDIalog;
     TextView textView;
     Button goForward, goBackward, turnLeft, turnRight, buttonName, buttonTestPopup;
-    ImageView background, serverStatus, recSymbol, mainSpeak, stop,battery;
+    ImageView background, serverStatus, recSymbol, mainSpeak, stop,battery, backgroundFace;
     private AlertDialog tableDialog = null;
     MQTTManager mqttManager = null;
     private Map<String, Boolean> colorCellMap = new HashMap<>();
     String name;
     private HorizontalInfiniteCycleViewPager viewPager;
     private List<String> testList = new ArrayList<>();
+    private Animation animation_while_speak;
+    private boolean cry = false, love = false, rage = false;
 
 
     @Override
@@ -100,6 +105,8 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
         RobotManager.getInstance().addRobotEventListener(this);
         EventManager.getInstance().addConnectionEventListener(this);
         EventManager.getInstance().addMediaEventListener(this);
+
+        animation_while_speak = AnimationUtils.loadAnimation(this,R.anim.audio_output);
 
         try {
 
@@ -123,6 +130,7 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
             buttonTestPopup = findViewById(R.id.testBtnPopup);
             stop.setEnabled(false);
             background = findViewById(R.id.background);
+            backgroundFace = findViewById(R.id.faceBackground);
             serverStatus = findViewById(R.id.imageView_ServerStatus);
             img = findViewById(R.id.image);
             recSymbol = findViewById(R.id.recording);
@@ -584,7 +592,7 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
      * @param text il testo da sintetizzare
      */
     public void talk(String text, LED led) {
-
+        animationWhileSpeaking();
         text = chooseRandomText(text);
         speechManager.startSpeak(text);
         hardWareManager.setLED(led);
@@ -990,6 +998,7 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
 
     @Override
     public void speak(String text) {
+
         talk(text, speechLed);
         //speechManager.startSpeak(text);
     }
@@ -1018,7 +1027,10 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        background.setImageDrawable(null);
+                        backgroundFace.setVisibility(View.INVISIBLE);
+                        cry = false;
+                        love = false;
+                        rage = false;
                     }
                 }, delay);
 
@@ -1036,19 +1048,28 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        cry = false;
+                        love = false;
+                        rage = false;
                         try {
                             switch (face) {
                                 case SAD:
-                                    background.setImageResource(R.drawable.cry);
+                                    backgroundFace.setVisibility(View.VISIBLE);
+                                    backgroundFace.setImageResource(R.drawable.cry);
                                     systemManager.showEmotion(EmotionsType.CRY);
+                                    cry = true;
                                     break;
                                 case LOVE:
+                                    backgroundFace.setVisibility(View.VISIBLE);
                                     systemManager.showEmotion(EmotionsType.KISS);
-                                    background.setImageResource(R.drawable.love);
+                                    backgroundFace.setImageResource(R.drawable.love);
+                                    love = true;
                                     break;
                                 case OUTRAGE:
+                                    backgroundFace.setVisibility(View.VISIBLE);
                                     systemManager.showEmotion(EmotionsType.ANGRY);
-                                    background.setImageResource(R.drawable.flame);
+                                    backgroundFace.setImageResource(R.drawable.flame);
+                                    rage = true;
                                     break;
                                 case LAUGH:
                                     systemManager.showEmotion(EmotionsType.LAUGHTER);
@@ -1178,6 +1199,40 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
         //MQTTManager.getInstance().disconnect();
         MQTTManager.getInstance().connect(MainActivity.this);
         EventManager.getInstance().addConnectionEventListener(MainActivity.this);
+    }
+
+
+    public void animationWhileSpeaking(){
+        //   Handler h = new Handler();
+        //    h.postDelayed(new Runnable() {
+        //      @Override
+        //       public void run()
+        //       {
+
+        if(love || cry || rage){
+            return;
+        }
+        runOnUiThread(new Runnable() {
+            public void run() {
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Log.i("TextToSpeech","On Start");
+                            System.out.println("STARTONE");
+                            background.setAnimation(animation_while_speak);
+                            animation_while_speak.start();
+                            background.invalidate();
+                            background.requestLayout();
+                        } catch (Exception ex){
+                            ex.printStackTrace();
+                        }
+
+                    }
+                }, 0);
+
+            }
+        });
     }
 
 
