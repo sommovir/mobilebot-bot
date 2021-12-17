@@ -197,7 +197,7 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
                             buttonTestPopup.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    faceChanged(FaceType.SAD);
+                                    faceChanged(FaceType.SAD, 4000);
                                 }
                             });
                         }
@@ -444,17 +444,17 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
         speechManager.setOnSpeechListener(new WakenListener() {
             @Override
             public void onWakeUpStatus(boolean b) {
-                System.out.println("------------------------------>>>>>>>>>>> WAKEUP: " + b);
+                //System.out.println("------------------------------>>>>>>>>>>> WAKEUP: " + b);
             }
 
             @Override
             public void onWakeUp() {
-                System.out.println("------------------------------>>>>>>>>>>> WAKEUP !!!!!!!! ");
+               // System.out.println("------------------------------>>>>>>>>>>> WAKEUP !!!!!!!! ");
             }
 
             @Override
             public void onSleep() {
-                System.out.println("------------------------------>>>>>>>>>>> SLEEEEP ZZZZzzZZZ: ");
+                //System.out.println("------------------------------>>>>>>>>>>> SLEEEEP ZZZZzzZZZ: ");
             }
         });
 
@@ -1009,30 +1009,68 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
             }});*/
     }
 
+
+    public void resetNormalBackground(long delay){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        background.setImageDrawable(null);
+                    }
+                }, delay);
+
+
+            }
+        });
+    }
+
     @Override
-    public void faceChanged(FaceType face) {
-        switch (face) {
-            case SAD:
-                background.setImageResource(R.drawable.cry);
-                systemManager.showEmotion(EmotionsType.CRY);
-                break;
-            case LOVE:
-                systemManager.showEmotion(EmotionsType.KISS);
-                background.setImageResource(R.drawable.love);
-                break;
-            case OUTRAGE:
-                systemManager.showEmotion(EmotionsType.ANGRY);
-                background.setImageResource(R.drawable.flame);
-                break;
-            case LAUGH:
-                systemManager.showEmotion(EmotionsType.LAUGHTER);
-                break;
-            case QUESTION:
-                systemManager.showEmotion(EmotionsType.QUESTION);
-                break;
-            default:
-                systemManager.showEmotion(EmotionsType.NORMAL);
-        }
+    public void faceChanged(FaceType face, long delay) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            switch (face) {
+                                case SAD:
+                                    background.setImageResource(R.drawable.cry);
+                                    systemManager.showEmotion(EmotionsType.CRY);
+                                    break;
+                                case LOVE:
+                                    systemManager.showEmotion(EmotionsType.KISS);
+                                    background.setImageResource(R.drawable.love);
+                                    break;
+                                case OUTRAGE:
+                                    systemManager.showEmotion(EmotionsType.ANGRY);
+                                    background.setImageResource(R.drawable.flame);
+                                    break;
+                                case LAUGH:
+                                    systemManager.showEmotion(EmotionsType.LAUGHTER);
+                                    break;
+                                case QUESTION:
+                                    systemManager.showEmotion(EmotionsType.QUESTION);
+                                    break;
+                                default:
+                                    systemManager.showEmotion(EmotionsType.NORMAL);
+                            }
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }, 0);
+
+
+            }
+        });
+
+        resetNormalBackground(delay);
+
     }
 
     @Override

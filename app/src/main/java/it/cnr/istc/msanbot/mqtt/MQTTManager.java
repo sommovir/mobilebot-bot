@@ -229,7 +229,7 @@ public class MQTTManager {
 
                     byte[] payload = message.getPayload();
                     String sss = new String(payload);
-                    System.out.println(sss);
+                    System.out.println("SPEECH " + sss);
                 }
             });
 
@@ -246,9 +246,10 @@ public class MQTTManager {
                     System.out.println("Faccia:" + face);
                     String[] split = face.split(",");
                     if(split.length == 2){
-                        RobotManager.getInstance().changeFace(FaceType.of(split[0]));
+                        long delay = Long.parseLong(split[1]);
+                        RobotManager.getInstance().changeFace(FaceType.of(split[0]),delay);
                     }else{
-                        RobotManager.getInstance().changeFace(FaceType.of(face));
+                        RobotManager.getInstance().changeFace(FaceType.of(face),5000);
                     }
 
 
@@ -372,7 +373,7 @@ public class MQTTManager {
                             ex.printStackTrace();
                         }
                     }
-                    System.out.println("Frase:" + sss);
+                    System.out.println("\t\tFrase:" + sss);
                     EventManager.getInstance().speak(sss);
 
                 }

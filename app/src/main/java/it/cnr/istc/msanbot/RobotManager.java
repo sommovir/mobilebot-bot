@@ -65,78 +65,78 @@ public class RobotManager {
     }
 
 
-    public void changeFace(FaceType face) {
+    public void changeFace(FaceType face, long delay) {
         switch (face) {
             case NORMAL:
-                normalFaceAnimationStart();
+                normalFaceAnimationStart(delay);
                 break;
             case SAD:
-                piangiAnimationStart();
+                piangiAnimationStart(delay);
                 break;
 
             case LOVE:
-                kissAnimationStart();
+                kissAnimationStart(delay);
                 break;
 
             case LAUGH:
-                smileAnimationStart();
+                smileAnimationStart(delay);
                 break;
 
             case OUTRAGE:
-                angryAnimationStart();
+                angryAnimationStart(delay);
                 break;
 
             case CRY:
-                cryAnimationStart();
+                cryAnimationStart(delay);
                 break;
 
             case QUESTION:
-                questionAnimationStart();
+                questionAnimationStart(delay);
                 break;
 
 
         }
     }
 
-    private void normalFaceAnimationStart() {
+    private void normalFaceAnimationStart(long delay) {
         for (RobotEventListener listener : robotEventListeners) {
-            listener.faceChanged(FaceType.NORMAL);
+            listener.faceChanged(FaceType.NORMAL, delay);
         }
     }
 
-    private void piangiAnimationStart() {
+    private void piangiAnimationStart(long delay) {
         for (RobotEventListener listener : robotEventListeners) {
-            listener.faceChanged(FaceType.SAD);
+            listener.faceChanged(FaceType.SAD, delay);
         }
     }
 
-    private void kissAnimationStart() {
+    private void kissAnimationStart(long delay) {
         for (RobotEventListener listener : robotEventListeners) {
-            listener.faceChanged(FaceType.LOVE);
+            listener.faceChanged(FaceType.LOVE, delay);
         }
     }
 
-    private void smileAnimationStart() {
+    private void smileAnimationStart(long delay) {
         for (RobotEventListener listener : robotEventListeners) {
-            listener.faceChanged(FaceType.LAUGH);
+            listener.faceChanged(FaceType.LAUGH, delay);
         }
     }
 
-    private void angryAnimationStart() {
+    private void angryAnimationStart(long delay) {
         for (RobotEventListener listener : robotEventListeners) {
-            listener.faceChanged(FaceType.OUTRAGE);
+            listener.faceChanged(FaceType.OUTRAGE, delay);
         }
     }
 
-    private void cryAnimationStart() {
+    private void cryAnimationStart(long delay) {
         for (RobotEventListener listener : robotEventListeners) {
-            listener.faceChanged(FaceType.CRY);
+            listener.faceChanged(FaceType.CRY, delay);
         }
     }
 
-    private void questionAnimationStart() {
+    private void questionAnimationStart(long delay) {
         for (RobotEventListener listener : robotEventListeners) {
-            listener.faceChanged(FaceType.QUESTION);
+            listener.faceChanged(FaceType.QUESTION, delay);
         }
     }
 

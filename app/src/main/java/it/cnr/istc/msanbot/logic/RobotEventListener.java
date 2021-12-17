@@ -4,7 +4,7 @@ import com.sanbot.opensdk.function.beans.wheelmotion.NoAngleWheelMotion;
 
 public interface RobotEventListener {
 
-    public void faceChanged(FaceType face);
+    public void faceChanged(FaceType face, long delay);
 
     public void move(Byte angleWheelMotion, int speed, int duration);
 
