@@ -265,6 +265,7 @@ public class MQTTManager {
                         byte[] payload = message.getPayload();
                         String tables = new String(payload);
                         System.out.println("---->" + tables);
+                        TableModel.getInstance().resetTables();
                         if(tables.contains("<CONTINUE>")){
                             String[] split = tables.split("<CONTINUE>");
                             for(String table: split){
@@ -362,6 +363,7 @@ public class MQTTManager {
 
                     byte[] payload = message.getPayload();
                     String sss = new String(payload);
+                    System.out.println("AAAAAAA: " + sss);
                     if (sss.contains("<AUTOLISTEN>")) {
                         System.out.println("Contiene autolisten");
                         try {
