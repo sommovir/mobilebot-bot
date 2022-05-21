@@ -42,6 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="test popup slide"
+        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -145,8 +146,8 @@
         android:layout_marginEnd="20dp"
         />
 
-    <!--
-    <TextView
+
+    <!--<TextView
     android:visibility="invisible"
         android:id="@+id/button_mainButton"
         android:layout_width="91dp"
@@ -220,10 +221,10 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/button_mainButton3"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.97" />
+        app:layout_constraintVertical_bias="0.97" />-->
 
 
-     -->
+
 
 
 
@@ -256,17 +257,17 @@
         -->
 
     <TextView
-    android:visibility="invisible"
-
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
 
+        android:layout_height="wrap_content"
         android:text="A"
+
         android:textColor="@color/colorPrimary"
+        android:visibility="visible"
 
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintVertical_bias="0.903"
+        app:layout_constraintEnd_toEndOf="@+id/goBackward"
+        app:layout_constraintTop_toTopOf="@+id/goForwardx"
         tools:ignore="MissingConstraints" />
 
     <Button
@@ -287,7 +288,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="TurnLeft"
-        android:visibility="gone"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.439"
@@ -301,7 +302,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="68dp"
         android:text="Backward"
-        android:visibility="gone"
+        android:visibility="invisible"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.53"

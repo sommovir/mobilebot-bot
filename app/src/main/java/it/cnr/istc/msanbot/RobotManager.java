@@ -164,4 +164,19 @@ public class RobotManager {
         return (String) y[3].subSequence(0, y[3].indexOf("<"));
     }
 
+    public static String getMovementDirectionNew(String x){
+        String y[] = x.split("<MOVEMENT>");
+
+        return y[1];
+    }
+
+    public static String getMovementVelocityTurnNew(String x){
+        String y[] = x.split("<MOVEMENT>");
+        if(y[1].contains("<:>")){
+            return y[1].split("<:>")[1];
+        }else{
+            return null;
+        }
+    }
+
 }

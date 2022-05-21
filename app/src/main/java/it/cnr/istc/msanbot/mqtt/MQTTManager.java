@@ -245,18 +245,18 @@ public class MQTTManager {
 
                     System.out.println("Faccia:" + face);
                     String[] split = face.split(",");
-                    if(split.length == 2){
+                    if (split.length == 2) {
                         long delay = Long.parseLong(split[1]);
-                        RobotManager.getInstance().changeFace(FaceType.of(split[0]),delay);
-                    }else{
-                        RobotManager.getInstance().changeFace(FaceType.of(face),5000);
+                        RobotManager.getInstance().changeFace(FaceType.of(split[0]), delay);
+                    } else {
+                        RobotManager.getInstance().changeFace(FaceType.of(face), 5000);
                     }
 
 
                 }
             });
 
-            client.subscribe(Topics.COMMAND.getTopic() + "/" + clientId + "/" + "table", new IMqttMessageListener() {
+            /*client.subscribe(Topics.COMMAND.getTopic() + "/" + clientId + "/" + "table", new IMqttMessageListener() {
                 @Override
                 public void messageArrived(String topic, MqttMessage message) throws Exception {
                     try {
@@ -265,26 +265,25 @@ public class MQTTManager {
                         byte[] payload = message.getPayload();
                         String tables = new String(payload);
                         System.out.println("---->" + tables);
-                        if(tables.contains("<CONTINUE>")){
+                        if (tables.contains("<CONTINUE>")) {
                             String[] split = tables.split("<CONTINUE>");
-                            for(String table: split){
+                            for (String table : split) {
                                 TableModel.getInstance().addCurrentTable(table);
                                 System.out.println("TABLES: " + table);
                             }
-                        }else {
+                        } else {
                             System.out.println("TABLES: " + tables);
                             TableModel.getInstance().addCurrentTable(tables);
                         }
                         System.out.println("TABLE LIST SIZE: " + TableModel.getInstance().getCurrentDataTable().size());
                         EventManager.getInstance().showTable();
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
 
 
-
                 }
-            });
+            });*/
 
 
             client.subscribe(Topics.COMMAND.getTopic() + "/" + clientId + "/" + "link", new IMqttMessageListener() {
@@ -338,20 +337,22 @@ public class MQTTManager {
 
                     System.out.println(topic + "\t" + clientId);
 
+
                     byte[] payload = message.getPayload();
                     String movement = new String(payload);
 
-                    String movementDirection = RobotManager.getInstance().getMovementDirection(movement);
-                    String movementVelocityGrade = RobotManager.getInstance().getMovementVelocityTurn(movement);
+                    System.out.println("Movimento" + "\t" + movement);
 
-                    if(movementDirection.equals(NoAngleWheelMotion.ACTION_TURN_LEFT) || movementDirection.equals(NoAngleWheelMotion.ACTION_TURN_RIGHT)){
-                        RobotManager.getInstance().turnRobot(RobotMovement.of(movementDirection).toSanbotMovement(),3,new Integer(movementVelocityGrade));
-                    }else{
+                    String movementDirection = RobotManager.getInstance().getMovementDirectionNew(movement);
+                    String movementVelocityGrade = RobotManager.getInstance().getMovementVelocityTurnNew(movement);
+
+                    if (movementDirection.equals(NoAngleWheelMotion.ACTION_TURN_LEFT) || movementDirection.equals(NoAngleWheelMotion.ACTION_TURN_RIGHT)) {
+                        RobotManager.getInstance().turnRobot(RobotMovement.of(movementDirection).toSanbotMovement(), 3, movementVelocityGrade == null ? 2 : new Integer(movementVelocityGrade));
+                    } else {
                         RobotManager.getInstance().moveRobot(RobotMovement.of(movementDirection).toSanbotMovement(), sanbotVelocity(movementVelocityGrade), 3);
                     }
                 }
             });
-
 
 
             client.subscribe(Topics.RESPONSES.getTopic() + "/" + clientId, new IMqttMessageListener() {
@@ -362,6 +363,20 @@ public class MQTTManager {
 
                     byte[] payload = message.getPayload();
                     String sss = new String(payload);
+                    /*if (sss.contains("<MOVEMENT>")) {
+                        String movementDirection = RobotManager.getInstance().getMovementDirectionNew(sss);
+                        String movementVelocityGrade = RobotManager.getInstance().getMovementVelocityTurnNew(sss);
+
+                        if (movementDirection.equals(NoAngleWheelMotion.ACTION_TURN_LEFT) || movementDirection.equals(NoAngleWheelMotion.ACTION_TURN_RIGHT)) {
+                            RobotManager.getInstance().turnRobot(RobotMovement.of(movementDirection).toSanbotMovement(), 3, movementVelocityGrade == null ? 2 : new Integer(movementVelocityGrade));
+                        } else {
+                            RobotManager.getInstance().moveRobot(RobotMovement.of(movementDirection).toSanbotMovement(), sanbotVelocity(movementVelocityGrade), 60);
+                        }
+                        sss = sss.split("<MOVEMENT>")[0];
+                        sss = sss.replace("<AUTOLISTEN>", "");
+
+                        return;
+                    }*/
                     if (sss.contains("<AUTOLISTEN>")) {
                         System.out.println("Contiene autolisten");
                         try {
@@ -369,12 +384,15 @@ public class MQTTManager {
                             String purePhrase = getAutoListenPhrase(sss);
                             EventManager.getInstance().forceAutoListen(autoListenDelay);
                             sss = purePhrase;
+                            System.out.println("\t\tFrase:" + sss);
+                            EventManager.getInstance().speak(sss);
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }
+                    }else{
+                        System.out.println("\t\tFrase:" + sss);
+                        EventManager.getInstance().speak(sss);
                     }
-                    System.out.println("\t\tFrase:" + sss);
-                    EventManager.getInstance().speak(sss);
 
                 }
             });
@@ -418,18 +436,24 @@ public class MQTTManager {
 
     }
 
-    public int sanbotVelocity(String x){
-        switch (x){
-            case "LOW":return 2;
-            case "MEDIUM":return 4;
-            case "HIGH":return 6;
+    public int sanbotVelocity(String x) {
+        if (x == null) {
+            return 6;
+        }
+        switch (x) {
+            case "LOW":
+                return 2;
+            case "MEDIUM":
+                return 4;
+            case "HIGH":
+                return 6;
         }
         return 2;
     }
 
     public void imalive() {
         this.publish(IM_ALIVE_TOPIC, "robottino");
-        publish(Topics.GETDEVICE.getTopic(),clientId+":"+ DeviceType.ROBOT.getDeviceType());
+        publish(Topics.GETDEVICE.getTopic(), clientId + ":" + DeviceType.ROBOT.getDeviceType());
     }
 
     public void publish(String topic, String text) {

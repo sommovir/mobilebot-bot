@@ -1125,8 +1125,8 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
                             switch (face) {
                                 case SAD:
                                     backgroundFace.setVisibility(View.VISIBLE);
-                                    backgroundFace.setImageResource(R.drawable.cry);
                                     systemManager.showEmotion(EmotionsType.CRY);
+                                    backgroundFace.setImageResource(R.drawable.cry);
                                     cry = true;
                                     break;
                                 case LOVE:
@@ -1265,7 +1265,7 @@ public class MainActivity extends TopBaseActivity implements MediaEventListener,
     }
 
     public void connect() {
-        MQTTManager.getInstance().setIp("192.168.67.159");
+        MQTTManager.getInstance().setIp("192.168.43.157");
         //MQTTManager.getInstance().disconnect();
         MQTTManager.getInstance().connect(MainActivity.this);
         EventManager.getInstance().addConnectionEventListener(MainActivity.this);
