@@ -3,6 +3,8 @@ package it.cnr.istc.msanbot.adapter;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
+import android.os.Build;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +14,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.viewpager.widget.PagerAdapter;
+
+import org.w3c.dom.Text;
 
 import java.util.HashMap;
 import java.util.List;
@@ -68,6 +73,7 @@ public class SlideAdapter extends PagerAdapter implements MediaEventListener {
      * @return Returns an Object representing the new page.  This does not
      * need to be a View, but can be some other container of the page.
      */
+
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
@@ -80,6 +86,7 @@ public class SlideAdapter extends PagerAdapter implements MediaEventListener {
         System.out.println("Posizione: " + position + "\nTable: " + currentDataTable.get(position));
         String[] rows = table.split("<ROW>");
 
+        /*
         int row = 0;
         boolean continueTable = false;
         for (String d : rows) {
@@ -147,7 +154,33 @@ public class SlideAdapter extends PagerAdapter implements MediaEventListener {
             tableLayout.addView(tableRow);
         }
 
+         */
+
         container.addView(view);
+
+
+        System.out.println("---------- TABLE FATTA EPICOOOOOOOO ----------");
+
+        String tablehtml = "<table style=\"border: 1px solid black;\">";
+        for(String r: rows){
+            String riga = "<tr>";
+            String[] cells = r.split("<CELL>");
+            for(String c : cells){
+                riga += "<td>" + c + "</td>";
+            }
+            riga += "</tr>";
+            tablehtml += riga;
+        }
+        tablehtml += "</table>";
+
+        System.out.println(tablehtml);
+
+        TextView textView = view.findViewById(R.id.testoepico);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            textView.setText(Html.fromHtml(tablehtml, Html.FROM_HTML_MODE_COMPACT));
+        } else {
+            textView.setText(Html.fromHtml(tablehtml));
+        }
 
         return view;
 

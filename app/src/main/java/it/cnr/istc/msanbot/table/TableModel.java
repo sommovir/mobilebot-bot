@@ -30,4 +30,6 @@ public class TableModel {
         currentDataTable.add(table);
     }
 
+    public void resetTables(){currentDataTable.clear();}
+
 }

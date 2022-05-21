@@ -69,4 +69,8 @@ public class Settings {
     public boolean isGoogleSpeechEnabled() {
         return googleSpeechEnabled;
     }
+
+    public static Context getContext() {
+        return context;
+    }
 }
